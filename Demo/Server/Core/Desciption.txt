@@ -1,5 +1,8 @@
-API Functions
+Commands
+ - Device turned on
+ - Device turned off
 
+API
+-------------
 Post
  - On/Off (For when a device turns on outside of schedule)
- 

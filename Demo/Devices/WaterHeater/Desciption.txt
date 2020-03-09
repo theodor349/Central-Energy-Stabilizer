@@ -1,0 +1,14 @@
+Commands
+ - Turn on
+ - Turn off
+
+ - Send current temperature
+ - Send current effect (W)
+
+API
+------------
+Post
+ - On/Off (When the server commands it to run or turn of)
+
+Get
+ - When the server asks for some data (e.g. current temperature)

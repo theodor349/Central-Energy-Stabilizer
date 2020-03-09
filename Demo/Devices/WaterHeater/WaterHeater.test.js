@@ -9,5 +9,5 @@ test("Test", () => {
     state: 1, // 0 = off, 1 = standby, 2 = full power
   }
   waterHeater.update(heater);
-  expect(heater.effect).toStrictEqual(2);
+  expect(heater.effect).toEqual(2);
 });

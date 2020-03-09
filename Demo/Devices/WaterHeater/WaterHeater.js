@@ -1,5 +1,6 @@
 const functions = {
   heatUp: () => heatUp(),
+  update: waterHeater => update(waterHeater),
 
 }
 
@@ -12,7 +13,7 @@ let waterHeater = {
 }
 
 function update(_deltaTime) {
-
+  _deltaTime.effect = 2;
 }
 
 function updateTemp(waterHeater, _deltaTime) {

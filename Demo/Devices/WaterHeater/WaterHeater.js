@@ -17,6 +17,8 @@ let testerWaterHeater = {
 }
 
 let progressBar = new _progress.Bar();
+progressBar.Start(100, 0);
+update(testerWaterHeater);
 
 function update(waterHeater) {
   updateTemp(waterHeater);
@@ -46,7 +48,7 @@ function checkTemp(waterHeater) {
   if (waterHeater.currentTemp < waterHeater.lowerLimit)
     updateState(waterHeater, 2);
   else if (waterHeater.currentTemp == waterHeater.lowerLimit)
-    update(waterHeater, 1);
+    updateState(waterHeater, 1);
   else if (waterHeater.currentTemp > waterHeater.upperLimit)
     updateState(waterHeater, 0);
   else if (waterHeater.currentTemp == waterHeater.upperLimit)

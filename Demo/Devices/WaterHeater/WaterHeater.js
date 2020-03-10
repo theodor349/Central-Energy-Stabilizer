@@ -1,5 +1,5 @@
 const functions = {
-  update: waterHeater => update(waterHeater),
+  update: (waterHeater, _deltaTime) => update(waterHeater, _deltaTime),
   updateTemp: (waterHeater) => updateTemp(waterHeater),
   updateState: (waterHeater, state) => updateState(waterHeater, state),
   notifyServer: (waterHeater) => waterHeater,
@@ -13,9 +13,7 @@ let waterHeater = {
   state: 1, // 0 = off, 1 = standby, 2 = full power
 }
 
-function update(_deltaTime) {
-
-}
+function update(_deltaTime, _deltaTime) {}
 
 function updateTemp(waterHeater, _deltaTime) {
 

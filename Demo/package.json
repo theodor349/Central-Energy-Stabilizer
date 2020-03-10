@@ -11,5 +11,8 @@
   "license": "ISC",
   "devDependencies": {
     "jest": "^25.1.0"
+  },
+  "dependencies": {
+    "socket.io": "^2.3.0"
   }
 }

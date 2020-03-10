@@ -5,6 +5,12 @@ const functions = {
   doActions: (waterHeater) => doActions(waterHeater),
 }
 
+const state = {
+  OFF: 0,
+  STANDBY: 1,
+  ON: 2,
+}
+
 let nextId = 0;
 let testerWaterHeater = {
   id: NaN, // ID
@@ -19,12 +25,15 @@ let testerWaterHeater = {
 
 let waterHeater = undefined;
 
+add(testerWaterHeater);
+const timer = setInterval(function() {
+  update(waterHeater);
+}, 1000);
 
-
-function add(waterHeater) {
-  waterHeater.id = nextId;
+function add(_waterHeater) {
+  _waterHeater.id = nextId;
   nextId++;
-  waterHeater = waterHeater;
+  waterHeater = _waterHeater;
 }
 
 function remove(waterHeater) {
@@ -42,17 +51,28 @@ function schedule(waterHeater) {
   date.setMinutes(date.getMinutes() + 1);
   waterHeater.timeOn = date;
 
+  date = new Date();
   date.setMinutes(date.getMinutes() + 2);
+  waterHeater.timeOff = date;
+
+  console.log("Time to turn on " + waterHeater.timeOn.getHours() + ":" + waterHeater.timeOn.getMinutes() + ":" + waterHeater.timeOn.getSeconds());
+  console.log("Time to turn off " + waterHeater.timeOff.getHours() + ":" + waterHeater.timeOff.getMinutes() + ":" + waterHeater.timeOff.getSeconds());
 }
 
 function doActions(waterHeater) {
   let date = new Date();
-  if (waterHeater.timeOn != undefined) {
-    if (waterHeater.timeOn >= date)
+  if (waterHeater.timeOn !== undefined && waterHeater.state != state.ON) {
+    if (waterHeater.timeOn <= date) {
+      waterHeater.state = state.ON;
       console.log("Turn on");
-  } else if (waterHeater.timeOff != undefined) {
-    if (waterHeater.timeOff >= date)
+    }
+  } else if (waterHeater.timeOff !== undefined && waterHeater.state != state.OFF) {
+    if (waterHeater.timeOff <= date) {
+      waterHeater.state = state.OFF;
+      waterHeater.timeOn = undefined;
+      waterHeater.timeOff = undefined;
       console.log("Turn off");
+    }
   }
 }
 

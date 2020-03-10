@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="da" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>Muffin</title>
+    </head>
+
+
+    <body>
+        <h1>Muffin, yes yes yes!</h1>
+
+
+
+        <form action="">
+          <input id="m" autocomplete="off" /><button>Send</button>
+        </form>
+
+
+
+        <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+
+        <script>
+          $(function () {
+            let socket = io();
+            $('form').submit(function(e){
+              e.preventDefault(); // prevents page reloading
+              socket.emit('chat message', $('#m').val());
+              $('#m').val('');
+              return false;
+            });
+          });
+        </script>
+
+
+        <script>
+          var socket = io();
+        </script>
+    </body>
+</html>

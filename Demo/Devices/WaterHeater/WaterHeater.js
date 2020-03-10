@@ -1,3 +1,7 @@
+
+let connection = require('./WaterHeaterConnection.js');
+
+
 const functions = {
   update: (waterHeater) => update(waterHeater),
   updateTemp: (waterHeater) => updateTemp(waterHeater),

@@ -1,4 +1,3 @@
-
 let connection = require('./WaterHeaterConnection.js');
 
 

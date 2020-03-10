@@ -1,0 +1,1 @@
+const waterHeater = require('./deviceManager.js');

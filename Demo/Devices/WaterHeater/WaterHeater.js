@@ -13,7 +13,9 @@ let waterHeater = {
   state: 1, // 0 = off, 1 = standby, 2 = full power
 }
 
-function update(_deltaTime, _deltaTime) {}
+function update(waterHeater, _deltaTime) {
+
+}
 
 function updateTemp(waterHeater, _deltaTime) {
 

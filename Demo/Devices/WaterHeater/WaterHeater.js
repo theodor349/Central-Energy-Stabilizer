@@ -1,11 +1,14 @@
+const _progress = require('cli-progress');
+
 const functions = {
   update: (waterHeater) => update(waterHeater),
   updateTemp: (waterHeater) => updateTemp(waterHeater),
   updateState: (waterHeater, state) => updateState(waterHeater, state),
+  checkTemp: (waterHeater) => checkTemp(waterHeater),
   notifyServer: (waterHeater) => waterHeater,
 }
 
-let waterHeater = {
+let testerWaterHeater = {
   currentTemp: 55, // Current temperature
   lowerLimit: 55, // When under it should start
   upperLimit: 85, // When abow it turns off
@@ -13,8 +16,15 @@ let waterHeater = {
   state: 1, // 0 = off, 1 = standby, 2 = full power
 }
 
+let progressBar = new _progress.Bar();
+
 function update(waterHeater) {
   updateTemp(waterHeater);
+  updateProgressBar(waterHeater);
+}
+
+function updateProgressBar(waterHeater) {
+  progressBar
 }
 
 function updateTemp(waterHeater) {
@@ -29,8 +39,18 @@ function updateTemp(waterHeater) {
     default:
   }
 
-  if (waterHeater.currentTemp < 55)
+  checkTemp(waterHeater);
+}
+
+function checkTemp(waterHeater) {
+  if (waterHeater.currentTemp < waterHeater.lowerLimit)
     updateState(waterHeater, 2);
+  else if (waterHeater.currentTemp == waterHeater.lowerLimit)
+    update(waterHeater, 1);
+  else if (waterHeater.currentTemp > waterHeater.upperLimit)
+    updateState(waterHeater, 0);
+  else if (waterHeater.currentTemp == waterHeater.upperLimit)
+    updateState(waterHeater, 1);
 }
 
 function updateState(waterHeater, state) {

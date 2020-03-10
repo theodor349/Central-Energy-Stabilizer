@@ -28,6 +28,9 @@ function updateTemp(waterHeater) {
       break;
     default:
   }
+
+  if (waterHeater.currentTemp < 55)
+    updateState(waterHeater, 2);
 }
 
 function updateState(waterHeater, state) {

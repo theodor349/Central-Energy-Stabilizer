@@ -22,7 +22,7 @@
 
         <script>
           $(function () {
-            let socket = io();
+            let socket = io('/user');
             $('form').submit(function(e){
               e.preventDefault(); // prevents page reloading
               socket.emit('chat message', $('#m').val());
@@ -33,8 +33,6 @@
         </script>
 
 
-        <script>
-          var socket = io();
-        </script>
+
     </body>
 </html>

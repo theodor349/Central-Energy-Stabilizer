@@ -1,7 +1,10 @@
-var io = require('socket.io-client');
-var socket = io.connect("http://localhost:3000/", {
-    reconnection: true
+let io = require('socket.io-client');
+let socket = io('/device');
+socket = io.connect("http://localhost:3000/device", {
+    reconnection: true,
 });
+
+
 
 socket.on('connect', function () {
     console.log('connected to localhost:3000');

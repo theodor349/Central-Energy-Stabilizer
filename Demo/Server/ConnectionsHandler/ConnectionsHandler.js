@@ -55,7 +55,7 @@ deviceSpace.on('connection', function(socket) {
         break;
       default:
     }
-  })
+  });
 
 });
 

@@ -68,10 +68,6 @@ function getDeviceObject() {
   return myWaterHeater;
 }
 
-function getDeviceInfo() {
-  return myWaterHeater;
-}
-
 function updateState(state) {
   myWaterHeater.state = state;
   notifyServer(myWaterHeater);

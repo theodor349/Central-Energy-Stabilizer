@@ -1,8 +1,13 @@
-let app = require('express')();
+let express = require('express');
+let app = express();
 let http = require('http').createServer(app);
 let io = require('socket.io')(http);
 
 let appData = require('../Core/DeviceStorage.js')
+
+console.log(__dirname + '/Public');
+
+app.use("/public", express.static(__dirname + '/Public'));
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -11,6 +16,7 @@ app.get('/', function(req, res){
 const userSpace = io.of('/user');
 
 userSpace.on('connection', function(socket){
+    runUserInit();
 
     socket.on('chat message', function(msg){
     console.log('message from user: ' + msg);

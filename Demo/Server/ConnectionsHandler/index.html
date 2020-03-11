@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="da" dir="ltr">
     <head>
+
+
+
+
         <meta charset="utf-8">
         <title>Muffin</title>
     </head>
@@ -17,22 +21,13 @@
 
 
 
-        <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-        <script src="/socket.io/socket.io.js"></script>
-
-        <script>
-          $(function () {
-            let socket = io('/user');
-            $('form').submit(function(e){
-              e.preventDefault(); // prevents page reloading
-              socket.emit('chat message', $('#m').val());
-              $('#m').val('');
-              return false;
-            });
-          });
-        </script>
 
 
+
+
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./public/connection.js"></script>
 
     </body>
 </html>

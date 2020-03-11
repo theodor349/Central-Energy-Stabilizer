@@ -1,4 +1,5 @@
-let connection = require('./WaterHeaterConnection.js');
+// const connection = require('./WaterHeaterConnection.js');
+const fs = require('fs');
 
 const functions = {
   update: () => update(),
@@ -12,18 +13,19 @@ const functions = {
 
 const state = {
   OFF: 0,
-  STANDBY: 1,
+  KEEP_TEMP: 1,
   ON: 2,
 }
 
 const deltaTime = 1;
 
 let myWaterHeater = {
+  type: "WaterHeater",
   currentTemp: 55, // Current temperature
   lowerLimit: 55, // When under it should start
   upperLimit: 85, // When abow it turns off
-  effect: 1000, // Watts
-  state: state.ON, // 0 = off, 1 = standby, 2 = full power
+  maxEffect: 1000, // Watts
+  state: state.ON, // 0 = off, 1 = KEEP_TEMP, 2 = full power
 }
 
 function makeWaterHeater(_waterHeater) {
@@ -56,12 +58,12 @@ function checkTemp() {
 
   if (currTemp < lowerLimit && currState != state.ON)
     updateState(state.ON);
-  else if (currTemp == lowerLimit && currState != state.STANDBY)
-    updateState(state.STANDBY);
+  else if (currTemp == lowerLimit && currState != state.KEEP_TEMP)
+    updateState(state.KEEP_TEMP);
   else if (currTemp > upperLimit && currState != state.OFF)
     updateState(state.OFF);
-  else if (currTemp == upperLimit && currState != state.STANDBY)
-    updateState(state.STANDBY);
+  else if (currTemp == upperLimit && currState != state.KEEP_TEMP)
+    updateState(state.KEEP_TEMP);
 }
 
 function getDeviceObject() {

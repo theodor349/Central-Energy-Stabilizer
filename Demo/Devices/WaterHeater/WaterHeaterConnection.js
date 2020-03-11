@@ -1,5 +1,6 @@
 let io = require('socket.io-client');
-let socket = io('/device');
+let waterHeaterFunctions = require('./Waterheater.js');
+
 socket = io.connect("http://localhost:3000/device", {
     reconnection: true,
 });
@@ -9,8 +10,17 @@ socket = io.connect("http://localhost:3000/device", {
 socket.on('connect', function () {
     console.log('connected to localhost:3000');
 
-    socket.on('clientEvent', function (data) {
-        console.log('message from the server:', data);
-        socket.emit('serverEvent', "thanks server! for sending '" + data + "'");
-    });
+    socket.on('getDeviceInfo', function(){
+        getDeviceInfo(socket);
+    })
+
+
 });
+
+function getDeviceInfo(socket){
+
+    object = waterHeaterFunctions.getDeviceObject();
+
+    socket.emit('newDeviceInfo', object);
+    console.log('DeviceInfo send to server');
+}

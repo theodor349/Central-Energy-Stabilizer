@@ -2,20 +2,21 @@ let app = require('express')();
 let http = require('http').createServer(app);
 let io = require('socket.io')(http);
 
+let appData = require('../Core/DeviceStorage.js')
+
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
 const userSpace = io.of('/user');
 
-    userSpace.on('connection', function(socket){
-    console.log('a user connected');
+userSpace.on('connection', function(socket){
 
-    userSpace.on('chat message', function(msg){
+    socket.on('chat message', function(msg){
     console.log('message from user: ' + msg);
     });
 
-    userSpace.on('disconnect', function(){
+    socket.on('disconnect', function(){
       console.log('a user disconnected');
     });
 
@@ -23,14 +24,38 @@ const userSpace = io.of('/user');
 
 const deviceSpace = io.of('/device');
 deviceSpace.on('connection', function(socket){
-  console.log('a device connected');
+    runDeviceInit();
 
-  deviceSpace.on('disconnect', function(){
+    socket.on('newDeviceInfo', function(device){
+        registerNewDevice(device);
+    })
+
+
+    socket.on('disconnect', function(){
     console.log('a device disconnected');
-  });
+    });
 
 });
 
 http.listen(3000, function(){
   console.log('Server started!');
 });
+
+
+
+function runUserInit(){
+    console.log('a user connected');
+}
+
+
+
+
+
+function runDeviceInit(){
+    console.log('a device connected');
+    deviceSpace.emit('getDeviceInfo');
+}
+
+function registerNewDevice(device){
+    appData.addDevice(device);
+}

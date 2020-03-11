@@ -1,6 +1,5 @@
 let connection = require('./WaterHeaterConnection.js');
 
-
 const functions = {
   update: (waterHeater) => update(waterHeater),
   updateTemp: (waterHeater) => updateTemp(waterHeater),
@@ -44,14 +43,23 @@ function updateTemp(waterHeater) {
 }
 
 function checkTemp(waterHeater) {
-  if (waterHeater.currentTemp < waterHeater.lowerLimit && waterHeater.state != state.ON)
+  let currTemp = waterHeater.currentTemp;
+  let lowerLimit = waterHeater.lowerLimit;
+  let upperLimit = waterHeater.upperLimit;
+  let currState = waterHeater.state;
+
+  if (currTemp < lowerLimit && currState != state.ON)
     updateState(waterHeater, state.ON);
-  else if (waterHeater.currentTemp == waterHeater.lowerLimit && waterHeater.state != state.STANDBY)
+  else if (currTemp == lowerLimit && currState != state.STANDBY)
     updateState(waterHeater, state.STANDBY);
-  else if (waterHeater.currentTemp > waterHeater.upperLimit && waterHeater.state != state.OFF)
+  else if (currTemp > upperLimit && currState != state.OFF)
     updateState(waterHeater, state.OFF);
-  else if (waterHeater.currentTemp == waterHeater.upperLimit && waterHeater.state != state.STANDBY)
+  else if (currTemp == upperLimit && currState != state.STANDBY)
     updateState(waterHeater, state.STANDBY);
+}
+
+function getTemp(waterHeater) {
+  return waterHeater.currentTemp;
 }
 
 function updateState(waterHeater, state) {

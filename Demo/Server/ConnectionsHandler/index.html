@@ -4,30 +4,98 @@
 
 
 
-
+        <link rel="stylesheet" href="Public/main.css">
         <meta charset="utf-8">
-        <title>Muffin</title>
+        <title>Pebert – The energy saving bot</title>
     </head>
 
 
     <body>
-        <h1>Muffin, yes yes yes!</h1>
+        <header>
+            <h1>Pebert</h1>
+            <h2>The energy saving network bot</h2>
+        </header>
+
+        <section id="serverDevices">
+
+            <!-- template for water heater -->
+            <section id = "deviceIdHere">
+                <div>
+                    <img src="/images/waterheaterIcon.svg" alt="Device type">
+                </div>
+                <ul>
+                    <li>device name</li><!-- Water heater -->
+                    <li>current temp</li><!-- in celcius -->
+                    <li>lower limit</li>
+                    <li>upper limit</li>
+                    <li>max effect</li><!-- in watt -->
+                    <li>state</li><!-- 0 = off, 1 = KEEP_TEMP, 2 = full power -->
+                </ul>
+            </section>
+
+            <!-- template for water heater -->
+            <section id = "deviceIdHere">
+                <div>
+                    <img src="/images/waterheaterIcon.svg" alt="Device type">
+                </div>
+                <ul>
+                    <li>device name</li><!-- Water heater -->
+                    <li>current temp</li><!-- in celcius -->
+                    <li>lower limit</li>
+                    <li>upper limit</li>
+                    <li>max effect</li><!-- in watt -->
+                    <li>state</li><!-- 0 = off, 1 = KEEP_TEMP, 2 = full power -->
+                </ul>
+            </section>
+
+            <!-- template for water heater -->
+            <section id = "deviceIdHere">
+                <div>
+                    <img src="/images/waterheaterIcon.svg" alt="Device type">
+                </div>
+                <ul>
+                    <li>device name</li><!-- Water heater -->
+                    <li>current temp</li><!-- in celcius -->
+                    <li>lower limit</li>
+                    <li>upper limit</li>
+                    <li>max effect</li><!-- in watt -->
+                    <li>state</li><!-- 0 = off, 1 = KEEP_TEMP, 2 = full power -->
+                </ul>
+            </section>
+
+            <!-- template for water heater -->
+            <section id = "deviceIdHere">
+                <div>
+                    <img src="/images/waterheaterIcon.svg" alt="Device type">
+                </div>
+                <ul>
+                    <li>device name</li><!-- Water heater -->
+                    <li>current temp</li><!-- in celcius -->
+                    <li>lower limit</li>
+                    <li>upper limit</li>
+                    <li>max effect</li><!-- in watt -->
+                    <li>state</li><!-- 0 = off, 1 = KEEP_TEMP, 2 = full power -->
+                </ul>
+            </section>
+
+        </section>
+
+
+
+
+
 
 
 
         <form action="">
-          <input id="m" autocomplete="off" /><button>Send</button>
+          <input id="m" autocomplete="off" /><button>Send test message to server</button>
         </form>
-
-
-
-
-
 
 
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="./public/connection.js"></script>
+    <script src="./public/displayDevices.js"></script>
 
     </body>
 </html>

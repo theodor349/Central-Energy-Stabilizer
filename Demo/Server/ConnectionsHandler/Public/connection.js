@@ -2,8 +2,8 @@
 
 let socket = io('/user');
 
-// temp chat shit
 
+// temp chat shit
 $(function () {
   $('form').submit(function(e){
     e.preventDefault(); // prevents page reloading

@@ -1,0 +1,99 @@
+* {
+    color: #2B2B2B;
+}
+
+body{
+    margin: 0 auto;
+    text-align: center;
+}
+
+header {
+    padding: 20px;
+    text-align: center;
+    background-color: #52B157;
+}
+    header h1{
+        margin-top:0;
+        margin-bottom: 0;
+    }
+
+    header h2{
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    #serverDevices{
+
+    }
+
+    #serverDevices section{
+        background: #CCCCCC;
+        height: 50px;
+        display:flex;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    #serverDevices section:nth-child(odd){
+        background: #dddddd;
+    }
+
+        #serverDevices section div{
+            display: inline-block;
+        }
+            #serverDevices section div img{
+                background: rgba(255, 255, 255, 0.3);
+                padding: 5px;
+                width: 40px;
+                height: 40px;
+            }
+
+
+        #serverDevices section ul{
+            margin: 0 auto;
+            padding: 0;
+            display: inline-block;
+            text-decoration: none;
+            text-align: left;
+        }
+
+
+
+            #serverDevices section ul li{
+                display: inline;
+                margin: 12px;
+                line-height: 50px;
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+form{
+    margin: 10px;
+}
+    form input{
+        padding: 4px;
+        text-align: center;
+    }
+
+    form button{
+        background: #52B157;
+        transition: 0.3s;
+        color: #2B2B2B;
+        cursor: pointer;
+        padding: 4px;
+    }
+
+    form button:hover{
+        background: #2B2B2B;
+        color: #CCCCCC;
+    }

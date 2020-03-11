@@ -24,51 +24,61 @@ let testerWaterHeater = {
   state: state.ON, // 0 = off, 1 = standby, 2 = full power
 }
 
-function update(waterHeater) {
-  updateTemp(waterHeater);
+let myWaterHeater = undefined;
+
+function makeWaterHeater(_waterHeater) {
+  myWaterHeater = _waterHeater;
 }
 
-function updateTemp(waterHeater) {
-  switch (waterHeater.state) {
+function update() {
+  updateTemp(myWaterHeater);
+}
+
+function updateTemp() {
+  switch (myWaterHeater.state) {
     case state.OFF:
-      waterHeater.currentTemp -= 1 * deltaTime;
+      myWaterHeater.currentTemp -= 1 * deltaTime;
       break;
     case state.ON:
-      waterHeater.currentTemp += 1 * deltaTime;
+      myWaterHeater.currentTemp += 1 * deltaTime;
       break;
     default:
   }
 
-  checkTemp(waterHeater);
+  checkTemp();
 }
 
-function checkTemp(waterHeater) {
-  let currTemp = waterHeater.currentTemp;
-  let lowerLimit = waterHeater.lowerLimit;
-  let upperLimit = waterHeater.upperLimit;
-  let currState = waterHeater.state;
+function checkTemp() {
+  let currTemp = myWaterHeater.currentTemp;
+  let lowerLimit = myWaterHeater.lowerLimit;
+  let upperLimit = myWaterHeater.upperLimit;
+  let currState = myWaterHeater.state;
 
   if (currTemp < lowerLimit && currState != state.ON)
-    updateState(waterHeater, state.ON);
+    updateState(state.ON);
   else if (currTemp == lowerLimit && currState != state.STANDBY)
-    updateState(waterHeater, state.STANDBY);
+    updateState(state.STANDBY);
   else if (currTemp > upperLimit && currState != state.OFF)
-    updateState(waterHeater, state.OFF);
+    updateState(state.OFF);
   else if (currTemp == upperLimit && currState != state.STANDBY)
-    updateState(waterHeater, state.STANDBY);
+    updateState(state.STANDBY);
 }
 
-function getTemp(waterHeater) {
-  return waterHeater.currentTemp;
+function getTemp() {
+  return myWaterHeater.currentTemp;
 }
 
-function updateState(waterHeater, state) {
-  waterHeater.state = state;
-  notifyServer(waterHeater);
+function getDeviceInfo() {
+  return
 }
 
-function notifyServer(waterHeater) {
-  console.log("State changed to: " + waterHeater.state);
+function updateState(state) {
+  myWaterHeater.state = state;
+  notifyServer(myWaterHeater);
+}
+
+function notifyServer() {
+  console.log("State changed to: " + myWaterHeater.state);
 }
 
 module.exports = functions;

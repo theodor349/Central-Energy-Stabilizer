@@ -48,11 +48,11 @@ function update(waterHeater) {
 
 function schedule(waterHeater) {
   let date = new Date();
-  date.setMinutes(date.getMinutes() + 1);
+  date.setSeconds(date.getSeconds() + 5);
   waterHeater.timeOn = date;
 
   date = new Date();
-  date.setMinutes(date.getMinutes() + 2);
+  date.setSeconds(date.getSeconds() + 10);
   waterHeater.timeOff = date;
 
   console.log("Time to turn on " + waterHeater.timeOn.getHours() + ":" + waterHeater.timeOn.getMinutes() + ":" + waterHeater.timeOn.getSeconds());
@@ -63,18 +63,29 @@ function doActions(waterHeater) {
   let date = new Date();
   if (waterHeater.timeOn !== undefined && waterHeater.state != state.ON) {
     if (waterHeater.timeOn <= date) {
-      waterHeater.state = state.ON;
-      console.log("Turn on");
+      turnOnWaterHeater(waterHeater);
     }
   } else if (waterHeater.timeOff !== undefined && waterHeater.state != state.OFF) {
     if (waterHeater.timeOff <= date) {
-      waterHeater.state = state.OFF;
-      waterHeater.timeOn = undefined;
-      waterHeater.timeOff = undefined;
-      console.log("Turn off");
+      turnOffWaterHeater(waterHeater);
     }
   }
 }
 
+function turnOnWaterHeater(waterHeater) {
+  waterHeater.state = state.ON;
+  notifyWaterHeater(waterHeater.state);
+}
+
+function turnOffWaterHeater(waterHeater) {
+  waterHeater.state = state.OFF;
+  waterHeater.timeOn = undefined;
+  waterHeater.timeOff = undefined;
+  notifyWaterHeater(waterHeater.state);
+}
+
+function notifyWaterHeater(_state) {
+  console.log("Commanding Water Heater to turn " + _state.toString());
+}
 
 module.exports = functions;

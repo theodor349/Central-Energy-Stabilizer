@@ -1,0 +1,6 @@
+{
+  "type":"WaterHeater",
+  "lowerLimit":55,
+  "upperLimit":85,
+  "maxEffect":1000,
+}

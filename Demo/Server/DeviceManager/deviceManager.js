@@ -25,29 +25,14 @@ let testerWaterHeater = {
   timeOff: undefined,
 }
 
-add(testerWaterHeater);
-const timer = setInterval(function() {
-  for (var i = 0; i < devices.length; i++) {
-    update(devices[i]);
-  }
-}, 1000);
+//add(testerWaterHeater);
+//const timer = setInterval(function() {
+//  for (var i = 0; i < devices.length; i++) {
+//    updateLoop(devices[i]);
+//  }
+//}, 1000);
 
-function add(device) {
-  device.id = getNextId();
-  devices.push(device);
-}
-
-function getNextId() {
-  let temp = nextId;
-  nextId++;
-  return temp;
-}
-
-function remove(device) {
-  devices.remove(device);
-}
-
-function update(device) {
+function updateLoop(device) {
   if (device.timeOn == undefined && device.timeOff == undefined)
     schedule(device);
   doActions(device);
@@ -74,11 +59,7 @@ function schedule(device) {
     device.timeOff.getSeconds());
 }
 
-function updateDeviceInfo(device) {
-  let id = divce.id;
-  // Overwrite Device
-  device.id = id;
-}
+function updateDeviceInfo(device) {}
 
 function doActions(device) {
   let date = new Date();

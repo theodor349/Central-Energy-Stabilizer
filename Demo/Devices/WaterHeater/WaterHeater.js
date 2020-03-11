@@ -18,7 +18,8 @@ const state = {
 
 const deltaTime = 1;
 
-let testerWaterHeater = {
+// This is just an example
+let exampleWaterHeater = {
   currentTemp: 55, // Current temperature
   lowerLimit: 55, // When under it should start
   upperLimit: 85, // When abow it turns off

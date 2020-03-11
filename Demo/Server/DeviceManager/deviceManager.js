@@ -79,18 +79,27 @@ function doActions(device) {
 
 function turnOnDevice(device) {
   device.state = state.ON;
-  notifyWaterHeater(device.state);
+  if (device.socket != undefined) {
+    device.socket.emit('command', "turnOn");
+  }
 }
 
 function turnOffDevice(device) {
   device.state = state.OFF;
   device.timeOn = undefined;
   device.timeOff = undefined;
-  notifyWaterHeater(device.state);
+  if (device.socket != undefined) {
+    device.socket.emit('command', "turnOff");
+  }
 }
 
-function notifyWaterHeater(_state) {
-  console.log("Commanding device to turn " + _state.toString());
+function notifyWaterHeater(device) {
+  console.log(device);
+  if (device.socket != undefined) {
+    console.log("Worked");
+    device.socket.emit('command', "turnOn");
+  } else
+    console.log("No socket to send command on");
 }
 
 module.exports = functions;

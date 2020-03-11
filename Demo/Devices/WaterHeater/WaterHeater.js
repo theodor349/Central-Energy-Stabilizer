@@ -69,7 +69,7 @@ function getTemp() {
 }
 
 function getDeviceInfo() {
-  return
+  return myWaterHeater;
 }
 
 function updateState(state) {

@@ -52,7 +52,7 @@ deviceSpace.on('connection', function(socket) {
     appData.updateDevice(device);
     switch (command) {
       case "schedule":
-        deviceManager.schedule(device);
+        deviceManager.schedule(appData.getDevice(device.id));
         break;
       default:
     }

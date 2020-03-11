@@ -1,10 +1,14 @@
 let io = require('socket.io-client');
-let waterHeaterFunctions = require('./Waterheater.js');
+let waterHeaterFunctions = require('./WaterHeaterFunctions.js');
+const state = {
+  OFF: 0,
+  KEEP_TEMP: 1,
+  ON: 2,
+}
 
 socket = io.connect("http://localhost:3000/device", {
   reconnection: true,
 });
-
 
 
 socket.on('connect', function() {
@@ -24,7 +28,27 @@ socket.on('connect', function() {
     socket.emit('updateInformation', waterHeaterFunctions.getDeviceObject(), command);
   })
 
+  socket.on('command', function(command, info) {
+    commandHandler(command, info, socket);
+  })
 });
+
+function commandHandler(command, info, socket) {
+  console.log("Device ID: " + waterHeaterFunctions.getDeviceObject().id + " Received command: " + command);
+  switch (command) {
+    case "turnOn":
+      waterHeaterFunctions.updateState(state.ON);
+      break;
+    case "turnOff":
+      waterHeaterFunctions.updateState(state.OFF);
+      break;
+    case "keepTemp":
+      waterHeaterFunctions.updateState(state.KEEP_TEMP)
+      break;
+    default:
+
+  }
+}
 
 function getDeviceInfo(socket) {
 

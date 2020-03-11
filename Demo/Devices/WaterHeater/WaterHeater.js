@@ -18,16 +18,13 @@ const state = {
 
 const deltaTime = 1;
 
-// This is just an example
-let exampleWaterHeater = {
+let myWaterHeater = {
   currentTemp: 55, // Current temperature
   lowerLimit: 55, // When under it should start
   upperLimit: 85, // When abow it turns off
   effect: 1000, // Watts
   state: state.ON, // 0 = off, 1 = standby, 2 = full power
 }
-
-let myWaterHeater = undefined;
 
 function makeWaterHeater(_waterHeater) {
   myWaterHeater = _waterHeater;

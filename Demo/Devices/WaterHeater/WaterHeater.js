@@ -64,8 +64,8 @@ function checkTemp() {
     updateState(state.STANDBY);
 }
 
-function getTemp() {
-  return myWaterHeater.currentTemp;
+function getDeviceObject() {
+  return myWaterHeater;
 }
 
 function getDeviceInfo() {

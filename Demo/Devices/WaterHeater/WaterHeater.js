@@ -1,11 +1,13 @@
 let connection = require('./WaterHeaterConnection.js');
 
 const functions = {
-  update: (waterHeater) => update(waterHeater),
-  updateTemp: (waterHeater) => updateTemp(waterHeater),
-  updateState: (waterHeater, state) => updateState(waterHeater, state),
-  checkTemp: (waterHeater) => checkTemp(waterHeater),
-  notifyServer: (waterHeater) => waterHeater,
+  update: () => update(),
+  updateTemp: () => updateTemp(),
+  updateState: (state) => updateState(state),
+  checkTemp: () => checkTemp(),
+  notifyServer: () => notifyServer(),
+  makeWaterHeater: (waterHeater) => makeWaterHeater(waterHeater),
+  getDeviceObject: () => getDeviceObject(),
 }
 
 const state = {

@@ -8,8 +8,10 @@ test("Test: example test", () => {
     effect: 1000,    // Watts
     state: 1,        // 0 = off, 1 = standby, 2 = full power
   }
-  waterHeater.update(heater);
-  expect(heater.effect).not.toEqual(2);
+
+	waterHeater.makeWaterHeater(heater);
+  waterHeater.update();
+  expect(waterHeater.getDeviceObject().effect).not.toEqual(2);
 });
 
 //Test for update function
@@ -21,8 +23,9 @@ test("Testing the update function (effect 1000) (success)", () => {
 		effect: 1000,    // Watts
 		state: 1,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.update(heater);
-	expect(heater.effect).toBe(1000);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.update();
+	expect(waterHeater.getDeviceObject().effect).toBe(1000);
 });
 
 test("Testing the update function (effect 1000) (failure)", () => {
@@ -33,8 +36,9 @@ test("Testing the update function (effect 1000) (failure)", () => {
     effect: 1000,    // Watts
     state: 1,        // 0 = off, 1 = standby, 2 = full power
   }
-  waterHeater.update(heater);
-  expect(heater.effect).not.toEqual(2);
+	waterHeater.makeWaterHeater(heater);
+  waterHeater.update();
+  expect(waterHeater.getDeviceObject().effect).not.toEqual(2);
 });
 
 //Test for the updateTemp function state temp change
@@ -46,8 +50,9 @@ test("Testing the updateTemp function with state: standby (success)", () => {
 		effect: 1000,    // Watts
 		state: 1,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.updateTemp(heater);
-	expect(heater.currentTemp).toBe(55);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.updateTemp();
+	expect(waterHeater.getDeviceObject().currentTemp).toBe(55);
 });
 
 test("Testing the updateTemp function with state: standby (failure)", () => {
@@ -58,8 +63,9 @@ test("Testing the updateTemp function with state: standby (failure)", () => {
 		effect: 1000,    // Watts
 		state: 1,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.updateTemp(heater);
-	expect(heater.currentTemp).not.toBe(50);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.updateTemp();
+	expect(waterHeater.getDeviceObject().currentTemp).not.toBe(50);
 });
 
 test("Testing the updateTemp function with state: full power (success)", () => {
@@ -70,8 +76,9 @@ test("Testing the updateTemp function with state: full power (success)", () => {
 		effect: 1000,    // Watts
 		state: 2,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.updateTemp(heater);
-	expect(heater.currentTemp).toBe(56);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.updateTemp();
+	expect(waterHeater.getDeviceObject().currentTemp).toBe(56);
 });
 
 test("Testing the updateTemp function with state: full power (failure)", () => {
@@ -82,8 +89,9 @@ test("Testing the updateTemp function with state: full power (failure)", () => {
 		effect: 1000,    // Watts
 		state: 2,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.updateTemp(heater);
-	expect(heater.currentTemp).not.toBe(55);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.updateTemp();
+	expect(waterHeater.getDeviceObject().currentTemp).not.toBe(55);
 });
 
 test("Testing the updateTemp function with state: off (success)", () => {
@@ -94,8 +102,9 @@ test("Testing the updateTemp function with state: off (success)", () => {
 		effect: 1000,    // Watts
 		state: 0,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.updateTemp(heater);
-	expect(heater.currentTemp).toBe(54);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.updateTemp();
+	expect(waterHeater.getDeviceObject().currentTemp).toBe(54);
 });
 test("Testing the updateTemp function with state: off (failure)", () => {
 	let heater = {
@@ -105,8 +114,9 @@ test("Testing the updateTemp function with state: off (failure)", () => {
 		effect: 1000,    // Watts
 		state: 0,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.updateTemp(heater);
-	expect(heater.currentTemp).not.toBe(55);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.updateTemp();
+	expect(waterHeater.getDeviceObject().currentTemp).not.toBe(55);
 });
 
 //Test for state in temperature outside of limits
@@ -118,8 +128,9 @@ test("Testing the checkTemp function with currentTemp: 55 (success)", () => {
 		effect: 1000,    // Watts
 		state: 1,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.checkTemp(heater);
-	expect(heater.state).toBe(1);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.checkTemp();
+	expect(waterHeater.getDeviceObject().state).toBe(1);
 });
 
 test("Testing the checkTemp function with currentTemp: 55 (failure)", () => {
@@ -130,8 +141,9 @@ test("Testing the checkTemp function with currentTemp: 55 (failure)", () => {
 		effect: 1000,    // Watts
 		state: 1,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.checkTemp(heater);
-	expect(heater.state).not.toBe(0);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.checkTemp();
+	expect(waterHeater.getDeviceObject().state).not.toBe(0);
 });
 
 test("Testing the checkTemp function with currentTemp: 54 (success)", () => {
@@ -142,8 +154,9 @@ test("Testing the checkTemp function with currentTemp: 54 (success)", () => {
 		effect: 1000,    // Watts
 		state: 1,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.checkTemp(heater);
-	expect(heater.state).toBe(2);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.checkTemp();
+	expect(waterHeater.getDeviceObject().state).toBe(2);
 });
 
 test("Testing the checkTemp function with currentTemp: 54 (failure)", () => {
@@ -154,8 +167,9 @@ test("Testing the checkTemp function with currentTemp: 54 (failure)", () => {
 		effect: 1000,    // Watts
 		state: 1,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.checkTemp(heater);
-	expect(heater.state).not.toBe(1);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.checkTemp();
+	expect(waterHeater.getDeviceObject().state).not.toBe(1);
 });
 
 test("Testing the checkTemp function with currentTemp: 20 (success)", () => {
@@ -166,8 +180,9 @@ test("Testing the checkTemp function with currentTemp: 20 (success)", () => {
 		effect: 1000,    // Watts
 		state: 1,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.checkTemp(heater);
-	expect(heater.state).toBe(2);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.checkTemp();
+	expect(waterHeater.getDeviceObject().state).toBe(2);
 });
 
 test("Testing the checkTemp function with currentTemp: 20 (failure)", () => {
@@ -178,8 +193,9 @@ test("Testing the checkTemp function with currentTemp: 20 (failure)", () => {
 		effect: 1000,    // Watts
 		state: 1,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.checkTemp(heater);
-	expect(heater.state).not.toBe(1);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.checkTemp();
+	expect(waterHeater.getDeviceObject().state).not.toBe(1);
 });
 
 test("Testing the checkTemp function with currentTemp: 86 (success)", () => {
@@ -190,8 +206,9 @@ test("Testing the checkTemp function with currentTemp: 86 (success)", () => {
 		effect: 1000,    // Watts
 		state: 1,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.checkTemp(heater);
-	expect(heater.state).toBe(0);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.checkTemp();
+	expect(waterHeater.getDeviceObject().state).toBe(0);
 });
 
 test("Testing the checkTemp function with state: 86 (failure)", () => {
@@ -202,8 +219,9 @@ test("Testing the checkTemp function with state: 86 (failure)", () => {
 		effect: 1000,    // Watts
 		state: 1,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.checkTemp(heater);
-	expect(heater.state).not.toBe(2);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.checkTemp();
+	expect(waterHeater.getDeviceObject().state).not.toBe(2);
 });
 
 test("Testing the checkTemp function with currentTemp: 100 (success)", () => {
@@ -214,8 +232,9 @@ test("Testing the checkTemp function with currentTemp: 100 (success)", () => {
 		effect: 1000,    // Watts
 		state: 1,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.checkTemp(heater);
-	expect(heater.state).toBe(0);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.checkTemp();
+	expect(waterHeater.getDeviceObject().state).toBe(0);
 });
 
 test("Testing the checkTemp function with state: 100 (failure)", () => {
@@ -226,8 +245,9 @@ test("Testing the checkTemp function with state: 100 (failure)", () => {
 		effect: 1000,    // Watts
 		state: 1,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.checkTemp(heater);
-	expect(heater.state).not.toBe(2);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.checkTemp();
+	expect(waterHeater.getDeviceObject().state).not.toBe(2);
 });
 
 //Test for the updateState function for changing state
@@ -239,8 +259,9 @@ test("Testing the updateState function", () => {
 		effect: 1000,    // Watts
 		state: 1,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.updateState(heater, 2);
-	expect(heater.state).toBe(2);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.updateState(2);
+	expect(waterHeater.getDeviceObject().state).toBe(2);
 });
 
 test("Testing the updateState function", () => {
@@ -251,8 +272,9 @@ test("Testing the updateState function", () => {
 		effect: 1000,    // Watts
 		state: 1,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.updateState(heater, 2);
-	expect(heater.state).not.toBe(1);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.updateState(2);
+	expect(waterHeater.getDeviceObject().state).not.toBe(1);
 });
 
 test("Testing the updateState function", () => {
@@ -263,8 +285,9 @@ test("Testing the updateState function", () => {
 		effect: 1000,    // Watts
 		state: 1,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.updateState(heater, 0);
-	expect(heater.state).toBe(0);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.updateState(0);
+	expect(waterHeater.getDeviceObject().state).toBe(0);
 });
 
 test("Testing the updateState function", () => {
@@ -275,8 +298,9 @@ test("Testing the updateState function", () => {
 		effect: 1000,    // Watts
 		state: 1,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.updateState(heater, 2);
-	expect(heater.state).not.toBe(1);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.updateState(2);
+	expect(waterHeater.getDeviceObject().state).not.toBe(1);
 });
 
 test("Testing the updateState function", () => {
@@ -287,8 +311,9 @@ test("Testing the updateState function", () => {
 		effect: 1000,    // Watts
 		state: 1,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.updateState(heater, 1);
-	expect(heater.state).toBe(1);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.updateState(1);
+	expect(waterHeater.getDeviceObject().state).toBe(1);
 });
 
 test("Testing the updateState function", () => {
@@ -299,8 +324,9 @@ test("Testing the updateState function", () => {
 		effect: 1000,    // Watts
 		state: 1,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.updateState(heater, 1);
-	expect(heater.state).not.toBe(2);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.updateState(1);
+	expect(waterHeater.getDeviceObject().state).not.toBe(2);
 });
 
 //Test for the notifyServer function
@@ -312,7 +338,8 @@ test("Testing the notifyServer function", () => {
 		effect: 1000,    // Watts
 		state: 1,        // 0 = off, 1 = standby, 2 = full power
 	}
-	waterHeater.notifyServer(heater);
+	waterHeater.makeWaterHeater(heater);
+	waterHeater.notifyServer();
 	expect().toBe();
 });
 	

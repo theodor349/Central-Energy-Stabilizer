@@ -1,0 +1,15 @@
+Device connects
+Device is sent down to Device-Handler
+Device-Handler adds it to know devices
+---
+Device-Handler wants to schedule device
+Device-Handler asks Device for info
+Device sends info
+Device-Handler receives the data
+Device-Handler schedules device
+---
+Device-Handler waits for the time the device should turn on
+Device-Handler commands the device to turn on
+--
+Device-Handler waits for the time the device should turn off
+Device-Handler commands the device to turn off

@@ -19,6 +19,11 @@ socket.on('connect', function() {
     socket.emit('idSet', waterHeaterFunctions.getDeviceObject());
   });
 
+  socket.on('updateInfo', function(command) {
+    console.log("Device ID: " + waterHeaterFunctions.getDeviceObject().id + " Received command: " + command);
+    socket.emit('updateInformation', waterHeaterFunctions.getDeviceObject(), command);
+  })
+
 });
 
 function getDeviceInfo(socket) {

@@ -4,6 +4,7 @@ let http = require('http').createServer(app);
 let io = require('socket.io')(http);
 
 let appData = require('../Core/DeviceStorage.js')
+let deviceManager = require('./../DeviceManager/DeviceManager.js');
 
 console.log(__dirname + '/Public');
 
@@ -43,7 +44,18 @@ deviceSpace.on('connection', function(socket) {
 
   socket.on('disconnect', function() {
     console.log('a device disconnected');
+    appData.removeConnection(socket);
   });
+
+  socket.on('updateInformation', function(device, command) {
+    appData.updateDevice(device);
+    switch (command) {
+      case "schedule":
+        deviceManager.schedule(device);
+        break;
+      default:
+    }
+  })
 
 });
 
@@ -57,10 +69,6 @@ function runUserInit() {
   console.log('a user connected');
 }
 
-
-
-
-
 function runDeviceInit(socket) {
   console.log('a device connected');
   let device = socket.emit('getDeviceInfo');
@@ -72,13 +80,17 @@ function registerNewDevice(device, socket) {
     device.id = id;
     socket.emit('setId', id);
   } else {
-    appData.addDevice(device);
+    device.socket = socket;
+    if (!appData.containsDevice(device.id)) {
+      appData.addDevice(device);
+    }
   }
 }
 
 let nextId = 0;
 
 function getNewId() {
+  let temp = nextId;
   nextId++;
-  return nextId--;
+  return temp;
 }

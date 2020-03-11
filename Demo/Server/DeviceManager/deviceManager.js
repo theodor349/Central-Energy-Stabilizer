@@ -1,3 +1,5 @@
+let appData = require('../Core/DeviceStorage.js')
+
 const functions = {
   add: (waterHeater) => add(waterHeater),
   remove: (waterHeater) => remove(waterHeater),
@@ -11,9 +13,6 @@ const state = {
   ON: 2,
 }
 
-let nextId = 0;
-let devices = new Array();
-
 let testerWaterHeater = {
   id: NaN, // ID
   currentTemp: 55, // Current temperature
@@ -25,22 +24,23 @@ let testerWaterHeater = {
   timeOff: undefined,
 }
 
-//add(testerWaterHeater);
-//const timer = setInterval(function() {
-//  for (var i = 0; i < devices.length; i++) {
-//    updateLoop(devices[i]);
-//  }
-//}, 1000);
+const timer = setInterval(function() {
+  console.log("Updating devices");
+  for (var i = 0; i < appData.getAmountOfDevices(); i++) {
+    let device = appData.getDevice(i);
+    if (device != undefined) {
+      update(device);
+    }
+  }
+}, 1000);
 
-function updateLoop(device) {
+function update(device) {
   if (device.timeOn == undefined && device.timeOff == undefined)
-    schedule(device);
+    updateDeviceInfo(device, "schedule");
   doActions(device);
 }
 
 function schedule(device) {
-  updateDeviceInfo(device);
-
   let date = new Date();
   date.setSeconds(date.getSeconds() + 5);
   device.timeOn = date;
@@ -59,7 +59,10 @@ function schedule(device) {
     device.timeOff.getSeconds());
 }
 
-function updateDeviceInfo(device) {}
+function updateDeviceInfo(device, command) {
+  if (device.socket != undefined)
+    device.socket.emit('updateInfo', command);
+}
 
 function doActions(device) {
   let date = new Date();

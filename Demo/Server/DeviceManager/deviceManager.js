@@ -12,6 +12,8 @@ const state = {
 }
 
 let nextId = 0;
+let devices = new Array();
+
 let testerWaterHeater = {
   id: NaN, // ID
   currentTemp: 55, // Current temperature
@@ -23,69 +25,88 @@ let testerWaterHeater = {
   timeOff: undefined,
 }
 
-let waterHeater = undefined;
-
 add(testerWaterHeater);
 const timer = setInterval(function() {
-  update(waterHeater);
+  for (var i = 0; i < devices.length; i++) {
+    update(devices[i]);
+  }
 }, 1000);
 
-function add(_waterHeater) {
-  _waterHeater.id = nextId;
+function add(device) {
+  device.id = getNextId();
+  devices.push(device);
+}
+
+function getNextId() {
+  let temp = nextId;
   nextId++;
-  waterHeater = _waterHeater;
+  return temp;
 }
 
-function remove(waterHeater) {
-  waterHeater = undefined;
+function remove(device) {
+  devices.remove(device);
 }
 
-function update(waterHeater) {
-  if (waterHeater.timeOn == undefined && waterHeater.timeOff == undefined)
-    schedule(waterHeater);
-  doActions(waterHeater);
+function update(device) {
+  if (device.timeOn == undefined && device.timeOff == undefined)
+    schedule(device);
+  doActions(device);
 }
 
-function schedule(waterHeater) {
+function schedule(device) {
+  updateDeviceInfo(device);
+
   let date = new Date();
   date.setSeconds(date.getSeconds() + 5);
-  waterHeater.timeOn = date;
+  device.timeOn = date;
 
   date = new Date();
   date.setSeconds(date.getSeconds() + 10);
-  waterHeater.timeOff = date;
+  device.timeOff = date;
 
-  console.log("Time to turn on " + waterHeater.timeOn.getHours() + ":" + waterHeater.timeOn.getMinutes() + ":" + waterHeater.timeOn.getSeconds());
-  console.log("Time to turn off " + waterHeater.timeOff.getHours() + ":" + waterHeater.timeOff.getMinutes() + ":" + waterHeater.timeOff.getSeconds());
+  console.log("Time to turn on " +
+    device.timeOn.getHours() + ":" +
+    device.timeOn.getMinutes() + ":" +
+    device.timeOn.getSeconds());
+  console.log("Time to turn off " +
+    device.timeOff.getHours() + ":" +
+    device.timeOff.getMinutes() + ":" +
+    device.timeOff.getSeconds());
 }
 
-function doActions(waterHeater) {
+function updateDeviceInfo(device) {
+  let id = divce.id;
+  // Overwrite Device
+  device.id = id;
+}
+
+function doActions(device) {
   let date = new Date();
-  if (waterHeater.timeOn !== undefined && waterHeater.state != state.ON) {
-    if (waterHeater.timeOn <= date) {
-      turnOnWaterHeater(waterHeater);
+  if (device.timeOn !== undefined && device.state != state.ON) {
+    if (device.timeOn <= date) {
+      turnOnDevice(device);
     }
-  } else if (waterHeater.timeOff !== undefined && waterHeater.state != state.OFF) {
-    if (waterHeater.timeOff <= date) {
-      turnOffWaterHeater(waterHeater);
+  } else if (device.timeOff !== undefined && device.state != state.OFF) {
+    if (device.timeOff <= date) {
+      turnOffDevice(device);
     }
   }
 }
 
-function turnOnWaterHeater(waterHeater) {
-  waterHeater.state = state.ON;
-  notifyWaterHeater(waterHeater.state);
+function turnOnDevice(device) {
+  device.state = state.ON;
+  notifyWaterHeater(device.state);
 }
 
-function turnOffWaterHeater(waterHeater) {
-  waterHeater.state = state.OFF;
-  waterHeater.timeOn = undefined;
-  waterHeater.timeOff = undefined;
-  notifyWaterHeater(waterHeater.state);
+function turnOffDevice(device) {
+  device.state = state.OFF;
+  device.timeOn = undefined;
+  device.timeOff = undefined;
+  notifyWaterHeater(device.state);
 }
 
 function notifyWaterHeater(_state) {
-  console.log("Commanding Water Heater to turn " + _state.toString());
+  console.log("Commanding device to turn " + _state.toString());
 }
 
 module.exports = functions;

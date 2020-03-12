@@ -136,6 +136,7 @@ header {
     opacity: 0.6;
     text-align: center;
     margin: 0 auto;
+    z-index: -1
 }
 
 .background p{
@@ -145,14 +146,18 @@ header {
     left: 0;
 }
 
-.background section:first-child{
+.background > section:first-child{
     bottom: 7vw;
 }
 
-.background section:nth-child(2){
+.background > section:nth-child(2){
     bottom: 6vw;
     left: 7vw;
 }
+
+    .background > section:nth-child(2) > img:last-child{
+        animation-delay: -0.4s;
+    }
 
 .background .fields{
     width: 100vw;
@@ -188,13 +193,6 @@ header {
         from {transform: rotate(0);}
         to {transform: rotate(360deg);}
     }
-
-
-
-
-
-
-
 
 
 

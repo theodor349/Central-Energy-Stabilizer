@@ -35,8 +35,11 @@ const timer = setInterval(function() {
 }, 1000);
 
 function update(device) {
-  if (device.timeOn == undefined && device.timeOff == undefined)
+  if (device.timeOn == undefined && device.timeOff == undefined) {
     updateDeviceInfo(device, "schedule");
+  } else {
+    console.log(device.turnOn + " - " + device.turnOff);
+  }
   doActions(device);
 }
 
@@ -60,8 +63,17 @@ function schedule(device) {
 }
 
 function updateDeviceInfo(device, command) {
-  if (device.socket != undefined)
-    device.socket.emit('updateInfo', command);
+  console.log("Trying to send Schedule Call");
+  if (device.socket != undefined) {
+    console.log("Sending Schedule Call");
+    device.socket.emit('updateInfo', command, getStrippedVersionOfDevice(device));
+  }
+}
+
+function getStrippedVersionOfDevice(device) {
+  let tempDevice = device;
+  delete tempDevice.socket;
+  return tempDevice;
 }
 
 function doActions(device) {
@@ -78,6 +90,7 @@ function doActions(device) {
 }
 
 function turnOnDevice(device) {
+  console.log("Turning on device: " + device.id);
   device.state = state.ON;
   if (device.socket != undefined) {
     device.socket.emit('command', "turnOn");
@@ -85,6 +98,7 @@ function turnOnDevice(device) {
 }
 
 function turnOffDevice(device) {
+  console.log("Turning off device: " + device.id);
   device.state = state.OFF;
   device.timeOn = undefined;
   device.timeOff = undefined;

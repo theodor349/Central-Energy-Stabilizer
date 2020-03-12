@@ -48,10 +48,12 @@ deviceSpace.on('connection', function(socket) {
     appData.removeConnection(socket);
   });
 
-  socket.on('updateInformation', function(device, command) {
+  socket.on('updateInformation', function(command, device) {
+    device.socket = socket;
     appData.updateDevice(device);
     switch (command) {
       case "schedule":
+        console.log("Updated info for scheduling");
         deviceManager.schedule(appData.getDevice(device.id));
         break;
       default:
@@ -63,8 +65,6 @@ deviceSpace.on('connection', function(socket) {
 http.listen(3000, function() {
   console.log('Server started!');
 });
-
-
 
 function runUserInit() {
   console.log('a user connected');

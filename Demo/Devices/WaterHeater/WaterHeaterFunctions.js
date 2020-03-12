@@ -5,7 +5,7 @@ const functions = {
   checkTemp: () => checkTemp(),
   notifyServer: () => notifyServer(),
   makeWaterHeater: (waterHeater) => makeWaterHeater(waterHeater),
-  getDeviceObject: () => getDeviceObject(),
+  getDeviceObject: (waterHeater) => getDeviceObject(waterHeater),
   setId: (id) => setId(id),
   getId: () => getId(),
 }
@@ -31,7 +31,6 @@ const timer = setInterval(function() {
   update();
   console.log("Current Temperature: " + myWaterHeater.currentTemp + "C");
 }, 1000);
-console.log(timer);
 
 function makeWaterHeater(_waterHeater) {
   myWaterHeater = _waterHeater;
@@ -71,8 +70,18 @@ function checkTemp() {
     updateState(state.KEEP_TEMP);
 }
 
-function getDeviceObject() {
-  return myWaterHeater;
+function getDeviceObject(device) {
+  if (device == undefined) {
+    return myWaterHeater;
+  }
+
+  device.type = myWaterHeater.type;
+  device.currentTemp = myWaterHeater.currentTemp;
+  device.lowerLimit = myWaterHeater.lowerLimit;
+  device.upperLimit = myWaterHeater.upperLimit;
+  device.maxEffect = myWaterHeater.maxEffect;
+  device.state = myWaterHeater.state;
+  return device;
 }
 
 function updateState(state) {

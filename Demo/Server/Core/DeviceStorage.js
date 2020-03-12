@@ -65,8 +65,7 @@ function removeDevice() {
 
 function updateDevice(device) {
   let index = getIndexOf(device.id);
-  device.socket = knownDevices[index].socket;
-  console.log("index: " + index + " socket: " + device.socket);
+  console.log("Updated device: " + device.id);
   knownDevices[index] = device;
 }
 

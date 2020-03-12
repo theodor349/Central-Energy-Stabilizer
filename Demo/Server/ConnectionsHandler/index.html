@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 <html lang="da" dir="ltr">
     <head>
-
-
-
-        <link rel="stylesheet" href="Public/main.css">
+<link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,600,700&display=swap&subset=latin-ext" rel="stylesheet">        <link rel="stylesheet" href="Public/main.css">
         <meta charset="utf-8">
         <title>Pebert – The energy saving bot</title>
     </head>
@@ -19,63 +16,62 @@
         <section id="serverDevices">
 
             <!-- template for water heater -->
-            <section id = "deviceIdHere">
-                <div>
-                    <img src="/images/waterheaterIcon.svg" alt="Device type">
-                </div>
-                <ul>
-                    <li>device name</li><!-- Water heater -->
-                    <li>current temp</li><!-- in celcius -->
-                    <li>lower limit</li>
-                    <li>upper limit</li>
-                    <li>max effect</li><!-- in watt -->
-                    <li>state</li><!-- 0 = off, 1 = KEEP_TEMP, 2 = full power -->
-                </ul>
+            <section id = "deviceIdHere" onclick="displayDeviceSetting(deviceIdHere)">
+                <header>
+                    <div>
+                        <img src="/images/waterheaterIcon.svg" alt="Device type">
+                    </div>
+                    <!-- device name -->
+                    <h3>Water heater</h3>
+                    <ul>
+                        <!-- furst p = description, second p = value, third p = measurement -->
+                        <li> <p>Temp: </p> <p>55</p> <p>&#8451;</p> </li> <!-- current temp in celcius -->
+
+                        <li> <p>Power:</p> <p>10.000</p> <p>watt</p> </li> <!-- current consumption in watt -->
+
+                        <li> <p>Status:</p> <p>on</p> <p>&#8593;</p> </li><!-- 0 = off, 1 = KEEP_TEMP, 2 = full power -->
+                    </ul>
+                </header>
+
+                <section>
+                    <h3>Settings:</h3>
+                    <section>
+                        <h4>spec:</h4>
+                        <ul>
+                            <li class="minMaxTemp"> <p>Temp: </p> <p>55</p> - <p>85</p> <p>&#8451;</p> </li> <!-- min and max temp in celcius -->
+                            <li class="minMaxEffect"> <p>Power: </p> <p>0</p> - <p>10.000</p> <p> watt</p> </li> <!-- min and max effect in watt -->
+                        </ul>
+                    </section>
+                </section>
             </section>
 
-            <!-- template for water heater -->
-            <section id = "deviceIdHere">
-                <div>
-                    <img src="/images/waterheaterIcon.svg" alt="Device type">
-                </div>
-                <ul>
-                    <li>device name</li><!-- Water heater -->
-                    <li>current temp</li><!-- in celcius -->
-                    <li>lower limit</li>
-                    <li>upper limit</li>
-                    <li>max effect</li><!-- in watt -->
-                    <li>state</li><!-- 0 = off, 1 = KEEP_TEMP, 2 = full power -->
-                </ul>
-            </section>
+            <section id = "deviceIdHere2" onclick="displayDeviceSetting(deviceIdHere2)">
+                <header>
+                    <div>
+                        <img src="/images/waterheaterIcon.svg" alt="Device type">
+                    </div>
+                    <!-- device name -->
+                    <h3>Water heater 2</h3>
+                    <ul>
+                        <!-- furst p = description, second p = value, third p = measurement -->
+                        <li> <p>Temp: </p> <p>85</p> <p>&#8451;</p> </li> <!-- current temp in celcius -->
 
-            <!-- template for water heater -->
-            <section id = "deviceIdHere">
-                <div>
-                    <img src="/images/waterheaterIcon.svg" alt="Device type">
-                </div>
-                <ul>
-                    <li>device name</li><!-- Water heater -->
-                    <li>current temp</li><!-- in celcius -->
-                    <li>lower limit</li>
-                    <li>upper limit</li>
-                    <li>max effect</li><!-- in watt -->
-                    <li>state</li><!-- 0 = off, 1 = KEEP_TEMP, 2 = full power -->
-                </ul>
-            </section>
+                        <li> <p>Power:</p> <p>10</p> <p>watt</p> </li> <!-- current consumption in watt -->
 
-            <!-- template for water heater -->
-            <section id = "deviceIdHere">
-                <div>
-                    <img src="/images/waterheaterIcon.svg" alt="Device type">
-                </div>
-                <ul>
-                    <li>device name</li><!-- Water heater -->
-                    <li>current temp</li><!-- in celcius -->
-                    <li>lower limit</li>
-                    <li>upper limit</li>
-                    <li>max effect</li><!-- in watt -->
-                    <li>state</li><!-- 0 = off, 1 = KEEP_TEMP, 2 = full power -->
-                </ul>
+                        <li> <p>Status:</p> <p>keep</p> <p>&#8594;</p> </li><!-- 0 = off, 1 = KEEP_TEMP, 2 = full power -->
+                    </ul>
+                </header>
+
+                <section>
+                    <h3>Settings:</h3>
+                    <section>
+                        <h4>spec:</h4>
+                        <ul>
+                            <li class="minMaxTemp"> <p>Temp: </p> <p>55</p> - <p>85</p> <p>&#8451;</p> </li> <!-- min and max temp in celcius -->
+                            <li class="minMaxEffect"> <p>Power: </p> <p>0</p> - <p>10.000</p> <p> watt</p> </li> <!-- min and max effect in watt -->
+                        </ul>
+                    </section>
+                </section>
             </section>
 
         </section>
@@ -86,7 +82,7 @@
 
 
 
-
+        <br>
         <form action="">
           <input id="m" autocomplete="off" /><button>Send test message to server</button>
         </form>
@@ -96,6 +92,9 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="./public/connection.js"></script>
     <script src="./public/displayDevices.js"></script>
+    <script src="./public/userInteractions.js">
+
+    </script>
 
     </body>
 </html>

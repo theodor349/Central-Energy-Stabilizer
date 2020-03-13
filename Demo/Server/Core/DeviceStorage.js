@@ -67,7 +67,7 @@ function updateDevice(device) {
   let index = getIndexOf(device.id);
   console.log("Updated device: " + device.id);
   knownDevices[index] = device;
-  broadCastUpdate(index)
+  broadCastUpdate(index);
 }
 
 function broadCastUpdate(index) {

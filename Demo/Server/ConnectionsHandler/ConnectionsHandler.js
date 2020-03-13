@@ -31,6 +31,10 @@ userSpace.on('connection', function(socket) {
 
 });
 
+function updateWindmill(){
+	userSpace.emit('updateWindmill', meterPerSecond);
+}
+
 const deviceSpace = io.of('/device');
 deviceSpace.on('connection', function(socket) {
   runDeviceInit(socket);

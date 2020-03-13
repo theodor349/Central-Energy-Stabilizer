@@ -7,6 +7,7 @@ const appData = {
   updateDevice: (device) => updateDevice(device),
   getDevice: (id) => getDevice(id),
   getAmountOfDevices: () => getAmountOfDevices(),
+  getStrippedVersionOfDevice: (device) => getStrippedVersionOfDevice(device),
 }
 
 function removeConnection(socket) {
@@ -56,7 +57,6 @@ function containsDevice(id) {
 function addDevice(device) {
   knownDevices.push(device);
   console.log("Number of connected devices: " + knownDevices.length);
-  console.log(knownDevices);
 }
 
 function removeDevice() {
@@ -67,6 +67,17 @@ function updateDevice(device) {
   let index = getIndexOf(device.id);
   console.log("Updated device: " + device.id);
   knownDevices[index] = device;
+  broadCastUpdate(index)
+}
+
+function broadCastUpdate(index) {
+  let device = getStrippedVersionOfDevice(knownDevices[index]);
+}
+
+function getStrippedVersionOfDevice(device) {
+  let tempDevice = Object.assign({}, device);
+  delete tempDevice.socket;
+  return tempDevice;
 }
 
 module.exports = appData;

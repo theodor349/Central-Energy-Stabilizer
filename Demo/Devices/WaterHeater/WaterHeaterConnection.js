@@ -25,13 +25,17 @@ socket.on('connect', function() {
 
   socket.on('updateInfo', function(command, device) {
     console.log("Received command: " + command);
-    console.log(device);
     socket.emit('updateInformation', command, waterHeaterFunctions.getDeviceObject(device));
-  })
+  });
 
   socket.on('command', function(command, info) {
     commandHandler(command, info, socket);
-  })
+  });
+
+  socket.on('constantUpdates', function(device) {
+    socket.emit("updateInformation", "constantUpdates", waterHeaterFunctions.getDeviceObject(device));
+  });
+
 });
 
 function commandHandler(command, info, socket) {

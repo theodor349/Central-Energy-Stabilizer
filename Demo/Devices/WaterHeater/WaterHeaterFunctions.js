@@ -8,6 +8,7 @@ const functions = {
   getDeviceObject: (waterHeater) => getDeviceObject(waterHeater),
   setId: (id) => setId(id),
   getId: () => getId(),
+  setSocket: (socket) => setSocket(socket),
 }
 
 const state = {
@@ -18,19 +19,24 @@ const state = {
 
 const deltaTime = 1;
 
+let socket = undefined;
 let myWaterHeater = {
   type: "WaterHeater",
   currentTemp: 55, // Current temperature
   lowerLimit: 55, // When under it should start
   upperLimit: 85, // When abow it turns off
   maxEffect: 1000, // Watts
-  state: state.ON, // 0 = off, 1 = KEEP_TEMP, 2 = full power
+  state: state.KEEP_TEMP, // 0 = off, 1 = KEEP_TEMP, 2 = full power
 }
 
 const timer = setInterval(function() {
   update();
   console.log("Current Temperature: " + myWaterHeater.currentTemp + "C");
 }, 1000);
+
+function setSocket(_socket) {
+  socket = _socket;
+}
 
 function makeWaterHeater(_waterHeater) {
   myWaterHeater = _waterHeater;
@@ -86,12 +92,9 @@ function getDeviceObject(device) {
 
 function updateState(state) {
   myWaterHeater.state = state;
-  notifyServer(myWaterHeater);
 }
 
-function notifyServer() {
-  console.log("State changed to: " + myWaterHeater.state);
-}
+function notifyServer() {}
 
 function setId(id) {
   myWaterHeater.id = id;

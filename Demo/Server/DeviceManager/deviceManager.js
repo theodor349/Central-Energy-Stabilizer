@@ -5,6 +5,8 @@ const functions = {
   remove: (waterHeater) => remove(waterHeater),
   schedule: (waterHeater) => schedule(waterHeater),
   doActions: (waterHeater) => doActions(waterHeater),
+  startConstantInfoFrom: (device) => startConstantInfoFrom(device),
+  stopConstantInfoFrom: (device) => stopConstantInfoFrom(device),
 }
 
 const state = {
@@ -25,7 +27,6 @@ let testerWaterHeater = {
 }
 
 const timer = setInterval(function() {
-  console.log("Updating devices");
   for (var i = 0; i < appData.getAmountOfDevices(); i++) {
     let device = appData.getDevice(i);
     if (device != undefined) {
@@ -35,12 +36,21 @@ const timer = setInterval(function() {
 }, 1000);
 
 function update(device) {
+  console.log(appData.getStrippedVersionOfDevice(device));
+  if (device.constantUpdates == undefined || !device.constantUpdates) {
+    startConstantInfoFrom(device);
+  } else if (device.constantUpdates) {
+    retriveConstUpdate(device);
+  }
   if (device.timeOn == undefined && device.timeOff == undefined) {
     updateDeviceInfo(device, "schedule");
-  } else {
-    console.log(device.turnOn + " - " + device.turnOff);
   }
   doActions(device);
+}
+
+function retriveConstUpdate(device) {
+  if (device.socket != undefined)
+    device.socket.emit('constantUpdates', appData.getStrippedVersionOfDevice(device))
 }
 
 function schedule(device) {
@@ -63,27 +73,25 @@ function schedule(device) {
 }
 
 function updateDeviceInfo(device, command) {
-  console.log("Trying to send Schedule Call");
   if (device.socket != undefined) {
-    console.log("Sending Schedule Call");
-    device.socket.emit('updateInfo', command, getStrippedVersionOfDevice(device));
+    device.socket.emit('updateInfo', command, appData.getStrippedVersionOfDevice(device));
   }
 }
 
-function getStrippedVersionOfDevice(device) {
-  let tempDevice = device;
-  delete tempDevice.socket;
-  return tempDevice;
+function doActions(device) {
+  turnOnOff(device)
 }
 
-function doActions(device) {
+function turnOnOff(device) {
   let date = new Date();
   if (device.timeOn !== undefined && device.state != state.ON) {
-    if (device.timeOn <= date) {
+    let on = new Date(device.timeOn);
+    if (on <= date) {
       turnOnDevice(device);
     }
   } else if (device.timeOff !== undefined && device.state != state.OFF) {
-    if (device.timeOff <= date) {
+    let off = new Date(device.timeOff);
+    if (off <= date) {
       turnOffDevice(device);
     }
   }
@@ -92,28 +100,45 @@ function doActions(device) {
 function turnOnDevice(device) {
   console.log("Turning on device: " + device.id);
   device.state = state.ON;
+  device.timeOn = undefined;
   if (device.socket != undefined) {
     device.socket.emit('command', "turnOn");
+  } else {
+    console.log("Could not send message");
   }
 }
 
 function turnOffDevice(device) {
   console.log("Turning off device: " + device.id);
   device.state = state.OFF;
-  device.timeOn = undefined;
   device.timeOff = undefined;
   if (device.socket != undefined) {
     device.socket.emit('command', "turnOff");
+  } else {
+    console.log("Could not send message");
   }
 }
 
 function notifyWaterHeater(device) {
-  console.log(device);
   if (device.socket != undefined) {
-    console.log("Worked");
     device.socket.emit('command', "turnOn");
   } else
     console.log("No socket to send command on");
+}
+
+function startConstantInfoFrom(device) {
+  console.log("Starting Const update on: " + device.id);
+  if (device.socket == undefined)
+    return;
+
+  device.constantUpdates = true;
+}
+
+function stopConstantInfoFrom(device) {
+  if (device.socket == undefined)
+    return;
+
+  device.constantUpdates = false;
 }
 
 module.exports = functions;

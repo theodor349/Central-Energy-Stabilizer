@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="da" dir="ltr">
+
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,600,700&display=swap&subset=latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="Public/main.css">
+  <meta charset="utf-8">
+  <title>Pebert – The energy saving bot</title>
+</head>
+
+
+<body>
+  <header>
+    <h1>Pebert</h1>
+    <h2>The energy saving network bot</h2>
+  </header>
+
+  <section id="serverDevices">
+    <!-- template for water heater -->
+    <section id="device0" onclick="displayDeviceSetting(device0)">
+      <header>
+        <div>
+          <img src="/images/waterheaterIcon.svg" alt="Device type">
+        </div>
+        <!-- device name -->
+        <h3>Water heater</h3>
+        <ul>
+          <!-- furst p = description, second p = value, third p = measurement -->
+          <li>
+            <p>Temp: </p>
+            <p>55</p>
+            <p>&#8451;</p>
+          </li> <!-- current temp in celcius -->
+
+          <li>
+            <p>Power:</p>
+            <p>10.000</p>
+            <p>watt</p>
+          </li> <!-- current consumption in watt -->
+
+          <li>
+            <p>Status:</p>
+            <p>on</p>
+            <p>&#8593;</p>
+          </li><!-- 0 = off, 1 = KEEP_TEMP, 2 = full power -->
+        </ul>
+      </header>
+
+      <section>
+        <h3>Settings:</h3>
+        <section>
+          <h4>spec:</h4>
+          <ul>
+            <li class="minMaxTemp">
+              <p>Temp: </p>
+              <p>55</p> - <p>85</p>
+              <p>&#8451;</p>
+            </li> <!-- min and max temp in celcius -->
+            <li class="minMaxEffect">
+              <p>Power: </p>
+              <p>0</p> - <p>10.000</p>
+              <p> watt</p>
+            </li> <!-- min and max effect in watt -->
+          </ul>
+        </section>
+      </section>
+    </section>
+  </section>
+
+  <br>
+  <form action="">
+    <input id="m" autocomplete="off" /><button>Send test message to server</button>
+  </form>
+
+
+  <section class="background">
+    <section class="windmill">
+      <img src="/images/windmillBody.svg" alt="">
+      <img src="/images/windmillWings.svg" alt="">
+    </section>
+
+    <section class="windmill">
+      <img src="/images/windmillBody.svg" alt="">
+      <img src="/images/windmillWings.svg" alt="">
+    </section>
+    <img src="/images/fields.svg" class="fields" alt="">
+
+    <p>Made by DAT2 C1-13</p>
+
+  </section>
+
+
+
+
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="./js/connection.js"></script>
+  <script src="./js/displayDevices.js"></script>
+  <script src="./js/userInteractions.js"></script>
+  <script src="./js/animationControl.js"></script>
+
+</body>
+
+</html>

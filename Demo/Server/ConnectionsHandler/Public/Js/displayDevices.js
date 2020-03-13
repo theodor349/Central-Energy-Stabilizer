@@ -35,9 +35,60 @@ const state = {
 //  state: state.OFF, // 0 = off, 1 = KEEP_TEMP, 2 = full power
 //}
 //addWaterHeater(myWaterHeater2);
+let waterHeaterAncher;
+//updateWaterHeater(myWaterHeater2);
 
 function updateWaterHeater(device) {
+  waterHeaterAncher = document.getElementById(("device" + device.id)).children[0].children[2];
+  setCurrTemp(device);
+  setCurrPower(device);
+  setCurrState(device);
+}
 
+function setCurrTemp(device) {
+  getCurrTemp().innerHTML = device.currentTemp;
+}
+
+function getCurrTemp() {
+  return waterHeaterAncher.children[0].children[1];
+}
+
+function setCurrPower(device) {
+  let value = getCurrPower();
+  if (device.state == state.ON) {
+    value.innerHTML = "1000"
+  } else if (device.state == state.KEEP_TEMP) {
+    value.innerHTML = "10"
+  } else {
+    value.innerHTML = "0"
+  }
+}
+
+function getCurrPower() {
+  return waterHeaterAncher.children[1].children[1];
+}
+
+function setCurrState(device) {
+  let value = getCurrState();
+  let unit = getCurrStateUnit();
+  if (device.state == state.ON) {
+    value.innerHTML = "on"
+    unit.innerHTML = " ↑";
+  } else if (device.state == state.KEEP_TEMP) {
+    value.innerHTML = "keep"
+    unit.innerHTML = " →";
+  } else {
+    value.innerHTML = "off"
+    unit.innerHTML = " ↓";
+  }
+}
+
+function getCurrState() {
+  return waterHeaterAncher.children[2].children[1];
+}
+
+function getCurrStateUnit() {
+  return waterHeaterAncher.children[2].children[2];
 }
 
 function addWaterHeater(device) {
@@ -71,7 +122,7 @@ function buildWaterHeaterHeader(device) {
 
   let name = document.createElement("h3");
   header.appendChild(name);
-  name.innerText = device.type + " " + (device.id + 1);
+  name.innerHTML = device.type + " " + (device.id + 1);
 
   let description = buildWaterHeaterDescription(device);
   header.appendChild(description);
@@ -84,11 +135,11 @@ function buildWaterHeaterDescription(device) {
 
   let list = document.createElement("li");
   let name = document.createElement("p");
-  name.innerText = "Temp: ";
+  name.innerHTML = "Temp: ";
   let value = document.createElement("p");
-  value.innerText = device.currentTemp;
+  value.innerHTML = device.currentTemp;
   let unit = document.createElement("p");
-  unit.innerText = "℃";
+  unit.innerHTML = "℃";
   list.appendChild(name);
   list.appendChild(value);
   list.appendChild(unit);
@@ -96,17 +147,17 @@ function buildWaterHeaterDescription(device) {
 
   list = document.createElement("li");
   name = document.createElement("p");
-  name.innerText = "Power: ";
+  name.innerHTML = "Power: ";
   value = document.createElement("p");
   if (device.state == state.ON) {
-    value.innerText = "1000"
+    value.innerHTML = "1000"
   } else if (device.state == state.KEEP_TEMP) {
-    value.innerText = "10"
+    value.innerHTML = "10"
   } else {
-    value.innerText = "0"
+    value.innerHTML = "0"
   }
   unit = document.createElement("p");
-  unit.innerText = " watt";
+  unit.innerHTML = " watt";
   list.appendChild(name);
   list.appendChild(value);
   list.appendChild(unit);
@@ -114,18 +165,18 @@ function buildWaterHeaterDescription(device) {
 
   list = document.createElement("li");
   name = document.createElement("p");
-  name.innerText = "Status: ";
+  name.innerHTML = "Status: ";
   value = document.createElement("p");
   unit = document.createElement("p");
   if (device.state == state.ON) {
-    value.innerText = "on"
-    unit.innerText = " ↑";
+    value.innerHTML = "on"
+    unit.innerHTML = " ↑";
   } else if (device.state == state.KEEP_TEMP) {
-    value.innerText = "keep"
-    unit.innerText = " →";
+    value.innerHTML = "keep"
+    unit.innerHTML = " →";
   } else {
-    value.innerText = "off"
-    unit.innerText = " ↓";
+    value.innerHTML = "off"
+    unit.innerHTML = " ↓";
   }
   list.appendChild(name);
   list.appendChild(value);
@@ -139,12 +190,12 @@ function buildWaterHeaterSettings(device) {
   let section = document.createElement("section");
   let title = document.createElement("h3");
   section.appendChild(title);
-  title.innerText = "Settings";
+  title.innerHTML = "Settings";
   let specs = document.createElement("section");
   section.appendChild(specs);
   title = document.createElement("h4");
   specs.appendChild(title);
-  title.innerText = "spec:";
+  title.innerHTML = "spec:";
 
   let ancher = document.createElement("ul");
   specs.appendChild(ancher);
@@ -152,13 +203,13 @@ function buildWaterHeaterSettings(device) {
   let list = document.createElement("li");
   list.setAttribute("class", "minMaxTemp");
   let name = document.createElement("p");
-  name.innerText = "Temp: ";
+  name.innerHTML = "Temp: ";
   let val1 = document.createElement("p");
-  val1.innerText = device.lowerLimit;
+  val1.innerHTML = device.lowerLimit;
   let val2 = document.createElement("p");
-  val2.innerText = device.upperLimit;
+  val2.innerHTML = device.upperLimit;
   let unit = document.createElement("p");
-  unit.innerText = "℃";
+  unit.innerHTML = "℃";
   list.appendChild(name);
   list.appendChild(val1);
   list.innerHTML += " - ";
@@ -169,13 +220,13 @@ function buildWaterHeaterSettings(device) {
   list = document.createElement("li");
   list.setAttribute("class", "minMaxEffect");
   name = document.createElement("p");
-  name.innerText = "Power: ";
+  name.innerHTML = "Power: ";
   val1 = document.createElement("p");
-  val1.innerText = 0;
+  val1.innerHTML = 0;
   val2 = document.createElement("p");
-  val2.innerText = device.maxEffect;
+  val2.innerHTML = device.maxEffect;
   unit = document.createElement("p");
-  unit.innerText = "watt";
+  unit.innerHTML = "watt";
   list.appendChild(name);
   list.appendChild(val1);
   list.innerHTML += " - ";

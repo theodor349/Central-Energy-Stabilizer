@@ -33,13 +33,21 @@ userSpace.on('connection', function(socket) {
 });
 
 let windmillUpdateLoop = setInterval(
-	function(){
-		let date = new Date().getMinutes();
-		updateWindmill(simulatedData(date));
-	}, 1000);
+  function() {
+    let date = new Date().getMinutes();
+    updateWindmill(simulatedData(date));
+  }, 1000);
 
-function updateWindmill(meterPerSecond){
-	userSpace.emit('updateWindmill', meterPerSecond);
+function updateWindmill(meterPerSecond) {
+  userSpace.emit('updateWindmill', meterPerSecond);
+}
+
+function addNewDeviceToClient(device) {
+  userSpace.emit("addDevice", appData.getStrippedVersionOfDevice(device));
+}
+
+function updateNewDeviceToClient(device) {
+  userSpace.emit("updateDevice", appData.getStrippedVersionOfDevice(device));
 }
 
 const deviceSpace = io.of('/device');
@@ -53,6 +61,7 @@ deviceSpace.on('connection', function(socket) {
   socket.on('idSet', function(device) {
     console.log("Id: " + device.id + " given to device: " + device.type);
     registerNewDevice(device, socket);
+    addNewDeviceToClient(device);
   });
 
   socket.on('disconnect', function() {
@@ -63,6 +72,7 @@ deviceSpace.on('connection', function(socket) {
   socket.on('updateInformation', function(command, device) {
     device.socket = socket;
     appData.updateDevice(device);
+    updateNewDeviceToClient(device)
     switch (command) {
       case "schedule":
         deviceManager.schedule(appData.getDevice(device.id));

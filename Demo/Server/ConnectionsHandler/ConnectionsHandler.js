@@ -5,6 +5,7 @@ let io = require('socket.io')(http);
 
 let appData = require('../Core/DeviceStorage.js')
 let deviceManager = require('./../DeviceManager/DeviceManager.js');
+let simulatedData = require('../Data/simulated_data.js');
 
 console.log(__dirname + '/Public');
 
@@ -31,7 +32,13 @@ userSpace.on('connection', function(socket) {
 
 });
 
-function updateWindmill(){
+let windmillUpdateLoop = setInterval(
+	function(){
+		let date = new Date().getMinutes();
+		updateWindmill(simulatedData(date));
+	}, 1000);
+
+function updateWindmill(meterPerSecond){
 	userSpace.emit('updateWindmill', meterPerSecond);
 }
 

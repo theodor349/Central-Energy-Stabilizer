@@ -2,6 +2,9 @@
 
 let socket = io('/user');
 
+socket.on('updateWindmill', function(meterPerSecond){
+	updateWindmillSpeed(meterPerSecond);
+});
 
 // temp chat shit
 $(function () {

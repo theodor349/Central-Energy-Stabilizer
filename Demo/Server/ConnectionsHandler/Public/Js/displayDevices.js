@@ -3,16 +3,38 @@ const state = {
   KEEP_TEMP: 1,
   ON: 2,
 }
-let myWaterHeater = {
-  id: 2,
+let myWaterHeater0 = {
+  id: 0,
   type: "WaterHeater",
   currentTemp: 55, // Current temperature
   lowerLimit: 55, // When under it should start
   upperLimit: 85, // When abow it turns off
   maxEffect: 1000, // Watts
+  state: state.ON, // 0 = off, 1 = KEEP_TEMP, 2 = full power
+}
+addWaterHeater(myWaterHeater0);
+
+let myWaterHeater1 = {
+  id: 1,
+  type: "WaterHeater",
+  currentTemp: 99, // Current temperature
+  lowerLimit: 40, // When under it should start
+  upperLimit: 60, // When abow it turns off
+  maxEffect: 1000, // Watts
+  state: state.KEEP_TEMP, // 0 = off, 1 = KEEP_TEMP, 2 = full power
+}
+addWaterHeater(myWaterHeater1);
+
+let myWaterHeater2 = {
+  id: 2,
+  type: "WaterHeater",
+  currentTemp: 76, // Current temperature
+  lowerLimit: 60, // When under it should start
+  upperLimit: 90, // When abow it turns off
+  maxEffect: 1000, // Watts
   state: state.OFF, // 0 = off, 1 = KEEP_TEMP, 2 = full power
 }
-addWaterHeater(myWaterHeater);
+addWaterHeater(myWaterHeater2);
 
 function addWaterHeater(device) {
   let devicesNode = document.getElementById("serverDevices");

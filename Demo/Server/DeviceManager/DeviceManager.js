@@ -36,7 +36,7 @@ const timer = setInterval(function() {
 }, 1000);
 
 function update(device) {
-  console.log(appData.getStrippedVersionOfDevice(device));
+  doActions(device);
   if (device.constantUpdates == undefined || !device.constantUpdates) {
     startConstantInfoFrom(device);
   } else if (device.constantUpdates) {
@@ -45,7 +45,6 @@ function update(device) {
   if (device.timeOn == undefined && device.timeOff == undefined) {
     updateDeviceInfo(device, "schedule");
   }
-  doActions(device);
 }
 
 function retriveConstUpdate(device) {

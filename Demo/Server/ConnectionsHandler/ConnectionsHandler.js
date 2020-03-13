@@ -10,6 +10,7 @@ console.log(__dirname + '/Public');
 
 app.use("/Public", express.static(__dirname + '/Public'));
 app.use("/images", express.static(__dirname + '/Public/Images'));
+app.use("/js", express.static(__dirname + '/Public/Js'));
 
 app.get('/', function(req, res) {
   res.sendFile(__dirname + '/index.html');

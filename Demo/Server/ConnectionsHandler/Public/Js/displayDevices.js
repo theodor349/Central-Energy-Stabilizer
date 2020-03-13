@@ -72,7 +72,13 @@ function buildWaterHeaterDescription(device) {
   name = document.createElement("p");
   name.innerText = "Power: ";
   value = document.createElement("p");
-  value.innerText = device.maxEffect;
+  if (device.state == state.ON) {
+    value.innerText = "1000"
+  } else if (device.state == state.KEEP_TEMP) {
+    value.innerText = "10"
+  } else {
+    value.innerText = "0"
+  }
   unit = document.createElement("p");
   unit.innerText = " watt";
   list.appendChild(name);

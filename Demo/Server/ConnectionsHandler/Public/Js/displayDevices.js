@@ -38,8 +38,17 @@ const state = {
 let waterHeaterAncher;
 //updateWaterHeater(myWaterHeater2);
 
-function updateWaterHeater(device) {
+function getWaterHeaterAncher(device) {
   waterHeaterAncher = document.getElementById(("device" + device.id)).children[0].children[2];
+}
+
+function removeDevice(device) {
+  let deviceElem = document.getElementById(("device" + device.id));
+  deviceElem.parentNode.removeChild(deviceElem);
+}
+
+function updateWaterHeater(device) {
+  getWaterHeaterAncher(device);
   setCurrTemp(device);
   setCurrPower(device);
   setCurrState(device);

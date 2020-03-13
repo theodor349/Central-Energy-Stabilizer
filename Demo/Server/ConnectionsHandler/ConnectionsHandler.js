@@ -46,6 +46,10 @@ function addNewDeviceToClient(device) {
   userSpace.emit("addDevice", appData.getStrippedVersionOfDevice(device));
 }
 
+function removeNewDeviceToClient(device) {
+  userSpace.emit("removeDevice", appData.getStrippedVersionOfDevice(device));
+}
+
 function updateNewDeviceToClient(device) {
   userSpace.emit("updateDevice", appData.getStrippedVersionOfDevice(device));
 }
@@ -66,6 +70,8 @@ deviceSpace.on('connection', function(socket) {
 
   socket.on('disconnect', function() {
     console.log('a device disconnected');
+    let device = appData.getDeviceFromSocket(socket);
+    removeNewDeviceToClient(appData.getStrippedVersionOfDevice(device));
     appData.removeConnection(socket);
   });
 

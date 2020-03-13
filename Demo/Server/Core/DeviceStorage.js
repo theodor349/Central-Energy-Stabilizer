@@ -8,6 +8,7 @@ const appData = {
   getDevice: (id) => getDevice(id),
   getAmountOfDevices: () => getAmountOfDevices(),
   getStrippedVersionOfDevice: (device) => getStrippedVersionOfDevice(device),
+  getDeviceFromSocket: (socket) => getDeviceFromSocket(socket),
 }
 
 function removeConnection(socket) {
@@ -61,6 +62,10 @@ function addDevice(device) {
 
 function removeDevice() {
 
+}
+
+function getDeviceFromSocket(socket) {
+  return knownDevices.find((device) => device.socket == socket, socket);
 }
 
 function updateDevice(device) {

@@ -12,6 +12,10 @@ socket.on('updateDevice', function(device) {
   updateWaterHeater(device);
 });
 
+socket.on('removeDevice', function(device) {
+  removeDevice(device);
+});
+
 // temp chat shit
 $(function() {
   $('form').submit(function(e) {

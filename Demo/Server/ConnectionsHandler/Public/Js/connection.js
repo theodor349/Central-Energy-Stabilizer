@@ -6,11 +6,10 @@ socket.on('updateWindmill', function(meterPerSecond) {
 
 socket.on('addDevice', function(device) {
   addWaterHeater(device);
-  console.log("Added a device");
 });
 
 socket.on('updateDevice', function(device) {
-
+  updateWaterHeater(device);
 });
 
 // temp chat shit

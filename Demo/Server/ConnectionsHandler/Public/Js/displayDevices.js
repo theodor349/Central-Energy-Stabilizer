@@ -36,6 +36,10 @@ const state = {
 //}
 //addWaterHeater(myWaterHeater2);
 
+function updateWaterHeater(device) {
+
+}
+
 function addWaterHeater(device) {
   let devicesNode = document.getElementById("serverDevices");
   let waterHeater = buildWaterHeaterHTML(device);

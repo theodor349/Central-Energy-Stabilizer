@@ -4,7 +4,7 @@
   "description": "",
   "main": "App.js",
   "scripts": {
-    "start": "nodemon App.js",
+    "start": "nodemon ./WashingMachine/App.js",
     "test": "jest"
   },
   "author": "",

@@ -15,6 +15,7 @@ function getLocalDeviceInfo() {
 
     deviceInfo = infoDataObject;
 }
+console.log("Works");
 
 getLocalDeviceInfo();
 console.log(deviceInfo);

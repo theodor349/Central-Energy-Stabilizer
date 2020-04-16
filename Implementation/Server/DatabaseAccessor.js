@@ -53,17 +53,17 @@ async function generateModels() {
     console.log("Graph Model created");
 
     // TODO: Remove tests
-    //test();
+    test();
 }
 
 // TODO: Remove tests
 function test() {
     dropDatabase();
     createDevice(createDevicePrototype());
-    setTimeout(async function() {
-        let res = await getDevice("id");
-        console.log(res);
-    }, 1000);
+    //    setTimeout(async function() {
+    //        let res = await getDevice("id");
+    //        console.log(res);
+    //    }, 1000);
     createGraph(createGraphPrototype());
 }
 
@@ -108,9 +108,11 @@ async function createDevice(device) {
         programs: serilizedDevice.programs,
         uniqueProperties: serilizedDevice.uniqueProperties
     });
-    await deviceModel.save((saveError, savedUser) => {
+    deviceModel.save((saveError, savedUser) => {
         if (saveError)
             console.log(saveError);
+        else
+            return savedUser;
     });
 }
 
@@ -139,6 +141,8 @@ async function createGraph(graph) {
     graphModel.save((saveError, savedUser) => {
         if (saveError)
             console.log(saveError);
+        else
+            return savedUser;
     });
 
 }

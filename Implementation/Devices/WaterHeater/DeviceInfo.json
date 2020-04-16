@@ -1,8 +1,9 @@
 {
 "isAutomatic": true,
 "deviceType": "Water Heater",
-"uniqueProperties": [
-    {"minTemp": 55},
-    {"maxTemp": 90}
-]
-}
+"uniqueProperties": { 
+    "minTemp": 55,
+    "maxTemp": 90,
+    "currentPower": null,
+    "currentTemp": null
+}}

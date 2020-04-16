@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require('fs');
+const updateInterval = 1000;
 
 let deviceInfo = {};
 
@@ -12,6 +13,8 @@ function getLocalDeviceInfo() {
     let infoDataObject = JSON.parse(infoRawData);
 
     deviceInfo = infoDataObject;
+    deviceInfo.state = null;
+    deviceInfo.isConnected = false;
 
     setDeviceId(idDataObject.id);
 }
@@ -32,3 +35,21 @@ getLocalDeviceInfo();
 console.log(deviceInfo);
 setDeviceId('10222P1-11');
 console.log(deviceInfo);
+
+// Unique function for washing machine
+setInterval(() => {
+    checkState();
+
+}, updateInterval);
+
+function checkState() {
+    let uniqueProperties = deviceInfo.uniqueProperties;
+
+    if () {
+        
+        deviceInfo.state = "Off";
+    }
+    if (uniqueProperties.currentTemp <= uniqueProperties.minTemp) {
+        deviceInfo.state = "Heating";
+    }
+}

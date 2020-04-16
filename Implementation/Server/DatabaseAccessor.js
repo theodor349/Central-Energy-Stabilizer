@@ -52,9 +52,18 @@ async function generateModels() {
     Graph = mongoose.model("Graphs", graphSchema);
     console.log("Graph Model created");
 
-    // TODO: Remove dropDatabase
+    // TODO: Remove tests
+    //test();
+}
+
+// TODO: Remove tests
+function test() {
     dropDatabase();
     createDevice(createDevicePrototype());
+    setTimeout(async function() {
+        let res = await getDevice("id");
+        console.log(res);
+    }, 1000);
     createGraph(createGraphPrototype());
 }
 
@@ -94,14 +103,18 @@ async function createDevice(device) {
         programs: serilizedDevice.programs,
         uniqueProperties: serilizedDevice.uniqueProperties
     });
-    deviceModel.save((saveError, savedUser) => {
+    await deviceModel.save((saveError, savedUser) => {
         if (saveError)
             console.log(saveError);
     });
 }
 
 async function getDevice(id) {
-
+    var res = await Device.findOne({
+        deviceID: id
+    });
+    res = deserializeDevice(res);
+    return res;
 }
 
 async function deleteDevice(id) {
@@ -144,6 +157,16 @@ async function removePartOfGraph(id, startIndex, amount) {
 function serializeDevice(device) {
     device.programs = JSON.stringify(device.programs);
     device.uniqueProperties = JSON.stringify(device.uniqueProperties);
+    return device;
+}
+
+function deserializeDevice(device) {
+    device = device.toObject({
+        getters: true,
+        virtuals: true
+    });
+    device.programs = JSON.parse(device.programs);
+    device.uniqueProperties = JSON.parse(device.uniqueProperties);
     return device;
 }
 

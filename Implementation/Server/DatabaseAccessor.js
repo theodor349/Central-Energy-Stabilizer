@@ -181,7 +181,7 @@ function serilizeGraph(graph) {
 */
 
 function createDevicePrototype() {
-    let program0 = {
+    let program_0 = {
         graph: [
             1,
             5,
@@ -195,7 +195,7 @@ function createDevicePrototype() {
         ]
     };
 
-    let program1 = {
+    let program_1 = {
         graph: [
             10,
             10,
@@ -204,8 +204,8 @@ function createDevicePrototype() {
     };
 
     let waterHeaterPrograms = [
-        program0,
-        program1
+        program_0,
+        program_1
     ];
 
     let waterHeaterProps = [{

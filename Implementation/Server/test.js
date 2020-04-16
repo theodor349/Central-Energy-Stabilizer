@@ -2,27 +2,31 @@ const assert = require('assert');
 const da = require('./DatabaseAccessor.js');
 
 function createDevicePrototype() {
+    let program_0 = {
+        graph: [
+            1,
+            5,
+            10,
+            10,
+            20,
+            20,
+            10,
+            5,
+            1,
+        ]
+    };
+
+    let program_1 = {
+        graph: [
+            10,
+            10,
+            10,
+        ]
+    };
+
     let waterHeaterPrograms = [
-        program0 = {
-            graph: [
-                1,
-                5,
-                10,
-                10,
-                20,
-                20,
-                10,
-                5,
-                1,
-            ]
-        },
-        program1 = {
-            graph: [
-                10,
-                10,
-                10,
-            ]
-        }
+        program_0,
+        program_1
     ];
 
     let waterHeaterProps = [{
@@ -45,7 +49,7 @@ function createDevicePrototype() {
         end: new Date(1000)
     }
 
-    let deviceWaterHeater1 = {
+    let deviceWaterHeater_1 = {
         deviceID: "id",
         isAutomatic: Boolean(false),
         currentPower: 132,
@@ -56,43 +60,43 @@ function createDevicePrototype() {
         uniqueProperties: waterHeaterProps
     };
 
-    return deviceWaterHeater1;
+    return deviceWaterHeater_1;
 }
 
 let device = createDevicePrototype();
 
 // Tests functions on creating entries into the database
 describe('Creating database entries', () => {
-		it('creates a device', (done) => {
-			da.createDevice(device).save.then(() => {
-				assert(!device.isNew);
-				done();
-            });
-        });
+    it('creates a device', (done) => {
+        da.createDevice(device);
+        console.log(device);
+        assert(!device.isNew);
+        done();
+    });
 });
 
 // Tests functions on reading entries from the database
 describe('Reading database entries', () => {
-        it('reads a device', (done) => {
-           device = da.getDevice(device.deviceID).then(() => {
-               assert();
-               done();
-           });
+    it('reads a device', (done) => {
+        device = da.getDevice(device.deviceID).then(() => {
+            assert(!device.isNew);
+            done();
         });
     });
+});
 
 // Tests functions on deleting devices from the database
 describe('Deleting database entries', () => {
-        it('deletes a device', (done) => {
-            da.deleteDevice(device.deviceID).then(() => {
-                assert(da.getDevice(device.deviceID) === False);
-                done();
-            });
+    it('deletes a device', (done) => {
+        da.deleteDevice(device.deviceID).then(() => {
+            assert(da.getDevice(device.deviceID) === False);
+            done();
         });
     });
+});
 
 // Tests functions on updating devices in database
-describe('Updating database entries', () =>{
+describe('Updating database entries', () => {
     it('updates a device', (done) => {
         da.updateDevice(device.deviceID, device.currentPower, 135).then(() => {
             assert(device.currentPower === 135);

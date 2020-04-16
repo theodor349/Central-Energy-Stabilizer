@@ -1,8 +1,27 @@
 'use strict';
 const mongoose = require('mongoose');
 
-let Device;
-let Graph;
+let Device = mongoose.model("Devices", new mongoose.Schema({
+    scheduledByUser: Boolean,
+    isScheduled: Boolean,
+    nextState: String,
+    scheduled: String,
+    scheduledInterval: String,
+
+    // From Device
+    deviceID: String,
+    isAutomatic: Boolean,
+    currentPower: Number,
+    currentState: String,
+    deviceType: String,
+    isConnected: Boolean,
+    programs: String,
+    uniqueProperties: String
+}));
+let Graph = mongoose.model("Graphs", new mongoose.Schema({
+    id: String,
+    values: String
+}));
 
 /*
     SECTION: Setup Functions
@@ -14,46 +33,12 @@ async function run(connectionString) {
         useNewUrlParser: true,
         useUnifiedTopology: true
     });
-
-    generateModels();
 }
 
 async function dropDatabase() {
     // Clear the database every time. This is for the sake of example only,
     // don't do this in prod :)
     await mongoose.connection.dropDatabase();
-}
-
-async function generateModels() {
-    let deviceSchema = new mongoose.Schema({
-        scheduledByUser: Boolean,
-        isScheduled: Boolean,
-        nextState: String,
-        scheduled: String,
-        scheduledInterval: String,
-
-        // From Device
-        deviceID: String,
-        isAutomatic: Boolean,
-        currentPower: Number,
-        currentState: String,
-        deviceType: String,
-        isConnected: Boolean,
-        programs: String,
-        uniqueProperties: String
-    });
-    Device = mongoose.model("Devices", deviceSchema);
-    console.log("Device Model created");
-
-    let graphSchema = new mongoose.Schema({
-        id: String,
-        values: String
-    });
-    Graph = mongoose.model("Graphs", graphSchema);
-    console.log("Graph Model created");
-
-    // TODO: Remove tests
-    test();
 }
 
 // TODO: Remove tests
@@ -83,10 +68,6 @@ const functions = {
     removePartOfGraph: (id, statIndex, amount) => removePartOfGraph(id, statIndex, amount),
 }
 
-const textFunctions = {
-    run: (connectionString) => run(connectionString),
-    generateModels: () => generateModels()
-}
 module.exports = functions;
 
 async function createDevice(device) {

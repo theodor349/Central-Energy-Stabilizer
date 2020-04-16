@@ -10,9 +10,9 @@ function getLocalDeviceInfo() {
 
     let idDataObject = JSON.parse(idRawData);
     let infoDataObject = JSON.parse(infoRawData);
-    
+
     deviceInfo = infoDataObject;
-    
+
     setDeviceId(idDataObject.id);
 }
 

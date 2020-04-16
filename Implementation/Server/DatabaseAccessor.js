@@ -228,7 +228,7 @@ function createDevicePrototype() {
         end: new Date(1000)
     }
 
-    let deviceWaterHeater1 = {
+    let deviceWaterHeater_1 = {
         deviceID: "id",
         isAutomatic: Boolean(false),
         currentPower: 132,
@@ -239,7 +239,7 @@ function createDevicePrototype() {
         uniqueProperties: waterHeaterProps
     };
 
-    return deviceWaterHeater1;
+    return deviceWaterHeater_1;
 }
 
 // Graphs

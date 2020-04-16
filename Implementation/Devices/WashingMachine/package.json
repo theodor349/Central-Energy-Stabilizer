@@ -7,6 +7,10 @@
     "start": "nodemon App.js",
     "test": "jest"
   },
+  "nodemonConfig": {
+    "ignore": ["DeviceId.json", "DeviceInfo.json"],
+    "delay": "2500"
+  },
   "author": "",
   "license": "ISC",
   "devDependencies": {

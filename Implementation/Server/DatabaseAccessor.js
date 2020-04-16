@@ -1,21 +1,38 @@
 'use strict';
 const mongoose = require('mongoose');
 
-let Device;
-let Graph;
+let Device = mongoose.model("Devices", new mongoose.Schema({
+    scheduledByUser: Boolean,
+    isScheduled: Boolean,
+    nextState: String,
+    scheduled: String,
+    scheduledInterval: String,
+
+    // From Device
+    deviceID: String,
+    isAutomatic: Boolean,
+    currentPower: Number,
+    currentState: String,
+    deviceType: String,
+    isConnected: Boolean,
+    programs: String,
+    uniqueProperties: String
+}));
+let Graph = mongoose.model("Graphs", new mongoose.Schema({
+    id: String,
+    values: String
+}));
 
 /*
     SECTION: Setup Functions
 */
 
-run().catch(error => console.log(error.stack));
-async function run() {
-    await mongoose.connect('mongodb://localhost:27017/P2', {
+run('mongodb://localhost:27017/P2').catch(error => console.log(error.stack));
+async function run(connectionString) {
+    await mongoose.connect(connectionString, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     });
-
-    generateModels();
 }
 
 async function dropDatabase() {
@@ -24,46 +41,14 @@ async function dropDatabase() {
     await mongoose.connection.dropDatabase();
 }
 
-async function generateModels() {
-    let deviceSchema = new mongoose.Schema({
-        scheduledByUser: Boolean,
-        isScheduled: Boolean,
-        nextState: String,
-        scheduled: String,
-        scheduledInterval: String,
-
-        // From Device
-        deviceID: String,
-        isAutomatic: Boolean,
-        currentPower: Number,
-        currentState: String,
-        deviceType: String,
-        isConnected: Boolean,
-        programs: String,
-        uniqueProperties: String
-    });
-    Device = mongoose.model("Devices", deviceSchema);
-    console.log("Device Model created");
-
-    let graphSchema = new mongoose.Schema({
-        id: String,
-        values: String
-    });
-    Graph = mongoose.model("Graphs", graphSchema);
-    console.log("Graph Model created");
-
-    // TODO: Remove tests
-    //test();
-}
-
 // TODO: Remove tests
 function test() {
     dropDatabase();
     createDevice(createDevicePrototype());
-    setTimeout(async function() {
-        let res = await getDevice("id");
-        console.log(res);
-    }, 1000);
+    //    setTimeout(async function() {
+    //        let res = await getDevice("id");
+    //        console.log(res);
+    //    }, 1000);
     createGraph(createGraphPrototype());
 }
 
@@ -82,6 +67,7 @@ const functions = {
     appendToGraph: (id, statIndex, values) => updateGraph(id, statIndex, values),
     removePartOfGraph: (id, statIndex, amount) => removePartOfGraph(id, statIndex, amount),
 }
+
 module.exports = functions;
 
 async function createDevice(device) {
@@ -103,9 +89,11 @@ async function createDevice(device) {
         programs: serilizedDevice.programs,
         uniqueProperties: serilizedDevice.uniqueProperties
     });
-    await deviceModel.save((saveError, savedUser) => {
+    deviceModel.save((saveError, savedUser) => {
         if (saveError)
             console.log(saveError);
+        else
+            return savedUser;
     });
 }
 
@@ -134,6 +122,8 @@ async function createGraph(graph) {
     graphModel.save((saveError, savedUser) => {
         if (saveError)
             console.log(saveError);
+        else
+            return savedUser;
     });
 
 }
@@ -228,7 +218,7 @@ function createDevicePrototype() {
         end: new Date(1000)
     }
 
-    let deviceWaterHeater1 = {
+    let deviceWaterHeater_1 = {
         deviceID: "id",
         isAutomatic: Boolean(false),
         currentPower: 132,
@@ -239,7 +229,7 @@ function createDevicePrototype() {
         uniqueProperties: waterHeaterProps
     };
 
-    return deviceWaterHeater1;
+    return deviceWaterHeater_1;
 }
 
 // Graphs

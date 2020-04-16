@@ -1,0 +1,47 @@
+const {MongoClient} = require('mongodb');
+
+// Test code to test the test
+
+test('add 1 to 1 to equal 2', () => {
+    expect(1+1).toBe(2);
+});
+test('add 1 to 1 to not equal 3', () => {
+    expect(1+1).not.toBe(3);
+});
+
+//
+
+describe('insert', () => {
+    let connection;
+    let db;
+
+    beforeAll(async() => {
+        connection = await MongoClient.connect(global.__MONGO_URI__, {
+            useNewUrlParser: true,
+        });
+        db = await connection.db(global.__MONGO_DB_NAME__);
+    });
+
+    afterAll(async ()=> {
+        await connection.close();
+        await db.close();
+    });
+/*
+    it('should insert a doc into collection', async () => {
+        const users = db.collection('users');
+
+        const mockUser = {_id: 'some-user-id', name: 'John'};
+        await users.insertOne(mockUser);
+
+        const insertedUser = await users.findOne({_id: 'some-user-id'});
+        expect(insertedUser).toEqual(mockUser);
+    });
+*/
+    it('should create a device', async () => {
+        const devices = db.collection('devices');
+
+        await devices.CreateDevicePrototype();
+
+        const newDevice = await devices.findOne({_id; ''});
+    });
+});

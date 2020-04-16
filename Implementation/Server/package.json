@@ -5,7 +5,7 @@
   "main": "App.js",
   "scripts": {
     "start": "nodemon DatabaseAccessor.js",
-    "test": "nodemon --exec 'mocha'"
+    "test": "nodemon --exec mocha"
   },
   "author": "",
   "license": "ISC",

@@ -3,26 +3,22 @@
 "deviceType": "Washing Machine",
 "programs": [
     {
-        "program_1": {
-            "pointArray": [
-                45,
-                53,
-                56,
-                60,
-                69
-            ]
-        }
+        "pointArray": [
+            45,
+            53,
+            56,
+            60,
+            69
+        ]
     },
     {
-        "program_2": {
-            "pointArray": [
-                47,
-                43,
-                49,
-                56,
-                60
-            ]
-        }    
-    }
+        "pointArray": [
+            47,
+            43,
+            49,
+            56,
+            60
+        ]
+    }  
 ]
 }

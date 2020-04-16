@@ -1,10 +1,14 @@
 'use strict';
 const mongoose = require('mongoose');
 
-let devicesTable;
+let Device;
+let Graph;
+
+/*
+    SECTION: Setup Functions
+*/
 
 run().catch(error => console.log(error.stack));
-
 async function run() {
     await mongoose.connect('mongodb://localhost:27017/P2', {
         useNewUrlParser: true,
@@ -38,20 +42,79 @@ async function generateModels() {
         programs: String,
         uniqueProperties: String
     });
-    devicesTable = mongoose.model("Devices", deviceSchema);
+    Device = mongoose.model("Devices", deviceSchema);
     console.log("Device Model created");
+
+    let graphSchema = new mongoose.Schema({
+        id: String,
+        values: String
+    });
+    Graph = mongoose.model("Graphs", graphSchema);
+    console.log("Graph Model created");
+
+    // TODO: Remove tests
+    //test();
+}
+
+// TODO: Remove tests
+function test() {
+    dropDatabase();
+    createDevice(createDevicePrototype());
+    setTimeout(async function() {
+        let res = await getDevice("id");
+        console.log(res);
+    }, 1000);
+    createGraph(createGraphPrototype());
 }
 
 /*
-    Interface Functions
+    SECTION: Interface Functions
 */
 
+const functions = {
+    createDevice: (device) => createDevice(device),
+    getDevice: (id) => getDevice(id),
+    deleteDevice: (id) => deleteDevice(id),
+    updateDevice: (id, field, value) => updateDevice(id, field, value),
+    createGraph: (graph) => createGraph(graph),
+    getGraph: (id) => getGraph(id),
+    updateGraph: (id, statIndex, values) => updateGraph(id, statIndex, values),
+    appendToGraph: (id, statIndex, values) => updateGraph(id, statIndex, values),
+    removePartOfGraph: (id, statIndex, amount) => removePartOfGraph(id, statIndex, amount),
+}
+module.exports = functions;
+
 async function createDevice(device) {
-    await devicesTable.create(SerializeDevice(device));
+    let serilizedDevice = serializeDevice(device);
+    const deviceModel = new Device({
+        scheduledByUser: serilizedDevice.scheduledByUser,
+        isScheduled: serilizedDevice.isScheduled,
+        nextState: serilizedDevice.nextState,
+        scheduled: serilizedDevice.scheduled,
+        scheduledInterval: serilizedDevice.scheduledInterval,
+
+        // From Device
+        deviceID: serilizedDevice.deviceID,
+        isAutomatic: serilizedDevice.isAutomatic,
+        currentPower: serilizedDevice.currentPower,
+        currentState: serilizedDevice.currentState,
+        deviceType: serilizedDevice.deviceType,
+        isConnected: serilizedDevice.isConnected,
+        programs: serilizedDevice.programs,
+        uniqueProperties: serilizedDevice.uniqueProperties
+    });
+    await deviceModel.save((saveError, savedUser) => {
+        if (saveError)
+            console.log(saveError);
+    });
 }
 
 async function getDevice(id) {
-
+    var res = await Device.findOne({
+        deviceID: id
+    });
+    res = deserializeDevice(res);
+    return res;
 }
 
 async function deleteDevice(id) {
@@ -62,7 +125,16 @@ async function updateDevice(id, field, value) {
 
 }
 
-async function createGraph(id) {
+async function createGraph(graph) {
+    let serilizedGraph = serilizeGraph(graph);
+    const graphModel = new Graph({
+        id: graph.id,
+        values: graph.values
+    });
+    graphModel.save((saveError, savedUser) => {
+        if (saveError)
+            console.log(saveError);
+    });
 
 }
 
@@ -79,27 +151,29 @@ async function removePartOfGraph(id, startIndex, amount) {
 }
 
 /*
-    Helper Functions
+    SECTION: Helper Functions
 */
 
-function SerializeDevice(device) {
+function serializeDevice(device) {
     device.programs = JSON.stringify(device.programs);
     device.uniqueProperties = JSON.stringify(device.uniqueProperties);
     return device;
 }
 
-const functions = {
-    createDevice: (device) => createDevice(device),
-    getDevice: (id) => getDevice(id),
-    deleteDevice: (id) => deleteDevice(id),
-    updateDevice: (id, field, value) => updateDevice(id, field, value),
-    createGraph: (id) => createGraph,
-    getGraph: (id) => getGraph(id),
-    updateGraph: (id, statIndex, values) => updateGraph(id, statIndex, values),
-    appendToGraph: (id, statIndex, values) => updateGraph(id, statIndex, values),
-    removePartOfGraph: (id, statIndex, amount) => removePartOfGraph(id, statIndex, amount),
+function deserializeDevice(device) {
+    device = device.toObject({
+        getters: true,
+        virtuals: true
+    });
+    device.programs = JSON.parse(device.programs);
+    device.uniqueProperties = JSON.parse(device.uniqueProperties);
+    return device;
 }
-module.exports = functions;
+
+function serilizeGraph(graph) {
+    graph.values = JSON.stringify(graph.values);
+    return graph;
+}
 
 /*
     TODO: Remove
@@ -107,27 +181,31 @@ module.exports = functions;
 */
 
 function createDevicePrototype() {
+    let program0 = {
+        graph: [
+            1,
+            5,
+            10,
+            10,
+            20,
+            20,
+            10,
+            5,
+            1,
+        ]
+    };
+
+    let program1 = {
+        graph: [
+            10,
+            10,
+            10,
+        ]
+    };
+
     let waterHeaterPrograms = [
-        program0 = {
-            graph: [
-                1,
-                5,
-                10,
-                10,
-                20,
-                20,
-                10,
-                5,
-                1,
-            ]
-        },
-        program1 = {
-            graph: [
-                10,
-                10,
-                10,
-            ]
-        }
+        program0,
+        program1
     ];
 
     let waterHeaterProps = [{
@@ -165,10 +243,8 @@ function createDevicePrototype() {
 }
 
 // Graphs
-console.log(createGraphPrototype());
-
 function createGraphPrototype() {
-    let graph = [
+    let values = [
         0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
         10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
         20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
@@ -176,5 +252,10 @@ function createGraphPrototype() {
         40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
         50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
     ];
+
+    let graph = {
+        id: "id",
+        values: values
+    };
     return graph;
 }

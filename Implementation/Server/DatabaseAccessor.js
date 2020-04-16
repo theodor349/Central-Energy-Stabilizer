@@ -4,8 +4,11 @@ const mongoose = require('mongoose');
 let Device;
 let Graph;
 
-run().catch(error => console.log(error.stack));
+/*
+    SECTION: Setup Functions
+*/
 
+run().catch(error => console.log(error.stack));
 async function run() {
     await mongoose.connect('mongodb://localhost:27017/P2', {
         useNewUrlParser: true,
@@ -56,8 +59,21 @@ async function generateModels() {
 }
 
 /*
-    Interface Functions
+    SECTION: Interface Functions
 */
+
+const functions = {
+    createDevice: (device) => createDevice(device),
+    getDevice: (id) => getDevice(id),
+    deleteDevice: (id) => deleteDevice(id),
+    updateDevice: (id, field, value) => updateDevice(id, field, value),
+    createGraph: (graph) => createGraph(graph),
+    getGraph: (id) => getGraph(id),
+    updateGraph: (id, statIndex, values) => updateGraph(id, statIndex, values),
+    appendToGraph: (id, statIndex, values) => updateGraph(id, statIndex, values),
+    removePartOfGraph: (id, statIndex, amount) => removePartOfGraph(id, statIndex, amount),
+}
+module.exports = functions;
 
 async function createDevice(device) {
     let serilizedDevice = serializeDevice(device);
@@ -122,7 +138,7 @@ async function removePartOfGraph(id, startIndex, amount) {
 }
 
 /*
-    Helper Functions
+    SECTION: Helper Functions
 */
 
 function serializeDevice(device) {
@@ -135,19 +151,6 @@ function serilizeGraph(graph) {
     graph.values = JSON.stringify(graph.values);
     return graph;
 }
-
-const functions = {
-    createDevice: (device) => createDevice(device),
-    getDevice: (id) => getDevice(id),
-    deleteDevice: (id) => deleteDevice(id),
-    updateDevice: (id, field, value) => updateDevice(id, field, value),
-    createGraph: (graph) => createGraph(graph),
-    getGraph: (id) => getGraph(id),
-    updateGraph: (id, statIndex, values) => updateGraph(id, statIndex, values),
-    appendToGraph: (id, statIndex, values) => updateGraph(id, statIndex, values),
-    removePartOfGraph: (id, statIndex, amount) => removePartOfGraph(id, statIndex, amount),
-}
-module.exports = functions;
 
 /*
     TODO: Remove

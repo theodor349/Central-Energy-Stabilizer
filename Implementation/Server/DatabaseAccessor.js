@@ -8,9 +8,9 @@ let Graph;
     SECTION: Setup Functions
 */
 
-run().catch(error => console.log(error.stack));
-async function run() {
-    await mongoose.connect('mongodb://localhost:27017/P2', {
+run('mongodb://localhost:27017/P2').catch(error => console.log(error.stack));
+async function run(connectionString) {
+    await mongoose.connect(connectionString, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     });
@@ -81,6 +81,11 @@ const functions = {
     updateGraph: (id, statIndex, values) => updateGraph(id, statIndex, values),
     appendToGraph: (id, statIndex, values) => updateGraph(id, statIndex, values),
     removePartOfGraph: (id, statIndex, amount) => removePartOfGraph(id, statIndex, amount),
+}
+
+const textFunctions = {
+    run: (connectionString) => run(connectionString),
+    generateModels: () => generateModels()
 }
 module.exports = functions;
 

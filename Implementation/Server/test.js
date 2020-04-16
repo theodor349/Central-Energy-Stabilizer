@@ -64,7 +64,7 @@ let device = createDevicePrototype();
 // Tests functions on creating entries into the database
 describe('Creating database entries', () => {
 		it('creates a device', (done) => {
-			da.createDevice(device).then(() => {
+			da.createDevice(device).save.then(() => {
 				assert(!device.isNew);
 				done();
             });

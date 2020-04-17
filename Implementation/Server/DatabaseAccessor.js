@@ -72,10 +72,6 @@ const functions = {
 module.exports = functions;
 
 async function createDevice(device) {
-    // TODO: Remove this
-    setTimeout(function() {
-        return "Something bad Happend";
-    }, 100);
     let serilizedDevice = serializeDevice(device);
     let deviceModel;
     try {

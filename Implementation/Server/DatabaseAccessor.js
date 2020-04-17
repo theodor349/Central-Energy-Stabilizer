@@ -33,7 +33,6 @@ async function run(connectionString) {
         useNewUrlParser: true,
         useUnifiedTopology: true
     });
-    dropDatabase();
 }
 
 async function dropDatabase() {
@@ -95,7 +94,7 @@ async function createDevice(device) {
     } catch (er) {
         return er;
     }
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
         deviceModel.save((saveError, savedUser) => {
             if (saveError) {
                 reject(saveError);
@@ -107,11 +106,12 @@ async function createDevice(device) {
 }
 
 async function getDevice(id) {
+    //    return new Promise((resolve, reject) => {
     var res = await Device.findOne({
         deviceID: id
     });
     res = deserializeDevice(res);
-    return res;
+    //    })
 }
 
 async function deleteDevice(id) {

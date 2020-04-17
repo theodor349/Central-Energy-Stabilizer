@@ -6,6 +6,8 @@ const tempGainPrSecond = 0.0033;
 const tempLossPrSecond = 0.0017;
 
 let deviceInfo = {};
+let waterHeaterOnInterval;
+let waterHeaterOffInterval;
 
 function getLocalDeviceInfo() {
     let idRawData = fs.readFileSync('DeviceId.json');
@@ -41,7 +43,7 @@ setDeviceId('10222P1-11');
 console.log(deviceInfo);
 
 // Unique function for water heater
-// Due to the lack of sensors, we assume the waterheater to be 0 degress on startup
+// Due to the lack of sensors, we assume the waterheater to be 0 degrees on startup
 function initCurrentTemp() {
     let uniqueProperties = deviceInfo.uniqueProperties;
     if (uniqueProperties.currentTemp === null) {
@@ -116,14 +118,14 @@ function changeStateToOn() {
 
 function waterHeaterOn() {
     let uniqueProperties = deviceInfo.uniqueProperties;
-    var waterHeaterOffInterval = setInterval(() => {
+    waterHeaterOnInterval = setInterval(() => {
         uniqueProperties.currentTemp += tempGainPrSecond;
     }, updateInterval);
 }
 
 function waterHeaterOff() {
     let uniqueProperties = deviceInfo.uniqueProperties;
-    var waterHeaterOnInterval = setInterval(() => {
+    waterHeaterOffInterval = setInterval(() => {
         uniqueProperties.currentTemp -= tempLossPrSecond;
     }, updateInterval);
 }

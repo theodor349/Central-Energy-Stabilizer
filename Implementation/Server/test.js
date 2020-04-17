@@ -50,7 +50,7 @@ function createDevicePrototype() {
     }
 
     let deviceWaterHeater_1 = {
-        deviceID: "id",
+        deviceID: "testId",
         isAutomatic: Boolean(false),
         currentPower: 132,
         currentState: "Off",
@@ -63,18 +63,12 @@ function createDevicePrototype() {
     return deviceWaterHeater_1;
 }
 
-let device = createDevicePrototype();
-
 // Tests functions on creating entries into the database
 describe('Creating database entries', () => {
-    it('creates a device', (done) => {
-        let rap = da.createDevice(device);
-        setTimeout(function() {
-            console.log("TESTING-1");
-            console.log(rap);
-            rap.then(console.log(rap));
-            console.log("TESTING-2");
-        }, 1000);
+    it('creates a device', async () => {
+        let device = createDevicePrototype();
+        let rap = await da.createDevice(device);
+        assert(rap.isNew !== undefined && !rap.isNew);
     });
 });
 

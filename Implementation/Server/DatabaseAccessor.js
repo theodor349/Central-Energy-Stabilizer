@@ -33,6 +33,7 @@ async function run(connectionString) {
         useNewUrlParser: true,
         useUnifiedTopology: true
     });
+    dropDatabase();
 }
 
 async function dropDatabase() {
@@ -71,32 +72,41 @@ const functions = {
 module.exports = functions;
 
 async function createDevice(device) {
+    // TODO: Remove this
+    setTimeout(function() {
+        return "Something bad Happend";
+    }, 100);
     let serilizedDevice = serializeDevice(device);
-    const deviceModel = new Device({
-        scheduledByUser: serilizedDevice.scheduledByUser,
-        isScheduled: serilizedDevice.isScheduled,
-        nextState: serilizedDevice.nextState,
-        scheduled: serilizedDevice.scheduled,
-        scheduledInterval: serilizedDevice.scheduledInterval,
+    let deviceModel;
+    try {
+        deviceModel = new Device({
+            scheduledByUser: serilizedDevice.scheduledByUser,
+            isScheduled: serilizedDevice.isScheduled,
+            nextState: serilizedDevice.nextState,
+            scheduled: serilizedDevice.scheduled,
+            scheduledInterval: serilizedDevice.scheduledInterval,
 
-        // From Device
-        deviceID: serilizedDevice.deviceID,
-        isAutomatic: serilizedDevice.isAutomatic,
-        currentPower: serilizedDevice.currentPower,
-        currentState: serilizedDevice.currentState,
-        deviceType: serilizedDevice.deviceType,
-        isConnected: serilizedDevice.isConnected,
-        programs: serilizedDevice.programs,
-        uniqueProperties: serilizedDevice.uniqueProperties
-    });
-    deviceModel.save((saveError, savedUser) => {
-        if (saveError)
-            console.log(saveError);
-        else {
-            console.log("Created Success");
-            console.log(savedUser);
-            return savedUser;
-        }
+            // From Device
+            deviceID: serilizedDevice.deviceID,
+            isAutomatic: serilizedDevice.isAutomatic,
+            currentPower: serilizedDevice.currentPower,
+            currentState: serilizedDevice.currentState,
+            deviceType: serilizedDevice.deviceType,
+            isConnected: serilizedDevice.isConnected,
+            programs: serilizedDevice.programs,
+            uniqueProperties: serilizedDevice.uniqueProperties
+        });
+    } catch (er) {
+        return er;
+    }
+    return new Promise(function(resolve, reject) {
+        deviceModel.save((saveError, savedUser) => {
+            if (saveError) {
+                reject(saveError);
+            } else {
+                resolve(savedUser);
+            }
+        });
     });
 }
 

@@ -27,12 +27,13 @@ let Graph = mongoose.model("Graphs", new mongoose.Schema({
     SECTION: Setup Functions
 */
 
-run('mongodb://localhost:27017/P2').catch(error => console.log(error.stack));
+run('mongodb://localhost:27017/P2Test').catch(error => console.log(error.stack));
 async function run(connectionString) {
     await mongoose.connect(connectionString, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     });
+    test();
 }
 
 async function dropDatabase() {
@@ -44,7 +45,13 @@ async function dropDatabase() {
 // TODO: Remove tests
 function test() {
     dropDatabase();
-    createDevice(createDevicePrototype());
+    for (var i = 0; i < 100; i++) {
+        createDevice(createDevicePrototype("id" + i));
+    }
+
+    setTimeout(function() {
+        deleteDevice("id1");
+    }, 1000);
     //    setTimeout(async function() {
     //        let res = await getDevice("id");
     //        console.log(res);
@@ -57,6 +64,8 @@ function test() {
 */
 
 const functions = {
+    startServer: () => startServer(),
+    startTestServer: () => startTestServer(),
     createDevice: (device) => createDevice(device),
     getDevice: (id) => getDevice(id),
     deleteDevice: (id) => deleteDevice(id),
@@ -106,16 +115,21 @@ async function createDevice(device) {
 }
 
 async function getDevice(id) {
-    //    return new Promise((resolve, reject) => {
     var res = await Device.findOne({
         deviceID: id
     });
     res = deserializeDevice(res);
-    //    })
 }
 
 async function deleteDevice(id) {
-
+    Device.deleteOne({
+        deviceID: id
+    }, (err) => {
+        if (err)
+            console.log(err);
+        else
+            console.log("Deleted: " + id);
+    });
 }
 
 async function updateDevice(id, field, value) {
@@ -179,7 +193,7 @@ function serilizeGraph(graph) {
           For testing only
 */
 
-function createDevicePrototype() {
+function createDevicePrototype(id) {
     let program_0 = {
         graph: [
             1,
@@ -228,7 +242,7 @@ function createDevicePrototype() {
     }
 
     let deviceWaterHeater_1 = {
-        deviceID: "id",
+        deviceID: id,
         isAutomatic: Boolean(false),
         currentPower: 132,
         currentState: "Off",

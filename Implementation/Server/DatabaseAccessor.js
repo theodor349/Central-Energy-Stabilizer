@@ -92,8 +92,11 @@ async function createDevice(device) {
     deviceModel.save((saveError, savedUser) => {
         if (saveError)
             console.log(saveError);
-        else
+        else {
+            console.log("Created Success");
+            console.log(savedUser);
             return savedUser;
+        }
     });
 }
 

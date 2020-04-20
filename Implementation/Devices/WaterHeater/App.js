@@ -10,14 +10,14 @@ let waterHeaterOnInterval;
 let waterHeaterOffInterval;
 
 const functions = {
+    testSetup: () => testSetup(),
     getDeviceInfo: () => getDeviceInfo(),
     setDeviceId: (id) => setDeviceId(id),
-    changeStateToOff: () => changeStateToOff()
-};
+    changeStateToOff: () => changeStateToOff(),
+    changeStateToOn: () => changeStateToOn(),
 
-function getDeviceInfo(){
-    return deviceInfo;
-}
+};
+module.exports = functions;
 
 function getLocalDeviceInfo() {
     let idRawData = fs.readFileSync('DeviceId.json');
@@ -48,9 +48,9 @@ function setDeviceId(id) {
 }
 
 getLocalDeviceInfo();
-console.log(deviceInfo);
+//console.log(deviceInfo);
 setDeviceId('10222P1-11');
-console.log(deviceInfo);
+//console.log(deviceInfo);
 
 // Unique function for water heater
 // Due to the lack of sensors, we assume the waterheater to be 0 degrees on startup
@@ -66,8 +66,7 @@ function initState() {
     if (uniqueProperties.currentTemp < uniqueProperties.minTemp) {
         deviceInfo.state = "On";
         waterHeaterOn();
-    }
-    else {
+    } else {
         deviceInfo.state = "Off";
         waterHeaterOff();
     }
@@ -76,12 +75,12 @@ function initState() {
 initCurrentTemp();
 initState();
 
-console.log(deviceInfo.state);
+//console.log(deviceInfo.state);
 
-setInterval(() => {
+let updater = setInterval(() => {
     checkState();
-    console.log(deviceInfo.state);
-    console.log(deviceInfo.uniqueProperties.currentTemp);
+    //console.log(deviceInfo.state);
+    //console.log(deviceInfo.uniqueProperties.currentTemp);
 }, updateInterval);
 
 function checkState() {
@@ -91,23 +90,19 @@ function checkState() {
         uniqueProperties.currentTemp > uniqueProperties.minTemp &&
         deviceInfo.state === "On") {
         changeStateToOff();
-    }
-    else if (uniqueProperties.currentTemp <= uniqueProperties.minTemp &&
-            deviceInfo.state === "Off") {
+    } else if (uniqueProperties.currentTemp <= uniqueProperties.minTemp &&
+        deviceInfo.state === "Off") {
         changeStateToOn();
-    }
-    else if (deviceInfo.isConnected === true &&
-            deviceInfo.serverMessage === "Off" &&
-            deviceInfo.state === "On") {
+    } else if (deviceInfo.isConnected === true &&
+        deviceInfo.serverMessage === "Off" &&
+        deviceInfo.state === "On") {
         changeStateToOff();
-    }
-    else if (deviceInfo.isConnected === true &&
-            deviceInfo.serverMessage === "On" &&
-            deviceInfo.state === "Off") {
+    } else if (deviceInfo.isConnected === true &&
+        deviceInfo.serverMessage === "On" &&
+        deviceInfo.state === "Off") {
         changeStateToOn();
-    }
-    else if (deviceInfo.onDisconnect === true &&
-            deviceInfo.state === "On") {
+    } else if (deviceInfo.onDisconnect === true &&
+        deviceInfo.state === "On") {
         changeStateToOff();
     }
 }
@@ -138,4 +133,16 @@ function waterHeaterOff() {
     waterHeaterOffInterval = setInterval(() => {
         uniqueProperties.currentTemp -= tempLossPrSecond;
     }, updateInterval);
+}
+
+/*
+    TESTING ONLY
+*/
+
+function testSetup() {
+    clearInterval(updater);
+}
+
+function getDeviceInfo() {
+    return deviceInfo;
 }

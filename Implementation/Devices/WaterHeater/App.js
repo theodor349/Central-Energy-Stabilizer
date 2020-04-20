@@ -9,6 +9,16 @@ let deviceInfo = {};
 let waterHeaterOnInterval;
 let waterHeaterOffInterval;
 
+const functions = {
+    getDeviceInfo: () => getDeviceInfo(),
+    setDeviceId: (id) => setDeviceId(id),
+    changeStateToOff: () => changeStateToOff()
+};
+
+function getDeviceInfo(){
+    return deviceInfo;
+}
+
 function getLocalDeviceInfo() {
     let idRawData = fs.readFileSync('DeviceId.json');
     let infoRawData = fs.readFileSync('DeviceInfo.json');

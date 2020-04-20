@@ -1,5 +1,5 @@
 const assert = require('assert');
-const da = require('./DatabaseAccessor.js');
+const da = require('./../DatabaseAccessor.js');
 
 function createDevicePrototype() {
     let program_0 = {

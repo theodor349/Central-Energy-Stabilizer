@@ -1,27 +1,28 @@
 {
-  "name": "devices",
-  "version": "1.0.0",
-  "description": "",
-  "main": "App.js",
-  "scripts": {
-    "start": "nodemon App.js",
-    "test": "jest"
-  },
-  "nodemonConfig": {
-    "ignore": [
-      "DeviceId.json",
-      "DeviceInfo.json"
-    ],
-    "delay": "2500"
-  },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "jest": "^25.1.0"
-  },
-  "dependencies": {
-    "express": "^4.17.1",
-    "nodemon": "^2.0.2",
-    "socket.io": "^2.3.0"
-  }
+    "name": "devices",
+    "version": "1.0.0",
+    "description": "",
+    "main": "App.js",
+    "scripts": {
+        "start": "nodemon App.js",
+        "test": "nodemon --exec mocha"
+    },
+    "nodemonConfig": {
+        "ignore": [
+            "DeviceId.json",
+            "DeviceInfo.json"
+        ],
+        "delay": "2500"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "assert": "^2.0.0",
+        "mocha": "^7.1.1",
+    },
+    "dependencies": {
+        "express": "^4.17.1",
+        "nodemon": "^2.0.2",
+        "socket.io": "^2.3.0"
+    }
 }

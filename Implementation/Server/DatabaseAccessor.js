@@ -115,10 +115,15 @@ async function createDevice(device) {
 }
 
 async function getDevice(id) {
-    var res = await Device.findOne({
+    let res = await Device.findOne({
         deviceID: id
+    }, (err) => {
+
+      if(err)
+        return err;
+
     });
-    res = deserializeDevice(res);
+    return deserializeDevice(res);
 }
 
 async function deleteDevice(id) {
@@ -126,9 +131,9 @@ async function deleteDevice(id) {
         deviceID: id
     }, (err) => {
         if (err)
-            console.log(err);
+            return err;
         else
-            console.log("Deleted: " + id);
+            return true;
     });
 }
 

@@ -75,6 +75,7 @@ const functions = {
     updateGraph: (id, statIndex, values) => updateGraph(id, statIndex, values),
     appendToGraph: (id, statIndex, values) => updateGraph(id, statIndex, values),
     removePartOfGraph: (id, statIndex, amount) => removePartOfGraph(id, statIndex, amount),
+    dropDatabase: () => dropDatabase(),
 }
 
 module.exports = functions;

@@ -2,9 +2,21 @@ const assert = require('assert');
 const app = require('./../App.js');
 
 describe('Water heater stateMachine', () => {
+    let testDevice = {
+        state: "On",
+        isConnected: false,
+        serverMessage: null,
+        uniqueProperties: {
+            currentTemp: 91,
+            minTemp: 55,
+            maxTemp: 90
+        }
+    }
 
-
-
+    it('device is too hot', () => {
+        app.checkState(testDevice);
+        assert(testDevice.state === "Off");
+    })
 
 });
 

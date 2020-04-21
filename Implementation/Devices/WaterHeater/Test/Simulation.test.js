@@ -1,7 +1,19 @@
 const assert = require('assert');
 const app = require('./../App.js');
-app.testSetup();
 
+describe('Water heater stateMachine', () => {
+
+
+
+
+});
+
+
+
+
+
+
+/*
 describe('Changing states', () => {
     it('set to off', () => {
         app.changeStateToOff();
@@ -42,4 +54,4 @@ describe('Changing states', () => {
         let info = app.getDeviceInfo();
         assert(info.state === 'On');
     });
-});
+}); */

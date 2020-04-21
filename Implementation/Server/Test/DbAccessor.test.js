@@ -64,40 +64,42 @@ function createDevicePrototype() {
 }
 
 // Tests functions on creating entries into the database
-describe('Creating database entries', () => {
-    it('creates a device', async () => {
+describe('Creating database devices', () => {
+    it('creates a device correct', async () => {
         let device = createDevicePrototype();
-        let rap = await da.createDevice(device);
-        assert(rap.isNew !== undefined && !rap.isNew);
+        let res = await da.createDevice(device);
+        assert(res.isNew !== undefined && !res.isNew);
     });
 });
 
-// Tests functions on reading entries from the database
-//describe('Reading database entries', () => {
-//    it('reads a device', (done) => {
-//        device = da.getDevice(device.deviceID).then(() => {
-//            assert(!device.isNew);
-//            done();
-//        });
-//    });
-//});
-//
-//// Tests functions on deleting devices from the database
-//describe('Deleting database entries', () => {
-//    it('deletes a device', (done) => {
-//        da.deleteDevice(device.deviceID).then(() => {
-//            assert(da.getDevice(device.deviceID) === False);
-//            done();
-//        });
-//    });
-//});
-//
-//// Tests functions on updating devices in database
-//describe('Updating database entries', () => {
-//    it('updates a device', (done) => {
-//        da.updateDevice(device.deviceID, device.currentPower, 135).then(() => {
-//            assert(device.currentPower === 135);
-//            done();
-//        });
-//    });
-//});
+describe('Deleting database devices', () => {
+    it('delete a device correct', async () => {
+        let device = createDevicePrototype();
+        await da.createDevice(device);
+        let res = await da.deleteDevice(device.id);
+        let resD = await getDevice(da.getDevice(device.id));
+        assert(res === true && resD !== undefined);
+    });
+});
+
+describe('Update database devices', () => {
+    it('update state of device correct', async () => {
+        let device = createDevicePrototype();
+        await da.createDevice(device);
+        let res = await da.updateDevice(device.id, "state", "On");
+        let redD = await da.getDevice(device.id);
+        assert(res === true && resD !== undefined && resD.state === "On");
+    });
+
+    it('update uniqueProperties of device correct', async () => {
+        let device = createDevicePrototype();
+        await da.createDevice(device);
+
+        let props = device.uniqueProperties;
+        props.mintemp = 10;
+
+        let res = await da.updateDevice(device.id, "uniqueProperties", props);
+        let redD = await da.getDevice(device.id);
+        assert(res === true && resD !== undefined && resD.uniqueProperties.mintemp === 10);
+    });
+});

@@ -66,12 +66,14 @@ function createDevicePrototype() {
 // Tests functions on creating entries into the database
 describe('Creating database devices', () => {
     it('creates a device correct', async () => {
+        da.dropDatabase();
         let device = createDevicePrototype();
         let res = await da.createDevice(device);
         assert(res.isNew !== undefined && !res.isNew);
     });
 
     it('creates a device wrong input', async () => {
+        da.dropDatabase();
         let device = createDevicePrototype();
         device.isAutomatic = "PLZ return an Error";
         let res = await da.createDevice(device);
@@ -81,27 +83,30 @@ describe('Creating database devices', () => {
 
 describe('Deleting database devices', () => {
     it('delete a device correct', async () => {
+        da.dropDatabase();
         let device = createDevicePrototype();
         await da.createDevice(device);
         let res = await da.deleteDevice(device.id);
         let resD = await da.getDevice(device.id);
-        console.log(res);
-        console.log(resD);
         assert(res === true && resD === null);
     });
 
     it('delete a device wrong ID', async () => {
+        da.dropDatabase();
         let device = createDevicePrototype();
         await da.createDevice(device);
         await da.deleteDevice(device.id);
+
         let res = await da.deleteDevice(device.id);
         let resD = await da.getDevice(da.getDevice(device.id));
+
         assert(res === true && resD !== undefined);
     });
 });
 
 describe('Update database devices', () => {
     it('update state of device correct', async () => {
+        da.dropDatabase();
         let device = createDevicePrototype();
         await da.createDevice(device);
         let res = await da.updateDevice(device.id, "state", "On");
@@ -110,6 +115,7 @@ describe('Update database devices', () => {
     });
 
     it('update uniqueProperties of device correct', async () => {
+        da.dropDatabase();
         let device = createDevicePrototype();
         await da.createDevice(device);
 

@@ -116,16 +116,20 @@ async function createDevice(device) {
 }
 
 async function getDevice(id) {
-    let res = await Device.findOne({
-        deviceID: id
-    }, (err) => {
-        if (err)
-            return err;
+    return new Promise((resolve, reject) => {
+        Device.findOne({
+            deviceID: id
+        }, (err, res) => {
+            if (err) {
+                reject(err);
+            } else {
+                if (res !== null)
+                    resolve(deserializeDevice(res))
+                else
+                    resolve(null);
+            }
+        });
     });
-
-    if (res === null)
-        return null;
-    return deserializeDevice(res);
 }
 
 async function deleteDevice(id) {

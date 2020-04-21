@@ -128,13 +128,16 @@ async function getDevice(id) {
 }
 
 async function deleteDevice(id) {
-    Device.deleteOne({
-        deviceID: id
-    }, (err) => {
-        if (err)
-            return err;
-        else
-            return true;
+    return new Promise((resolve, reject) => {
+        Device.deleteOne({
+            deviceID: id
+        }, (err) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(true);
+            }
+        });
     });
 }
 

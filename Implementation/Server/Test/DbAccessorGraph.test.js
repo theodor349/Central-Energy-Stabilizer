@@ -12,7 +12,7 @@ function createGraphPrototype() {
     ];
 
     let graph = {
-        id: "id",
+        graphId: "testId",
         values: values
     };
     return graph;
@@ -23,7 +23,10 @@ describe('Creating database graph', () => {
         da.dropDatabase();
         let graph = createGraphPrototype();
         let res = await da.createGraph(graph);
-        assert(res.isNew !== undefined && !res.isNew);
+        assert(
+            res.isNew !== undefined &&
+            !res.isNew &&
+            JSON.parse(res.values).length === 60);
     });
 
     it('creates a graph wrong input', async () => {
@@ -31,6 +34,6 @@ describe('Creating database graph', () => {
         let graph = createGraphPrototype();
         graph.values = "PLZ return an error";
         let res = await da.createGraph(graph);
-        assert(err.name === 'ValidationError');
+        assert(res === null);
     });
 });

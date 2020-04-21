@@ -19,7 +19,7 @@ let Device = mongoose.model("Devices", new mongoose.Schema({
     uniqueProperties: String
 }));
 let Graph = mongoose.model("Graphs", new mongoose.Schema({
-    id: String,
+    graphId: String,
     values: String
 }));
 
@@ -64,8 +64,7 @@ function test() {
 */
 
 const functions = {
-    startServer: () => startServer(),
-    startTestServer: () => startTestServer(),
+    // For testing and deployment
     createDevice: (device) => createDevice(device),
     getDevice: (id) => getDevice(id),
     deleteDevice: (id) => deleteDevice(id),
@@ -82,29 +81,31 @@ module.exports = functions;
 
 async function createDevice(device) {
     let serilizedDevice = serializeDevice(device);
-    let deviceModel;
-    try {
-        deviceModel = new Device({
-            scheduledByUser: serilizedDevice.scheduledByUser,
-            isScheduled: serilizedDevice.isScheduled,
-            nextState: serilizedDevice.nextState,
-            scheduled: serilizedDevice.scheduled,
-            scheduledInterval: serilizedDevice.scheduledInterval,
 
-            // From Device
-            deviceID: serilizedDevice.deviceID,
-            isAutomatic: serilizedDevice.isAutomatic,
-            currentPower: serilizedDevice.currentPower,
-            currentState: serilizedDevice.currentState,
-            deviceType: serilizedDevice.deviceType,
-            isConnected: serilizedDevice.isConnected,
-            programs: serilizedDevice.programs,
-            uniqueProperties: serilizedDevice.uniqueProperties
-        });
-    } catch (er) {
-        return er;
-    }
     return new Promise((resolve, reject) => {
+        let deviceModel;
+        try {
+            deviceModel = new Device({
+                scheduledByUser: serilizedDevice.scheduledByUser,
+                isScheduled: serilizedDevice.isScheduled,
+                nextState: serilizedDevice.nextState,
+                scheduled: serilizedDevice.scheduled,
+                scheduledInterval: serilizedDevice.scheduledInterval,
+
+                // From Device
+                deviceID: serilizedDevice.deviceID,
+                isAutomatic: serilizedDevice.isAutomatic,
+                currentPower: serilizedDevice.currentPower,
+                currentState: serilizedDevice.currentState,
+                deviceType: serilizedDevice.deviceType,
+                isConnected: serilizedDevice.isConnected,
+                programs: serilizedDevice.programs,
+                uniqueProperties: serilizedDevice.uniqueProperties
+            });
+        } catch (err) {
+            reject(err);
+        }
+
         deviceModel.save((saveError, savedUser) => {
             if (saveError) {
                 reject(saveError);
@@ -155,18 +156,27 @@ async function updateDevice(id, field, value) {
 }
 
 async function createGraph(graph) {
-    let serilizedGraph = serilizeGraph(graph);
-    const graphModel = new Graph({
-        id: graph.id,
-        values: graph.values
-    });
-    graphModel.save((saveError, savedUser) => {
-        if (saveError)
-            console.log(saveError);
-        else
-            return savedUser;
-    });
+    if (!isGraphValid(graph)) {
+        return null;
+    }
 
+    let serilizedGraph = serilizeGraph(graph);
+    return new Promise((resolve, reject) => {
+        try {
+            const graphModel = new Graph({
+                graphId: serilizedGraph.graphId,
+                values: serilizedGraph.values
+            });
+            graphModel.save((saveError, savedUser) => {
+                if (saveError)
+                    reject(saveError);
+                else
+                    resolve(savedUser);
+            });
+        } catch (err) {
+            reject(err);
+        }
+    });
 }
 
 async function getGraph(id) {
@@ -199,6 +209,10 @@ function deserializeDevice(device) {
     device.programs = JSON.parse(device.programs);
     device.uniqueProperties = JSON.parse(device.uniqueProperties);
     return device;
+}
+
+function isGraphValid(graph) {
+    return graph.values.length === 60
 }
 
 function serilizeGraph(graph) {
@@ -285,7 +299,7 @@ function createGraphPrototype() {
     ];
 
     let graph = {
-        id: "id",
+        graphId: "id",
         values: values
     };
     return graph;

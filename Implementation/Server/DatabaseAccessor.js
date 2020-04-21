@@ -123,7 +123,13 @@ async function getDevice(id) {
         return err;
 
     });
-    return deserializeDevice(res);
+
+    if(res !== null)
+      return deserializeDevice(res);
+
+    else
+      return false;
+
 }
 
 async function deleteDevice(id) {

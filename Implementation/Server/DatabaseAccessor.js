@@ -118,18 +118,13 @@ async function getDevice(id) {
     let res = await Device.findOne({
         deviceID: id
     }, (err) => {
-
-      if(err)
-        return err;
-
+        if (err)
+            return err;
     });
 
-    if(res !== null)
-      return deserializeDevice(res);
-
-    else
-      return false;
-
+    if (res === null)
+        return null;
+    return deserializeDevice(res);
 }
 
 async function deleteDevice(id) {

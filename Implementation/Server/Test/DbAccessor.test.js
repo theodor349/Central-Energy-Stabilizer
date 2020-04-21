@@ -73,9 +73,9 @@ describe('Creating database devices', () => {
 
     it('creates a device wrong input', async () => {
         let device = createDevicePrototype();
-        device.isAutomatic = "AHAHAHAHAHHAHA";
+        device.isAutomatic = "PLZ return an Error";
         let res = await da.createDevice(device);
-        assert();
+        assert(err.name === 'ValidationError');
     });
 });
 
@@ -84,8 +84,10 @@ describe('Deleting database devices', () => {
         let device = createDevicePrototype();
         await da.createDevice(device);
         let res = await da.deleteDevice(device.id);
-        let resD = await getDevice(da.getDevice(device.id));
-        assert(res === true && resD !== undefined);
+        let resD = await da.getDevice(device.id);
+        console.log(res);
+        console.log(resD);
+        assert(res === true && resD === null);
     });
 
     it('delete a device wrong ID', async () => {

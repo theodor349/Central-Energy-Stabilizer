@@ -72,7 +72,7 @@ describe('Creating database devices', () => {
         assert(res.isNew !== undefined && !res.isNew);
     });
 
-    it('creates a device wrong input', async () => {
+    it('creates a device with wrong input', async () => {
         da.dropDatabase();
         let device = createDevicePrototype();
         device.isAutomatic = "PLZ return an Error";
@@ -81,13 +81,33 @@ describe('Creating database devices', () => {
     });
 });
 
+describe('Get database devices', () => {
+    it('get a device correct', async () => {
+        da.dropDatabase();
+        let device = createDevicePrototype();
+        await da.createDevice(device);
+
+        let res = await da.getDevice("testId");
+        assert(res !== null && res.deviceID === device.deviceID);
+    });
+
+    it('get a device wrong ID', async () => {
+        da.dropDatabase();
+        let device = createDevicePrototype();
+        await da.createDevice(device);
+
+        let res = await da.getDevice("PLZ return an Error");
+        assert(res === null);
+    });
+});
+
 describe('Deleting database devices', () => {
     it('delete a device correct', async () => {
         da.dropDatabase();
         let device = createDevicePrototype();
         await da.createDevice(device);
-        let res = await da.deleteDevice(device.id);
-        let resD = await da.getDevice(device.id);
+        let res = await da.deleteDevice(device.deviceID);
+        let resD = await da.getDevice(device.deviceID);
         assert(res === true && resD === null);
     });
 
@@ -95,10 +115,10 @@ describe('Deleting database devices', () => {
         da.dropDatabase();
         let device = createDevicePrototype();
         await da.createDevice(device);
-        await da.deleteDevice(device.id);
+        await da.deleteDevice(device.deviceID);
 
-        let res = await da.deleteDevice(device.id);
-        let resD = await da.getDevice(device.id);
+        let res = await da.deleteDevice(device.deviceID);
+        let resD = await da.getDevice(device.deviceID);
 
         assert(res === true && resD !== undefined);
     });
@@ -109,8 +129,8 @@ describe('Update database devices', () => {
         da.dropDatabase();
         let device = createDevicePrototype();
         await da.createDevice(device);
-        let res = await da.updateDevice(device.id, "state", "On");
-        let redD = await da.getDevice(device.id);
+        let res = await da.updateDevice(device.deviceID, "state", "On");
+        let redD = await da.getDevice(device.deviceID);
         assert(res === true && resD !== undefined && resD.state === "On");
     });
 
@@ -122,8 +142,8 @@ describe('Update database devices', () => {
         let props = device.uniqueProperties;
         props.mintemp = 10;
 
-        let res = await da.updateDevice(device.id, "uniqueProperties", props);
-        let redD = await da.getDevice(device.id);
+        let res = await da.updateDevice(device.deviceID, "uniqueProperties", props);
+        let redD = await da.getDevice(device.deviceID);
         assert(res === true && resD !== undefined && resD.uniqueProperties.mintemp === 10);
     });
 });

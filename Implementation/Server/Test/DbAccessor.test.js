@@ -70,6 +70,13 @@ describe('Creating database devices', () => {
         let res = await da.createDevice(device);
         assert(res.isNew !== undefined && !res.isNew);
     });
+
+    it('creates a device wrong input', async () => {
+        let device = createDevicePrototype();
+        device.isAutomatic = "AHAHAHAHAHHAHA";
+        let res = await da.createDevice(device);
+        assert();
+    });
 });
 
 describe('Deleting database devices', () => {
@@ -78,6 +85,15 @@ describe('Deleting database devices', () => {
         await da.createDevice(device);
         let res = await da.deleteDevice(device.id);
         let resD = await getDevice(da.getDevice(device.id));
+        assert(res === true && resD !== undefined);
+    });
+
+    it('delete a device wrong ID', async () => {
+        let device = createDevicePrototype();
+        await da.createDevice(device);
+        await da.deleteDevice(device.id);
+        let res = await da.deleteDevice(device.id);
+        let resD = await da.getDevice(da.getDevice(device.id));
         assert(res === true && resD !== undefined);
     });
 });

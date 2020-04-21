@@ -117,18 +117,22 @@ async function createDevice(device) {
 
 async function getDevice(id) {
     return new Promise((resolve, reject) => {
-        Device.findOne({
-            deviceID: id
-        }, (err, res) => {
-            if (err) {
-                reject(err);
-            } else {
-                if (res !== null)
-                    resolve(deserializeDevice(res))
-                else
-                    resolve(null);
-            }
-        });
+        try {
+            Device.findOne({
+                deviceID: id
+            }, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if (res !== null)
+                        resolve(deserializeDevice(res))
+                    else
+                        resolve(null);
+                }
+            });
+        } catch (err) {
+            reject(err);
+        }
     });
 }
 

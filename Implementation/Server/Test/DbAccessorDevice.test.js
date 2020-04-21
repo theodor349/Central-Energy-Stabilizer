@@ -98,7 +98,7 @@ describe('Deleting database devices', () => {
         await da.deleteDevice(device.id);
 
         let res = await da.deleteDevice(device.id);
-        let resD = await da.getDevice(da.getDevice(device.id));
+        let resD = await da.getDevice(device.id);
 
         assert(res === true && resD !== undefined);
     });

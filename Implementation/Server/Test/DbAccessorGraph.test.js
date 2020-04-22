@@ -19,7 +19,7 @@ function createGraphPrototype() {
 }
 
 describe('Creating database graph', () => {
-    it('creates a graph correct', async () => {
+    it('creates a graph correct id', async () => {
         da.dropDatabase();
         let graph = createGraphPrototype();
         let res = await da.createGraph(graph);
@@ -29,11 +29,72 @@ describe('Creating database graph', () => {
             JSON.parse(res.values).length === 60);
     });
 
-    it('creates a graph wrong input', async () => {
+    it('creates a graph wrong id', async () => {
         da.dropDatabase();
         let graph = createGraphPrototype();
         graph.values = "PLZ return an error";
         let res = await da.createGraph(graph);
         assert(res === null);
     });
+});
+
+describe('Get database graph', () => {
+    it('get a graph correct id', async () => {
+        da.dropDatabase();
+        let graph = createGraphPrototype();
+        await da.createGraph(graph);
+        let res = await da.getGraph(graph.graphId);
+        assert(res.values.length === 60);
+    });
+    it('get a graph wrong id', async () => {
+        da.dropDatabase();
+        let graph = createGraphPrototype();
+        await da.createGraph(graph);
+        let res = await da.getGraph("PLZ return an error");
+        assert(res === null);
+    });
+});
+
+describe('Update database graph', () => {
+    it('Update a graph correct id', async () => {
+        da.dropDatabase();
+        let graph = createGraphPrototype();
+        await da.createGraph(graph);
+        let res = await da.updateGraph(graph.graphId, 10, [1, 1, 1]);
+        assert(res === true && res.values.length === 60);
+    });
+    it('Update a graph wrong id', async () => {
+        da.dropDatabase();
+        let graph = createGraphPrototype();
+        await da.createGraph(graph);
+        let res = await da.updateGraph("PLZ return an error", 10, [1, 1, 1]);
+        assert(res !== undefined && res === false);
+    });
+    it('Update a graph wrong start index', async () => {
+        da.dropDatabase();
+        let graph = createGraphPrototype();
+        await da.createGraph(graph);
+        let res = await da.updateGraph(graph.graphId, 165, [1, 1, 1]);
+        assert(res !== undefined && res === false);
+    });
+    it('Update a graph too many values', async () => {
+        da.dropDatabase();
+        let graph = createGraphPrototype();
+        await da.createGraph(graph);
+        let res = await da.updateGraph(graph.graphId, 0,
+            [
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+            ]);
+        assert(res !== undefined && res === false);
+    });
+
 });

@@ -38,9 +38,7 @@ const functions = {
     // For testing and deployment
     createGraph: (graph) => createGraph(graph),
     getGraph: (id) => getGraph(id),
-    updateGraph: (id, statIndex, values) => updateGraph(id, statIndex, values),
-    appendToGraph: (id, statIndex, values) => updateGraph(id, statIndex, values),
-    removePartOfGraph: (id, statIndex, amount) => removePartOfGraph(id, statIndex, amount),
+    updateGraph: (id, startIndex, values) => updateGraph(id, startIndex, values),
     dropDatabase: () => dropDatabase(),
 }
 
@@ -71,14 +69,45 @@ async function createGraph(graph) {
 }
 
 async function getGraph(id) {
-
+    return new Promise((resolve, reject) => {
+        getDeviceHelper(id)
+            .then((graph) => {
+                if (graph === null)
+                    resolve(null)
+                else
+                    resolve(deserilizeGraph(graph));
+            })
+            .catch((err) => {
+                reject(err);
+            })
+    });
 }
 
-async function appendToGraph(id, startIndex, values) {
-
+async function getDeviceHelper(id) {
+    return new Promise((resolve, reject) => {
+        try {
+            Graph.findOne({
+                graphId: id
+            }, (err, res) => {
+                if (err)
+                    reject(err);
+                else {
+                    if (res !== null)
+                        resolve(res);
+                    else
+                        resolve(null);
+                }
+            });
+        } catch (err) {
+            reject(err);
+        }
+    });
 }
 
-async function removePartOfGraph(id, startIndex, amount) {
+function updateGraph(id, startIndex, values) {
+    if (!validUpdate(startIndex, values))
+        return false;
+
 
 }
 
@@ -93,6 +122,20 @@ function isGraphValid(graph) {
 function serilizeGraph(graph) {
     graph.values = JSON.stringify(graph.values);
     return graph;
+}
+
+function deserilizeGraph(graph) {
+    graph = graph.toObject({
+        getters: true,
+        virtuals: true
+    });
+    graph.values = JSON.parse(graph.values);
+    return graph;
+}
+
+function validUpdate(startIndex, values) {
+    if (startIndex < 0 || startIndex >= 60) return false;
+    return startIndex + values.length < 60;
 }
 
 /*

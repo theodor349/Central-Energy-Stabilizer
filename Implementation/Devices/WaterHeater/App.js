@@ -5,9 +5,11 @@ const functions = {
     testSetup: () => testSetup(),
     getDeviceInfo: () => getDeviceInfo(),
     setDeviceId: (id) => setDeviceId(id),
-    changeStateToOff: () => changeStateToOff(),
-    changeStateToOn: () => changeStateToOn(),
-
+    changeStateToOff: (waterheater) => changeStateToOff(waterheater),
+    changeStateToOn: (waterheater) => changeStateToOn(waterheater),
+    checkState: (waterheater) => checkState(waterheater),
+    waterHeaterOn: (waterheater) => waterHeaterOn(waterheater),
+    waterHeaterOff: (waterheater) => waterHeaterOff(waterheater),
 };
 module.exports = functions;
 
@@ -22,7 +24,7 @@ let waterHeaterOffInterval;
 
 getLocalDeviceInfo();
 initCurrentTemp();
-initState();
+initState(deviceInfo);
 
 
 function getLocalDeviceInfo() {
@@ -64,71 +66,70 @@ function initCurrentTemp() {
     }
 }
 
-function initState() {
-    let uniqueProperties = deviceInfo.uniqueProperties;
+function initState(waterheater) {
+    let uniqueProperties = waterheater.uniqueProperties;
     if (uniqueProperties.currentTemp < uniqueProperties.minTemp) {
-        deviceInfo.state = "On";
-        waterHeaterOn();
+        waterheater.state = "On";
+        waterHeaterOn(waterheater);
     } else {
-        deviceInfo.state = "Off";
-        waterHeaterOff();
+        waterheater.state = "Off";
+        waterHeaterOff(waterheater);
     }
 }
 
-
-
 let updater = setInterval(() => {
-    checkState(deviceInfo);
+    //checkState(deviceInfo);
 }, updateInterval);
 
 function checkState(waterheater) {
-
     let uniqueProperties = waterheater.uniqueProperties;
 
-    if (waterheater.isConnected === false &&
+    if (uniqueProperties.currentTemp > uniqueProperties.maxTemp) {
+        changeStateToOff(waterheater);
+    } else if (waterheater.isConnected === false &&
         uniqueProperties.currentTemp > uniqueProperties.minTemp &&
         waterheater.state === "On") {
-        changeStateToOff();
+        changeStateToOff(waterheater);
     } else if (uniqueProperties.currentTemp <= uniqueProperties.minTemp &&
         waterheater.state === "Off") {
-        changeStateToOn();
+        changeStateToOn(waterheater);
     } else if (waterheater.isConnected === true &&
         waterheater.serverMessage === "Off" &&
         waterheater.state === "On") {
-        changeStateToOff();
+        changeStateToOff(waterheater);
     } else if (waterheater.isConnected === true &&
         waterheater.serverMessage === "On" &&
         waterheater.state === "Off") {
-        changeStateToOn();
+        changeStateToOn(waterheater);
     } else if (waterheater.onDisconnect === true &&
         waterheater.state === "On") {
-        changeStateToOff();
+        changeStateToOff(waterheater);
     }
 }
 
-function changeStateToOff() {
-    deviceInfo.onDisconnect = false;
+function changeStateToOff(waterheater) {
+    waterheater.onDisconnect = false;
 
     clearInterval(waterHeaterOnInterval);
-    waterHeaterOff();
-    deviceInfo.state = "Off";
+    waterHeaterOff(waterheater);
+    waterheater.state = "Off";
 }
 
-function changeStateToOn() {
+function changeStateToOn(waterheater) {
     clearInterval(waterHeaterOffInterval);
-    waterHeaterOn();
-    deviceInfo.state = "On";
+    waterHeaterOn(waterheater);
+    waterheater.state = "On";
 }
 
-function waterHeaterOn() {
-    let uniqueProperties = deviceInfo.uniqueProperties;
+function waterHeaterOn(waterheater) {
+    let uniqueProperties = waterheater.uniqueProperties;
     waterHeaterOnInterval = setInterval(() => {
         uniqueProperties.currentTemp += tempGainPrSecond;
     }, updateInterval);
 }
 
-function waterHeaterOff() {
-    let uniqueProperties = deviceInfo.uniqueProperties;
+function waterHeaterOff(waterheater) {
+    let uniqueProperties = waterheater.uniqueProperties;
     waterHeaterOffInterval = setInterval(() => {
         uniqueProperties.currentTemp -= tempLossPrSecond;
     }, updateInterval);

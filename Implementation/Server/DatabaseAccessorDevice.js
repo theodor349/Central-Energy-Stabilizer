@@ -134,7 +134,25 @@ async function deleteDevice(id) {
 }
 
 async function updateDevice(id, field, value) {
-
+    return new Promise((resolve, reject) => {
+        Device.findOne({
+            deviceID: id
+        }, (err) => {
+            if (err) {
+                reject(err);
+            } else {
+                Device.field = value;
+                Device.save((saveError, savedUser) => {
+                    if (saveError) {
+                        reject(saveError);
+                    } else {
+                        resolve(savedUser);
+                    }
+                });
+                resolve(true);
+            }
+       });
+    });
 }
 
 /*
@@ -155,6 +173,19 @@ function deserializeDevice(device) {
     device.programs = JSON.parse(device.programs);
     device.uniqueProperties = JSON.parse(device.uniqueProperties);
     return device;
+}
+
+function updateDeviceHelper(id){
+    return new Promise((resolve, reject) => {
+        Device.findOne({
+            deviceID: id
+        }, (err) =>{
+            if (err) {
+                reject(err);
+            } else {
+            }
+        });
+    });
 }
 
 /*

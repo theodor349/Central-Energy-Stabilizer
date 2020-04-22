@@ -129,9 +129,12 @@ describe('Update database devices', () => {
         da.dropDatabase();
         let device = createDevicePrototype();
         await da.createDevice(device);
-        let res = await da.updateDevice(device.deviceID, "state", "On");
-        let redD = await da.getDevice(device.deviceID);
-        assert(res === true && resD !== undefined && resD.state === "On");
+        let res = await da.updateDevice(device.deviceID, "currentState", "On");
+        let resD = await da.getDevice(device.deviceID);
+
+        console.log("res: " + res);
+        console.log(resD);
+        assert(res === true && resD !== undefined && resD.currentState === "On");
     });
 
     it('update uniqueProperties of device correct', async () => {
@@ -143,7 +146,8 @@ describe('Update database devices', () => {
         props.mintemp = 10;
 
         let res = await da.updateDevice(device.deviceID, "uniqueProperties", props);
-        let redD = await da.getDevice(device.deviceID);
+        let resD = await da.getDevice(device.deviceID);
+
         assert(res === true && resD !== undefined && resD.uniqueProperties.mintemp === 10);
     });
 });

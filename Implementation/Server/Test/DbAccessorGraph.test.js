@@ -1,5 +1,5 @@
 const assert = require('assert');
-const da = require('./../DatabaseAccessor.js');
+const da = require('./../DatabaseAccessorGraph.js');
 
 function createGraphPrototype() {
     let values = [

@@ -18,10 +18,6 @@ let Device = mongoose.model("Devices", new mongoose.Schema({
     programs: String,
     uniqueProperties: String
 }));
-let Graph = mongoose.model("Graphs", new mongoose.Schema({
-    graphId: String,
-    values: String
-}));
 
 /*
     SECTION: Setup Functions
@@ -33,7 +29,7 @@ async function run(connectionString) {
         useNewUrlParser: true,
         useUnifiedTopology: true
     });
-    test();
+    //test();
 }
 
 async function dropDatabase() {
@@ -48,15 +44,6 @@ function test() {
     for (var i = 0; i < 100; i++) {
         createDevice(createDevicePrototype("id" + i));
     }
-
-    setTimeout(function() {
-        deleteDevice("id1");
-    }, 1000);
-    //    setTimeout(async function() {
-    //        let res = await getDevice("id");
-    //        console.log(res);
-    //    }, 1000);
-    createGraph(createGraphPrototype());
 }
 
 /*
@@ -69,11 +56,6 @@ const functions = {
     getDevice: (id) => getDevice(id),
     deleteDevice: (id) => deleteDevice(id),
     updateDevice: (id, field, value) => updateDevice(id, field, value),
-    createGraph: (graph) => createGraph(graph),
-    getGraph: (id) => getGraph(id),
-    updateGraph: (id, statIndex, values) => updateGraph(id, statIndex, values),
-    appendToGraph: (id, statIndex, values) => updateGraph(id, statIndex, values),
-    removePartOfGraph: (id, statIndex, amount) => removePartOfGraph(id, statIndex, amount),
     dropDatabase: () => dropDatabase(),
 }
 
@@ -155,42 +137,6 @@ async function updateDevice(id, field, value) {
 
 }
 
-async function createGraph(graph) {
-    if (!isGraphValid(graph)) {
-        return null;
-    }
-
-    let serilizedGraph = serilizeGraph(graph);
-    return new Promise((resolve, reject) => {
-        try {
-            const graphModel = new Graph({
-                graphId: serilizedGraph.graphId,
-                values: serilizedGraph.values
-            });
-            graphModel.save((saveError, savedUser) => {
-                if (saveError)
-                    reject(saveError);
-                else
-                    resolve(savedUser);
-            });
-        } catch (err) {
-            reject(err);
-        }
-    });
-}
-
-async function getGraph(id) {
-
-}
-
-async function appendToGraph(id, startIndex, values) {
-
-}
-
-async function removePartOfGraph(id, startIndex, amount) {
-
-}
-
 /*
     SECTION: Helper Functions
 */
@@ -209,15 +155,6 @@ function deserializeDevice(device) {
     device.programs = JSON.parse(device.programs);
     device.uniqueProperties = JSON.parse(device.uniqueProperties);
     return device;
-}
-
-function isGraphValid(graph) {
-    return graph.values.length === 60
-}
-
-function serilizeGraph(graph) {
-    graph.values = JSON.stringify(graph.values);
-    return graph;
 }
 
 /*
@@ -285,22 +222,4 @@ function createDevicePrototype(id) {
     };
 
     return deviceWaterHeater_1;
-}
-
-// Graphs
-function createGraphPrototype() {
-    let values = [
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-        10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-        20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-        30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
-        40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
-        50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
-    ];
-
-    let graph = {
-        graphId: "id",
-        values: values
-    };
-    return graph;
 }

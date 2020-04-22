@@ -61,7 +61,11 @@ describe('Update database graph', () => {
         let graph = createGraphPrototype();
         await da.createGraph(graph);
         let res = await da.updateGraph(graph.graphId, 10, [1, 1, 1]);
-        assert(res === true && res.values.length === 60);
+        assert(res === true && res.values.length === 60 &&
+            res.values[10] == 1 &&
+            res.values[11] == 1 &&
+            res.values[12] == 1
+        );
     });
     it('Update a graph wrong id', async () => {
         da.dropDatabase();

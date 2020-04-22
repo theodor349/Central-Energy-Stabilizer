@@ -70,7 +70,7 @@ async function createGraph(graph) {
 
 async function getGraph(id) {
     return new Promise((resolve, reject) => {
-        getDeviceHelper(id)
+        getGraphHelper(id)
             .then((graph) => {
                 if (graph === null)
                     resolve(null)
@@ -83,7 +83,7 @@ async function getGraph(id) {
     });
 }
 
-async function getDeviceHelper(id) {
+async function getGraphHelper(id) {
     return new Promise((resolve, reject) => {
         try {
             Graph.findOne({
@@ -108,7 +108,11 @@ function updateGraph(id, startIndex, values) {
     if (!validUpdate(startIndex, values))
         return false;
 
-
+    let graph = getGraphHelper(id);
+    for (var i = 0; i < values.length; i++) {
+        graph.values[i + startIndex] = values[i];
+    }
+    // TODO: Finish this funtion 
 }
 
 /*

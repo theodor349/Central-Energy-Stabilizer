@@ -78,7 +78,7 @@ function initState(waterheater) {
 }
 
 let updater = setInterval(() => {
-    //checkState(deviceInfo);
+    checkState(deviceInfo);
 }, updateInterval);
 
 function checkState(waterheater) {

@@ -226,25 +226,6 @@ async function updateDevice(id, field, value) {
             .catch((err) => {
                 reject(err);
             });
-        /*
-        Device.findOne({
-            deviceId: id
-        }, (err) => {
-            if (err) {
-                reject(err);
-            } else {
-                Device.field = value;
-                Device.save((saveError, savedUser) => {
-                    if (saveError) {
-                        reject(saveError);
-                    } else {
-                        resolve(savedUser);
-                    }
-                });
-                resolve(true);
-            }
-       });
-       */
     });
 }
 

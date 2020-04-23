@@ -132,9 +132,9 @@ describe('Update database devices', () => {
         let res = await da.updateDevice(device.deviceId, "currentState", "On");
 
         let resD = await da.getDevice(device.deviceId);
-        console.log("Did update: " + res);
-        console.log("Device: ");
-        console.log(resD);
+//        console.log("Did update: " + res);
+//        console.log("Device: ");
+//        console.log(resD);
         assert(res === true && resD !== undefined && resD.currentState === "On");
     });
 
@@ -143,9 +143,9 @@ describe('Update database devices', () => {
         let device = createDevicePrototype();
         await da.createDevice(device);
 
-        let props = device.uniqueProperties;
-        props.mintemp = 10;
-
+        let props = JSON.parse(device.uniqueProperties);
+        props[1].mintemp = 10;
+        console.log(props);
         let res = await da.updateDevice(device.deviceId, "uniqueProperties", props);
         let resD = await da.getDevice(device.deviceId);
 

@@ -134,7 +134,6 @@ async function deleteDevice(id) {
 }
 
 async function updateDevice(id, field, value) {
-    console.log("ID: " + id);
     return new Promise((resolve, reject) => {
         getDeviceHelper(id)
             .then((device) => {
@@ -181,9 +180,12 @@ async function updateDevice(id, field, value) {
                         update = { isConnected: value };
                         break;
                     case "programs":
+                        value = JSON.stringify(value);
                         update = { programs: value };
                         break;
                     case "uniqueProperties":
+                        //value = JSON.stringify(value);
+                        console.log(value);
                         update = {uniqueProperties: value};
                         break;
                 }

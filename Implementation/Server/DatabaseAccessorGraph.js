@@ -38,7 +38,7 @@ const functions = {
     // For testing and deployment
     createGraph: (graph) => createGraph(graph),
     getGraph: (id) => getGraph(id),
-    updateGraph: (id, startIndex, values) => updateGraph(id, startIndex, values),
+    updateGraph: (id, values, shouldAdd) => updateGraph(id, values, shouldAdd),
     dropDatabase: () => dropDatabase(),
 }
 
@@ -104,8 +104,8 @@ async function getGraphHelper(id) {
     });
 }
 
-async function updateGraph(id, startIndex, points) {
-    if (!validUpdate(startIndex, points))
+async function updateGraph(id, points, shouldAdd) {
+    if (!validUpdate(points))
         return false;
 
     return new Promise(async (resolve, reject) => {
@@ -116,8 +116,18 @@ async function updateGraph(id, startIndex, points) {
 
                 let values = JSON.parse(graph.values);
 
-                for (let i = 0; i < points.length; i++) {
-                    values[i + startIndex] = points[i];
+                if (shouldAdd) {
+                    for (let i = 0; i < points.length; i++) {
+                        if (points[i] === 'n')
+                            continue;
+                        values[i] += points[i];
+                    }
+                } else {
+                    for (let i = 0; i < points.length; i++) {
+                        if (points[i] === 'n')
+                            continue;
+                        values[i] = points[i];
+                    }
                 }
 
                 let conditions = {
@@ -140,11 +150,6 @@ async function updateGraph(id, startIndex, points) {
             .catch((err) => {
                 reject(err);
             })
-
-
-
-        // TODO: Finish this funtion
-
     });
 }
 
@@ -170,9 +175,8 @@ function deserilizeGraph(graph) {
     return graph;
 }
 
-function validUpdate(startIndex, values) {
-    if (startIndex < 0 || startIndex >= 60) return false;
-    return startIndex + values.length < 60;
+function validUpdate(values) {
+    return values.length === 60;
 }
 
 /*

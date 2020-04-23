@@ -61,16 +61,51 @@ describe('Update database graph', () => {
         let graph = createGraphPrototype();
         await da.createGraph(graph);
 
-        let res = await da.updateGraph(graph.graphId, 10, [1, 1, 1]);
+        let res = await da.updateGraph(graph.graphId,
+            [
+                'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n',
+                1, 1, 1, 'n', 'n', 'n', 'n', 'n', 'n', 'n',
+                'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n',
+                'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n',
+                'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n',
+                'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 1,
+            ], false);
         let resG = await da.getGraph(graph.graphId);
 
         assert(res === true &&
             resG.values.length === 60 &&
             resG.values[10] === 1 &&
             resG.values[11] === 1 &&
-            resG.values[12] === 1
+            resG.values[12] === 1 &&
+            resG.values[59] === 1
         );
     });
+
+    it('Add to a graph with correct id', async () => {
+        da.dropDatabase();
+        let graph = createGraphPrototype();
+        await da.createGraph(graph);
+
+        let res = await da.updateGraph(graph.graphId,
+            [
+                'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n',
+                1, 1, 1, 'n', 'n', 'n', 'n', 'n', 'n', 'n',
+                'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n',
+                'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n',
+                'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n',
+                'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 1,
+            ], true);
+        let resG = await da.getGraph(graph.graphId);
+
+        assert(res === true &&
+            resG.values.length === 60 &&
+            resG.values[10] === 11 &&
+            resG.values[11] === 12 &&
+            resG.values[12] === 13 &&
+            resG.values[59] === 60
+        );
+    });
+
     it('Update a graph wrong id', async () => {
         da.dropDatabase();
         let graph = createGraphPrototype();

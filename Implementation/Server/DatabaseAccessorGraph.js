@@ -139,7 +139,7 @@ async function updateGraph(id, points, shouldAdd) {
                 Graph.updateOne(conditions, update, options, (err, success) => {
                     if (err)
                         reject(err);
-                    if (success.ok === 1)
+                    if (success.ok === 1 && success.nModified === 1)
                         resolve(true);
                     else
                         resolve(false);

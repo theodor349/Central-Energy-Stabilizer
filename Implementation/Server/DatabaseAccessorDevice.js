@@ -107,9 +107,9 @@ async function getDevice(id) {
                 if (err) {
                     reject(err);
                 } else {
-                    if (res !== null)
+                    if (res !== null) {
                         resolve(deserializeDevice(res))
-                    else
+                    } else
                         resolve(null);
                 }
             });
@@ -134,32 +134,34 @@ async function deleteDevice(id) {
 }
 
 async function updateDevice(id, field, value) {
+    console.log("ID: " + id);
     return new Promise((resolve, reject) => {
         getDeviceHelper(id)
-        .then((device) => {
-            if (device === null)
-                resolve(false);
-
-            let conditions = {
-                deviceId: id
-            };
-            let update = {
-                currentState: value
-            };
-            let options = {};
-
-            Device.updateOne(conditions, update, options, (err, success) => {
-                if (err)
-                    reject(err);
-                if (success.ok === 1)
-                    resolve(true);
-                else
+            .then((device) => {
+                if (device === null)
                     resolve(false);
+
+                let conditions = {
+                    deviceID: id
+                };
+                let update = {
+                    isConnected: false,
+                    currentPower: 100
+                };
+                let options = {};
+
+                Device.updateOne(conditions, update, options, (err, success) => {
+                    if (err)
+                        reject(err);
+                    if (success.ok === 1 && success.nModified === 1) {
+                        resolve(true);
+                    } else
+                        resolve(false);
+                });
+            })
+            .catch((err) => {
+                reject(err);
             });
-        })
-        .catch((err) => {
-            reject(err);
-        });
         /*
         Device.findOne({
             deviceID: id
@@ -202,7 +204,7 @@ function deserializeDevice(device) {
     return device;
 }
 
-function getDeviceHelper(id){
+function getDeviceHelper(id) {
     return new Promise((resolve, reject) => {
         try {
             Device.findOne({
@@ -217,11 +219,11 @@ function getDeviceHelper(id){
                         resolve(null);
                 }
             });
-        } catch (err){
+        } catch (err) {
             reject(err);
         }
     });
-    
+
 }
 
 /*

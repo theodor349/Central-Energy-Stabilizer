@@ -17,7 +17,7 @@ function createGraphPrototype() {
     };
     return graph;
 }
-if (false) {
+if (true) {
     describe('DatabaseAccessor Graph', () => {
         /*
             Create

@@ -58,92 +58,74 @@ function createDevicePrototype() {
     return deviceWaterHeater_1;
 }
 
-// Tests functions on creating entries into the database
-describe('Creating database devices', () => {
-    it('creates a device correct', async () => {
-        da.dropDatabase();
-        let device = createDevicePrototype();
-        let res = await da.createDevice(device);
-        assert(res.isNew !== undefined && !res.isNew);
+if (true) {
+    // Tests functions on creating entries into the database
+    describe('DatabaseAccessor Device', () => {
+        it('create: device correct with correct input', async () => {
+            da.dropDatabase();
+            let device = createDevicePrototype();
+            let res = await da.createDevice(device);
+            assert(res.isNew !== undefined && !res.isNew);
+        });
+
+        it('get: device correct with correct ID', async () => {
+            da.dropDatabase();
+            let device = createDevicePrototype();
+            await da.createDevice(device);
+
+            let res = await da.getDevice("testId");
+            assert(res !== null && res.deviceId === device.deviceId);
+        });
+
+        it('get: device wrong with ID', async () => {
+                da.dropDatabase();
+            let device = createDevicePrototype();
+            await da.createDevice(device);
+    
+            let res = await da.getDevice("PLZ return an Error");
+            assert(res === null);
+        });
+        it('delete: device with correct ID', async () => {
+            da.dropDatabase();
+            let device = createDevicePrototype();
+            await da.createDevice(device);
+            let res = await da.deleteDevice(device.deviceId);
+            let resD = await da.getDevice(device.deviceId);
+            assert(res === true && resD === null);
+        });
+    
+        it('delete: device with wrong ID', async () => {
+            da.dropDatabase();
+            let device = createDevicePrototype();
+            await da.createDevice(device);
+            await da.deleteDevice(device.deviceId);
+    
+            let res = await da.deleteDevice(device.deviceId);
+            let resD = await da.getDevice(device.deviceId);
+    
+            assert(res === true && resD !== undefined);
+        });
+        it('update:  device with correct state', async () => {
+            da.dropDatabase();
+            let device = createDevicePrototype();
+            await da.createDevice(device);
+            let res = await da.updateDevice(device.deviceId, "currentState", "On");
+    
+            let resD = await da.getDevice(device.deviceId);
+            assert(res === true && resD !== undefined && resD.currentState === "On");
+        });
+
+        it('update: device with correct uniqueProperties', async () => {
+            da.dropDatabase();
+            let device = createDevicePrototype();
+            await da.createDevice(device);
+
+            let props = JSON.parse(device.uniqueProperties);
+            props.mintemp = 10;
+            let res = await da.updateDevice(device.deviceId, "uniqueProperties", props);
+            let resD = await da.getDevice(device.deviceId);
+
+            assert(res === true && resD !== undefined && resD.uniqueProperties.mintemp === 10);
+        });
     });
-
-    it('creates a device with wrong input', async () => {
-        da.dropDatabase();
-        let device = createDevicePrototype();
-        device.isAutomatic = "PLZ return an Error";
-        let res = await da.createDevice(device);
-        assert(err.name === 'ValidationError');
-    });
-});
-
-describe('Get database devices', () => {
-    it('get a device correct', async () => {
-        da.dropDatabase();
-        let device = createDevicePrototype();
-        await da.createDevice(device);
-
-        let res = await da.getDevice("testId");
-        assert(res !== null && res.deviceId === device.deviceId);
-    });
-
-    it('get a device wrong ID', async () => {
-        da.dropDatabase();
-        let device = createDevicePrototype();
-        await da.createDevice(device);
-
-        let res = await da.getDevice("PLZ return an Error");
-        assert(res === null);
-    });
-});
-
-describe('Deleting database devices', () => {
-    it('delete a device correct', async () => {
-        da.dropDatabase();
-        let device = createDevicePrototype();
-        await da.createDevice(device);
-        let res = await da.deleteDevice(device.deviceId);
-        let resD = await da.getDevice(device.deviceId);
-        assert(res === true && resD === null);
-    });
-
-    it('delete a device wrong ID', async () => {
-        da.dropDatabase();
-        let device = createDevicePrototype();
-        await da.createDevice(device);
-        await da.deleteDevice(device.deviceId);
-
-        let res = await da.deleteDevice(device.deviceId);
-        let resD = await da.getDevice(device.deviceId);
-
-        assert(res === true && resD !== undefined);
-    });
-});
-
-describe('Update database devices', () => {
-    it('update state of device correct', async () => {
-        da.dropDatabase();
-        let device = createDevicePrototype();
-        await da.createDevice(device);
-        let res = await da.updateDevice(device.deviceId, "currentState", "On");
-
-        let resD = await da.getDevice(device.deviceId);
-        //        console.log("Did update: " + res);
-        //        console.log("Device: ");
-        //        console.log(resD);
-        assert(res === true && resD !== undefined && resD.currentState === "On");
-    });
-
-    it('update uniqueProperties of device correct', async () => {
-        da.dropDatabase();
-        let device = createDevicePrototype();
-        await da.createDevice(device);
-
-        let props = JSON.parse(device.uniqueProperties);
-        props.mintemp = 10;
-        console.log(props);
-        let res = await da.updateDevice(device.deviceId, "uniqueProperties", props);
-        let resD = await da.getDevice(device.deviceId);
-
-        assert(res === true && resD !== undefined && resD.uniqueProperties.mintemp === 10);
-    });
-});
+}

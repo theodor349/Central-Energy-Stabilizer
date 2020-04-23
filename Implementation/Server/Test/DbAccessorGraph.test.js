@@ -108,21 +108,6 @@ if (true) {
                 resG.values[59] === 1
             );
         });
-        it('update: graph with wrong id and correct values', async () => {
-            da.dropDatabase();
-            let graph = createGraphPrototype();
-            await da.createGraph(graph);
-            let res = await da.updateGraph("PLZ return an error",
-                [
-                    'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n',
-                    1, 1, 1, 'n', 'n', 'n', 'n', 'n', 'n', 'n',
-                    'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n',
-                    'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n',
-                    'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n',
-                    'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 1,
-                ], false);
-            assert(res !== undefined && res === false);
-        });
         it('update: graph with too few values', async () => {
             da.dropDatabase();
             let graph = createGraphPrototype();
@@ -139,7 +124,7 @@ if (true) {
             da.dropDatabase();
             let graph = createGraphPrototype();
             await da.createGraph(graph);
-            let res = await da.updateGraph(graph.graphId, 0,
+            let res = await da.updateGraph(graph.graphId,
                 [
                     0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
                     0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
@@ -151,8 +136,42 @@ if (true) {
                     0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
                     0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
                     0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-                ]);
+                ], false);
             assert(res !== undefined && res === false);
+        });
+        it('update: graph that does not exist with correct values', async () => {
+            da.dropDatabase();
+            let graph = createGraphPrototype();
+            let res = await da.updateGraph("PLZ do not return an error",
+                [
+                    'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n',
+                    1, 1, 1, 'n', 'n', 'n', 'n', 'n', 'n', 'n',
+                    'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n',
+                    'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n',
+                    'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n',
+                    'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 'n', 1,
+                ], false);
+            assert(res !== undefined && res === true);
+        });
+        it('update: adding to a graph that does not exist with correct values', async () => {
+            da.dropDatabase();
+            let graph = createGraphPrototype();
+            let res = await da.updateGraph(graph.graphId,
+                [
+                    0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                    0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                    0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                    0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                    0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                    0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                ], true);
+            let resG = await da.getGraph(graph.graphId);
+            assert(res === true &&
+                resG.values.length === 60 &&
+                resG.values[0] === 0 &&
+                resG.values[11] === 1 &&
+                resG.values[22] === 2 &&
+                resG.values[33] === 3);
         });
     });
 }

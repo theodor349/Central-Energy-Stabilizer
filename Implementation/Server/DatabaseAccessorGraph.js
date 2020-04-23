@@ -99,19 +99,22 @@ async function getGraphHelper(id) {
 }
 
 async function updateGraph(id, points, shouldAdd) {
-    if (!validUpdate(points))
+    if (!validUpdate(points)) {
         return false;
+    }
 
     return new Promise(async (resolve, reject) => {
         getGraphHelper(id)
-            .then((graph) => {
-                // Check
-                if (graph === null)
-                    resolve(false);
-
-
+            .then(async (graph) => {
+                let values;
+                if (graph === null) {
+                    graph = createDefaultGraph(id);
+                    values = graph.values;
+                    await createGraph(graph);
+                } else {
+                    values = JSON.parse(graph.values);
+                }
                 // Update Values
-                let values = JSON.parse(graph.values);
                 if (shouldAdd) {
                     for (let i = 0; i < points.length; i++) {
                         if (points[i] === 'n')
@@ -154,6 +157,23 @@ async function updateGraph(id, points, shouldAdd) {
 /*
     SECTION: Helper Functions
 */
+
+function createDefaultGraph(id) {
+    let values = [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    ];
+
+    let graph = {
+        graphId: id,
+        values: values
+    };
+    return graph;
+}
 
 function isGraphValid(graph) {
     return graph.values.length === 60

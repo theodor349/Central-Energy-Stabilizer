@@ -11,6 +11,7 @@ const functions = {
     setWaterHeaterOn: (waterHeater) => setWaterHeaterOn(waterHeater),
     setWaterHeaterOff: (waterHeater) => setWaterHeaterOff(waterHeater),
     setEnergyUsage: (waterHeater) => setEnergyUsage(waterHeater),
+    stopEnergyUsageInterval: (waterHeater) => stopEnergyUsageInterval(waterHeater),
 };
 module.exports = functions;
 
@@ -28,7 +29,6 @@ let energyUsageInterval;
 getLocalDeviceInfo();
 initCurrentTemp();
 initState(deviceInfo);
-
 
 function getLocalDeviceInfo() {
     let idRawData = fs.readFileSync('DeviceId.json');
@@ -62,7 +62,7 @@ function setEnergyUsage(waterHeater) {
 }
 
 function stopEnergyUsageInterval(waterHeater) {
-    let uniqueProperties = waterHeater.uniqueProperties;½
+    let uniqueProperties = waterHeater.uniqueProperties;
     clearInterval(energyUsageInterval);
     waterHeater.graphIndex = 0;
     uniqueProperties.currentPower = 0;

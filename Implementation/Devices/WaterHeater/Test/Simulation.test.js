@@ -192,7 +192,7 @@ describe('Water heater temperature while off/on', () => {
 
 describe('Water heater current power usage', () => {
 
-    it('Energy usage goes to next state in array', async () => {
+    it('Energy usage goes to next state in array from index 0', async () => {
         let testDevice = {
             programs: [
                 {
@@ -209,6 +209,62 @@ describe('Water heater current power usage', () => {
 
         app.setEnergyUsage(testDevice);
         assert(testDevice.uniqueProperties.currentPower === 750);
+    })
 
+    it('Energy usage goes to next state in array from index 2', async () => {
+        let testDevice = {
+            programs: [
+                {
+                    pointArray: [
+                        0, 750, 1500, 2250, 3000, Infinity
+                    ]
+                }
+            ],
+            uniqueProperties: {
+                currentPower: 0
+            },
+            graphIndex: 2
+        }
+
+        app.setEnergyUsage(testDevice);
+        assert(testDevice.uniqueProperties.currentPower === 2250);
+    })
+
+    it('Energy usage does not go to infinity (stays at max)', async () => {
+        let testDevice = {
+            programs: [
+                {
+                    pointArray: [
+                        0, 750, 1500, 2250, 3000, Infinity
+                    ]
+                }
+            ],
+            uniqueProperties: {
+                currentPower: 0
+            },
+            graphIndex: 4
+        }
+
+        app.setEnergyUsage(testDevice);
+        assert(testDevice.uniqueProperties.currentPower === 3000 && testDevice.graphIndex === 4);
+    })
+
+    it('Current power is 0 when device is turned off', async () => {
+        let testDevice = {
+            programs: [
+                {
+                    pointArray: [
+                        0, 750, 1500, 2250, 3000, Infinity
+                    ]
+                }
+            ],
+            uniqueProperties: {
+                currentPower: 3000
+            },
+            graphIndex: 5
+        }
+
+        app.stopEnergyUsageInterval(testDevice);
+        assert(testDevice.graphIndex === 0 && testDevice.uniqueProperties.currentPower === 0);
     })
 });

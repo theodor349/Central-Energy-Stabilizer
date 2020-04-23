@@ -49,12 +49,12 @@ if (true) {
             let res = await da.getGraph(graph.graphId);
             assert(res.values.length === 60);
         });
-        it('get: graph with wrong id', async () => {
+        it('get: graph that does not exist', async () => {
             da.dropDatabase();
             let graph = createGraphPrototype();
             await da.createGraph(graph);
-            let res = await da.getGraph("PLZ return an error");
-            assert(res === null);
+            let res = await da.getGraph("PLZ do not return an error");
+            assert(res !== null && res.values[10] === 0);
         });
 
         /*

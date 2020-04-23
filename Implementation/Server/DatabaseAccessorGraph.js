@@ -65,11 +65,14 @@ async function createGraph(graph) {
 async function getGraph(id) {
     return new Promise((resolve, reject) => {
         getGraphHelper(id)
-            .then((graph) => {
-                if (graph === null)
-                    resolve(null)
-                else
+            .then(async (graph) => {
+                if (graph === null) {
+                    graph = createDefaultGraph(id);
+                    graph = await createGraph(graph);
                     resolve(deserilizeGraph(graph));
+                } else {
+                    resolve(deserilizeGraph(graph));
+                }
             })
             .catch((err) => {
                 reject(err);

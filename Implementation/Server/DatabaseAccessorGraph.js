@@ -104,15 +104,48 @@ async function getGraphHelper(id) {
     });
 }
 
-function updateGraph(id, startIndex, values) {
-    if (!validUpdate(startIndex, values))
+async function updateGraph(id, startIndex, points) {
+    if (!validUpdate(startIndex, points))
         return false;
 
-    let graph = getGraphHelper(id);
-    for (var i = 0; i < values.length; i++) {
-        graph.values[i + startIndex] = values[i];
-    }
-    // TODO: Finish this funtion 
+    return new Promise(async (resolve, reject) => {
+        getGraphHelper(id)
+            .then((graph) => {
+                if (graph === null)
+                    resolve(false);
+
+                let values = JSON.parse(graph.values);
+
+                for (let i = 0; i < points.length; i++) {
+                    values[i + startIndex] = points[i];
+                }
+
+                let conditions = {
+                    graphId: id
+                };
+                let update = {
+                    values: JSON.stringify(values)
+                };
+                let options = {};
+
+                Graph.updateOne(conditions, update, options, (err, success) => {
+                    if (err)
+                        reject(err);
+                    if (success.ok === 1)
+                        resolve(true);
+                    else
+                        resolve(false);
+                });
+            })
+            .catch((err) => {
+                reject(err);
+            })
+
+
+
+        // TODO: Finish this funtion
+
+    });
 }
 
 /*

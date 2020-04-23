@@ -6,7 +6,7 @@
 
 const functions = {
     updateSurplus: () => updateSurplus,
-    addDemand: (graph) => addDemand(graph),
-    removeDemand: (graph) => removeDemand(graph),
+    addDemand: (startTime, graph) => addDemand(startTime, graph),
+    removeDemand: (startTime, graph) => removeDemand(startTime, graph),
 }
 module.exports = functions;

@@ -165,8 +165,7 @@ describe('Water heater temperature while off/on', () => {
                 maxTemp: 90
             }
         }
-        app.waterHeaterOn(testDevice);
-        await waitOneTick();
+        app.setWaterHeaterOn(testDevice);
         assert(priorTemp < testDevice.uniqueProperties.currentTemp);
 
     })
@@ -185,22 +184,31 @@ describe('Water heater temperature while off/on', () => {
                 maxTemp: 90
             }
         }
-        app.waterHeaterOff(testDevice);
-        await waitOneTick();
+        app.setWaterHeaterOff(testDevice);
         assert(priorTemp > testDevice.uniqueProperties.currentTemp);
 
     })
-
-
-
-
 });
 
-async function waitOneTick() {
-    return new Promise((resolve, reject) => {
-        setTimeout(function() {
-            resolve();
-        }, 1);
-    });
+describe('Water heater current power usage', () => {
 
-}
+    it('Energy usage goes to next state in array', async () => {
+        let testDevice = {
+            programs: [
+                {
+                    pointArray: [
+                        0, 750, 1500, 2250, 3000, Infinity
+                    ]
+                }
+            ],
+            uniqueProperties: {
+                currentPower: 0
+            },
+            graphIndex: 0
+        }
+
+        app.setEnergyUsage(testDevice);
+        assert(testDevice.uniqueProperties.currentPower === 750);
+
+    })
+});

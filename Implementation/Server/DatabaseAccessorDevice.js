@@ -135,6 +135,32 @@ async function deleteDevice(id) {
 
 async function updateDevice(id, field, value) {
     return new Promise((resolve, reject) => {
+        getDeviceHelper(id)
+        .then((device) => {
+            if (device === null)
+                resolve(false);
+
+            let conditions = {
+                deviceId: id
+            };
+            let update = {
+                currentState: value
+            };
+            let options = {};
+
+            Device.updateOne(conditions, update, options, (err, success) => {
+                if (err)
+                    reject(err);
+                if (success.ok === 1)
+                    resolve(true);
+                else
+                    resolve(false);
+            });
+        })
+        .catch((err) => {
+            reject(err);
+        });
+        /*
         Device.findOne({
             deviceID: id
         }, (err) => {
@@ -152,6 +178,7 @@ async function updateDevice(id, field, value) {
                 resolve(true);
             }
        });
+       */
     });
 }
 
@@ -175,17 +202,26 @@ function deserializeDevice(device) {
     return device;
 }
 
-function updateDeviceHelper(id){
+function getDeviceHelper(id){
     return new Promise((resolve, reject) => {
-        Device.findOne({
-            deviceID: id
-        }, (err) =>{
-            if (err) {
-                reject(err);
-            } else {
-            }
-        });
+        try {
+            Device.findOne({
+                deviceID: id
+            }, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if (res !== null)
+                        resolve(res);
+                    else
+                        resolve(null);
+                }
+            });
+        } catch (err){
+            reject(err);
+        }
     });
+    
 }
 
 /*

@@ -127,9 +127,12 @@ describe('Deleting database devices', () => {
 describe('Update database devices', () => {
     it('update state of device correct', async () => {
         da.dropDatabase();
+        console.log("1");
         let device = createDevicePrototype();
         await da.createDevice(device);
+        console.log("2");
         let res = await da.updateDevice(device.deviceID, "currentState", "On");
+        console.log("3");
         let resD = await da.getDevice(device.deviceID);
 
         console.log("res: " + res);

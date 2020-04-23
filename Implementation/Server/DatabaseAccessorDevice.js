@@ -144,10 +144,49 @@ async function updateDevice(id, field, value) {
                 let conditions = {
                     deviceId: id
                 };
-                let update = {
-                    isConnected: false,
-                    currentPower: 100
-                };
+                let update;
+
+                switch(field){
+                    case "scheduledByUser":
+                        update = { scheduledByUser: value };
+                        break;
+                    case "isScheduled":
+                        update = { isScheduled: value };
+                        break;
+                    case "nextState":
+                        update = { nextState: value };
+                        break;
+                    case "scheduled":
+                        update = { schedule: value };
+                        break;                   
+                    case "scheduledInterval":
+                        update = { scheduledInterval: value };
+                        break;
+                    case "deviceId":
+                        update = { deviceId: value };
+                        break;
+                    case "isAutomatic":
+                        update = { isAutomatic: value };
+                        break;
+                    case "currentPower":
+                        update = { currentPower: value };
+                        break;
+                    case "currentState":
+                        update = { currentState: value };
+                        break;
+                    case "deviceType":
+                        update = { deviceType: value };
+                        break;
+                    case "isConnected":
+                        update = { isConnected: value };
+                        break;
+                    case "programs":
+                        update = { programs: value };
+                        break;
+                    case "uniqueProperties":
+                        update = {uniqueProperties: value};
+                        break;
+                }
                 let options = {};
 
                 Device.updateOne(conditions, update, options, (err, success) => {

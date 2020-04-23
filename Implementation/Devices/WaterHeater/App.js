@@ -200,6 +200,10 @@ socket.on('connect', function() {
         socket.emit('receiveDeviceId', deviceInfo.Id);
     });
 
+    socket.on('setId', function(Id) {
+        setDeviceId(Id);
+        console.log(deviceInfo.Id);
+    })
 });
 
 socket.on('disconnect', function() {
@@ -207,3 +211,4 @@ socket.on('disconnect', function() {
 
     deviceInfo.isConnected = false;
 });
+

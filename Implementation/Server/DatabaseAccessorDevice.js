@@ -9,7 +9,7 @@ let Device = mongoose.model("Devices", new mongoose.Schema({
     scheduledInterval: String,
 
     // From Device
-    deviceID: String,
+    deviceId: String,
     isAutomatic: Boolean,
     currentPower: Number,
     currentState: String,
@@ -75,7 +75,7 @@ async function createDevice(device) {
                 scheduledInterval: serilizedDevice.scheduledInterval,
 
                 // From Device
-                deviceID: serilizedDevice.deviceID,
+                deviceId: serilizedDevice.deviceId,
                 isAutomatic: serilizedDevice.isAutomatic,
                 currentPower: serilizedDevice.currentPower,
                 currentState: serilizedDevice.currentState,
@@ -102,7 +102,7 @@ async function getDevice(id) {
     return new Promise((resolve, reject) => {
         try {
             Device.findOne({
-                deviceID: id
+                deviceId: id
             }, (err, res) => {
                 if (err) {
                     reject(err);
@@ -122,7 +122,7 @@ async function getDevice(id) {
 async function deleteDevice(id) {
     return new Promise((resolve, reject) => {
         Device.deleteOne({
-            deviceID: id
+            deviceId: id
         }, (err) => {
             if (err) {
                 reject(err);
@@ -142,7 +142,7 @@ async function updateDevice(id, field, value) {
                     resolve(false);
 
                 let conditions = {
-                    deviceID: id
+                    deviceId: id
                 };
                 let update = {
                     isConnected: false,
@@ -164,7 +164,7 @@ async function updateDevice(id, field, value) {
             });
         /*
         Device.findOne({
-            deviceID: id
+            deviceId: id
         }, (err) => {
             if (err) {
                 reject(err);
@@ -208,7 +208,7 @@ function getDeviceHelper(id) {
     return new Promise((resolve, reject) => {
         try {
             Device.findOne({
-                deviceID: id
+                deviceId: id
             }, (err, res) => {
                 if (err) {
                     reject(err);
@@ -280,7 +280,7 @@ function createDevicePrototype(id) {
     }
 
     let deviceWaterHeater_1 = {
-        deviceID: id,
+        deviceId: id,
         isAutomatic: Boolean(false),
         currentPower: 132,
         currentState: "Off",

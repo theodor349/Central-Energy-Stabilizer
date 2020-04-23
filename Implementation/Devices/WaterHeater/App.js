@@ -16,10 +16,12 @@ const functions = {
 module.exports = functions;
 
 const fs = require('fs');
+const io = require('socket.io-client');
 const updateInterval = 1000;
 const graphInterval = 60000;
 const tempGainPrSecond = 0.0033;
 const tempLossPrSecond = 0.0017;
+
 
 let deviceInfo = {};
 let waterHeaterOnInterval;
@@ -43,7 +45,18 @@ function getLocalDeviceInfo() {
     deviceInfo.serverMessage = null;
     deviceInfo.onDisconnect = false;
     deviceInfo.graphIndex = 0;
-
+    deviceInfo.programs = [
+        {
+            pointArray: [
+                0,
+                750,
+                1500,
+                2250,
+                3000,
+                Infinity
+            ]
+        }
+    ]
     setDeviceId(idDataObject.Id);
 }
 
@@ -173,15 +186,24 @@ function setWaterHeaterOff(waterHeater) {
     uniqueProperties.currentTemp -= tempLossPrSecond;
 }
 
-deviceInfo.programs = [
-    {
-        pointArray: [
-            0,
-            750,
-            1500,
-            2250,
-            3000,
-            Infinity
-        ]
-    }
-]
+
+// Connection
+let socket = io.connect("http://localhost:3000/device", {
+    reconnection: true,
+});
+
+socket.on('connect', function() {
+    console.log('Connected to localhost:3000');
+    deviceInfo.isConnected = true;
+
+    socket.on('askForId', function() {
+        socket.emit('receiveDeviceId', deviceInfo.Id);
+    });
+
+});
+
+socket.on('disconnect', function() {
+    console.log('Lost connection with localhost:3000');
+
+    deviceInfo.isConnected = false;
+});

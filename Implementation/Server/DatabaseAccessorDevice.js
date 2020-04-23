@@ -145,48 +145,71 @@ async function updateDevice(id, field, value) {
                 };
                 let update;
 
-                switch(field){
+                switch (field) {
                     case "scheduledByUser":
-                        update = { scheduledByUser: value };
+                        update = {
+                            scheduledByUser: value
+                        };
                         break;
                     case "isScheduled":
-                        update = { isScheduled: value };
+                        update = {
+                            isScheduled: value
+                        };
                         break;
                     case "nextState":
-                        update = { nextState: value };
+                        update = {
+                            nextState: value
+                        };
                         break;
                     case "scheduled":
-                        update = { schedule: value };
-                        break;                   
+                        update = {
+                            schedule: value
+                        };
+                        break;
                     case "scheduledInterval":
-                        update = { scheduledInterval: value };
+                        update = {
+                            scheduledInterval: value
+                        };
                         break;
                     case "deviceId":
-                        update = { deviceId: value };
+                        update = {
+                            deviceId: value
+                        };
                         break;
                     case "isAutomatic":
-                        update = { isAutomatic: value };
+                        update = {
+                            isAutomatic: value
+                        };
                         break;
                     case "currentPower":
-                        update = { currentPower: value };
+                        update = {
+                            currentPower: value
+                        };
                         break;
                     case "currentState":
-                        update = { currentState: value };
+                        update = {
+                            currentState: value
+                        };
                         break;
                     case "deviceType":
-                        update = { deviceType: value };
+                        update = {
+                            deviceType: value
+                        };
                         break;
                     case "isConnected":
-                        update = { isConnected: value };
+                        update = {
+                            isConnected: value
+                        };
                         break;
                     case "programs":
-                        value = JSON.stringify(value);
-                        update = { programs: value };
+                        update = {
+                            programs: JSON.stringify(value)
+                        };
                         break;
                     case "uniqueProperties":
-                        //value = JSON.stringify(value);
-                        console.log(value);
-                        update = {uniqueProperties: value};
+                        update = {
+                            uniqueProperties: JSON.stringify(value)
+                        };
                         break;
                 }
                 let options = {};
@@ -300,16 +323,11 @@ function createDevicePrototype(id) {
         program_1
     ];
 
-    let waterHeaterProps = [{
-            temp: 60
-        },
-        {
-            mintemp: 55
-        },
-        {
-            maxtemp: 80
-        }
-    ];
+    let waterHeaterProps = {
+        temp: 60,
+        mintemp: 55,
+        maxtemp: 80
+    }
 
     let scheduleInterval = {
         start: new Date(0),

@@ -232,6 +232,3 @@ socket.on('disconnect', function() {
 
     deviceInfo.isConnected = false;
 });
-
-
-

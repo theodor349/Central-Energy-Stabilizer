@@ -21,12 +21,16 @@ const updateInterval = 1000;
 const graphInterval = 60000;
 const tempGainPrSecond = 0.0033;
 const tempLossPrSecond = 0.0017;
+const initTemp = 66;
 
 
 let deviceInfo = {};
 let waterHeaterOnInterval;
 let waterHeaterOffInterval;
 let energyUsageInterval;
+let socket = io.connect("http://localhost:3000/device", {
+    reconnection: true,
+});
 
 getLocalDeviceInfo();
 initCurrentTemp();
@@ -104,17 +108,17 @@ function setDeviceId(Id) {
 function initCurrentTemp() {
     let uniqueProperties = deviceInfo.uniqueProperties;
     if (uniqueProperties.currentTemp === null) {
-        uniqueProperties.currentTemp = 0;
+        uniqueProperties.currentTemp = initTemp;
     }
 }
 
 function initState(waterHeater) {
     let uniqueProperties = waterHeater.uniqueProperties;
     if (uniqueProperties.currentTemp < uniqueProperties.minTemp) {
-        waterHeater.state = "On";
+        waterHeater.state = "on";
         waterHeaterOn(waterHeater);
     } else {
-        waterHeater.state = "Off";
+        waterHeater.state = "off";
         waterHeaterOff(waterHeater);
     }
 }
@@ -130,22 +134,27 @@ function checkState(waterHeater) {
         changeStateToOff(waterHeater);
     } else if (waterHeater.isConnected === false &&
         uniqueProperties.currentTemp > uniqueProperties.minTemp &&
-        waterHeater.state === "On") {
+        waterHeater.state === "on") {
         changeStateToOff(waterHeater);
     } else if (uniqueProperties.currentTemp <= uniqueProperties.minTemp &&
-        waterHeater.state === "Off") {
+        waterHeater.state === "off") {
         changeStateToOn(waterHeater);
     } else if (waterHeater.isConnected === true &&
-        waterHeater.serverMessage === "Off" &&
-        waterHeater.state === "On") {
+        waterHeater.serverMessage === "off" &&
+        waterHeater.state === "on") {
+        console.log("Server told me to off");
         changeStateToOff(waterHeater);
+        waterHeater.serverMessage = null;
     } else if (waterHeater.isConnected === true &&
-        waterHeater.serverMessage === "On" &&
-        waterHeater.state === "Off") {
+        waterHeater.serverMessage === "on" &&
+        waterHeater.state === "off") {
+        console.log("Server told me to on");
         changeStateToOn(waterHeater);
+        waterHeater.serverMessage = null;
     } else if (waterHeater.onDisconnect === true &&
-        waterHeater.state === "On") {
+        waterHeater.state === "on") {
         changeStateToOff(waterHeater);
+        waterHeater.serverMessage = null;
     }
 }
 
@@ -153,13 +162,21 @@ function changeStateToOff(waterHeater) {
     waterHeater.onDisconnect = false;
     clearInterval(waterHeaterOnInterval);
     waterHeaterOff(waterHeater);
-    waterHeater.state = "Off";
+    waterHeater.state = "off";
+
+    if (socket.connected === true) {
+        socket.emit("stateChanged", waterHeater.state, waterHeater.Id);
+    }
 }
 
 function changeStateToOn(waterHeater) {
     clearInterval(waterHeaterOffInterval);
     waterHeaterOn(waterHeater);
-    waterHeater.state = "On";
+    waterHeater.state = "on";
+    
+    if (socket.connected === true) {
+        socket.emit("stateChanged", waterHeater.state, waterHeater.Id);
+    }
 }
 
 function waterHeaterOn(waterHeater) {
@@ -186,12 +203,7 @@ function setWaterHeaterOff(waterHeater) {
     uniqueProperties.currentTemp -= tempLossPrSecond;
 }
 
-
 // Connection
-let socket = io.connect("http://localhost:3000/device", {
-    reconnection: true,
-});
-
 socket.on('connect', function() {
     console.log('Connected to localhost:3000');
     deviceInfo.isConnected = true;
@@ -202,8 +214,17 @@ socket.on('connect', function() {
 
     socket.on('setId', function(Id) {
         setDeviceId(Id);
-        console.log(deviceInfo.Id);
-    })
+        socket.emit('newDeviceWithId', deviceInfo);
+    });
+    
+    socket.on('on', function() {
+        deviceInfo.serverMessage = "on";
+    });
+
+    socket.on('off', function() {
+        deviceInfo.serverMessage = "off";
+    });
+
 });
 
 socket.on('disconnect', function() {
@@ -211,4 +232,6 @@ socket.on('disconnect', function() {
 
     deviceInfo.isConnected = false;
 });
+
+
 

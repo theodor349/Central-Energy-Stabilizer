@@ -4,21 +4,55 @@
         surplus
 */
 
+const da = require('./DatabaseAccessorGraph.js');
+
 const functions = {
     updateSurplus: () => updateSurplus,
     addDemand: (startTime, graph) => addDemand(startTime, graph),
     removeDemand: (startTime, graph) => removeDemand(startTime, graph),
+    invertValues: (demandGraphs) => invertValues(demandGraphs),
+    splitGraph: (startTime, graph) => splitGraph(startTime, graph),
 }
 module.exports = functions;
 
-function updateSurplus() {
-    let updatedGraph
+function updateSurplus(graph) {
+    console.log("graphId: " + graph.graphId);
+    console.log("graph: " + graph.values);
+    console.log("-------------");
+
+    da.updateGraph(graph.graphId, graph.values, true);
+
 }
 
 function addDemand(startTime, graph) {
 
-    console.log(startTime);
+    lowerGraph = { graphId: undefined, values: [] };
+    upperGraph = { graphId: undefined, values: [] };
 
+    lowerGraph.graphId = "demandGraph-Y" + startTime.getFullYear() + 
+                            "-M" + startTime.getMonth() + 
+                            "-D" + startTime.getDate() +
+                            "-H" + startTime.getHours();
+
+
+    if (startTime.getMinutes() !== 0) {
+        upperGraph.graphId = "demandGraph-Y" + startTime.getFullYear() + 
+                            "-M" + startTime.getMonth() + 
+                            "-D" + startTime.getDate() +
+                            "-H" + (startTime.getHours()+1);
+    }
+
+    demandGraphs = splitGraph(startTime, graph);
+
+    lowerGraph.values = demandGraphs.demandGraphLower;
+    upperGraph.values = demandGraphs.demandGraphUpper;
+    
+//    updateSurplus(lowerGraph);
+//    updateSurplus(upperGraph);
+
+}
+
+function removeDemand(startTime, graph){
     lowerGraph = { graphId: undefined, values: [] };
     upperGraph = { graphId: undefined, values: [] };
 
@@ -35,33 +69,25 @@ function addDemand(startTime, graph) {
                             "-D" + startTime.getDate() +
                             "-H" + (startTime.getHours()+1);
     }
-    console.log(upperGraph.graphId);
 
     demandGraphs = splitGraph(startTime, graph);
+
+    demandGraphs = invertValues(demandGraphs);
 
     lowerGraph.values = demandGraphs.demandGraphLower;
     upperGraph.values = demandGraphs.demandGraphUpper;
 
-    console.log(lowerGraph);
-    console.log(upperGraph);
-
-/* Example code for getting time stamps
-    let seconds = date.getSeconds();
-    let minutes = date.getMinutes();
-    let hours = date.getHours();
-    let day = date.getDate();
-    let month = date.getMonth()+1;
-    let year = date.getFullYear();
-    console.log("seconds: " + seconds);
-    console.log("minutes: " + minutes);
-    console.log("hours: " + hours);
-    console.log("date: " + day);
-    console.log("month: " + month);
-    console.log("year: " + year);
-*/
+    updateSurplus(lowerGraph);
+    updateSurplus(upperGraph);
 }
 
-function removeDemand(startTime, graph){
+function invertValues(demandGraphs){
+    for (i = 0; i < 60; i++) {
+        demandGraphs.demandGraphLower[i] *= -1;
+        demandGraphs.demandGraphUpper[i] *= -1;
+    }
+    return demandGraphs;
+
 }
 
 function splitGraph(startTime, graph) {
@@ -91,8 +117,8 @@ function splitGraph(startTime, graph) {
     for (i; i < 60; i++) {
         demandGraphs.demandGraphUpper[i] = 0;
     }
-    console.log(demandGraphs.demandGraphLower);
-    console.log(demandGraphs.demandGraphUpper);
+//    console.log(demandGraphs.demandGraphLower);
+//    console.log(demandGraphs.demandGraphUpper);
 
     return demandGraphs;
 }
@@ -107,3 +133,4 @@ testGraph = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
                 51, 52, 53, 54, 55, 56, 57, 58, 59, 60 ];
 
 addDemand(startTime, testGraph);
+removeDemand(startTime, testGraph);

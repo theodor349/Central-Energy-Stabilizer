@@ -64,7 +64,7 @@ async function createGraph(graph) {
 
 async function getGraph(id) {
     return new Promise((resolve, reject) => {
-        getGraphHelper(id)
+        getExistingGraph(id)
             .then(async (graph) => {
                 if (graph === null) {
                     graph = createDefaultGraph(id);
@@ -80,7 +80,7 @@ async function getGraph(id) {
     });
 }
 
-async function getGraphHelper(id) {
+async function getExistingGraph(id) {
     return new Promise((resolve, reject) => {
         try {
             Graph.findOne({
@@ -101,57 +101,24 @@ async function getGraphHelper(id) {
     });
 }
 
-async function updateGraph(id, points, shouldAdd) {
-    if (!validUpdate(points)) {
+async function updateGraph(id, points, shouldSum) {
+    if (!isPointsValid(points)) {
         return false;
     }
 
     return new Promise(async (resolve, reject) => {
-        getGraphHelper(id)
+        getExistingGraph(id)
             .then(async (graph) => {
-                let values;
-                if (graph === null) {
-                    graph = createDefaultGraph(id);
-                    values = graph.values;
-                    await createGraph(graph);
-                } else {
-                    values = JSON.parse(graph.values);
-                }
-                // Update Values
-                if (shouldAdd) {
-                    for (let i = 0; i < points.length; i++) {
-                        if (points[i] === 'n')
-                            continue;
-                        values[i] += points[i];
-                    }
-                } else {
-                    for (let i = 0; i < points.length; i++) {
-                        if (points[i] === 'n')
-                            continue;
-                        values[i] = points[i];
-                    }
-                }
+                let values = await createNewGraphIfNonExisting(graph, id);
+                values = updateValues(values, points, shouldSum);
 
-                // Set update variables
-                let conditions = {
-                    graphId: id
-                };
-                let update = {
-                    values: JSON.stringify(values)
-                };
-                let options = {};
-
-                // Update
-                Graph.updateOne(conditions, update, options, (err, success) => {
-                    if (err)
-                        reject(err);
-
-                    if (success.ok === 1 && success.n === 1) {
-                        resolve(true);
-                    } else {
-                        resolve(false);
-                    }
-                });
+                sendUpdateCommand(id, values)
+                    .then((val) => {
+                        resolve(val);
+                    })
+                    .catch((err) => {
+                        reject(err)
+                    })
             })
             .catch((err) => {
                 reject(err);
@@ -159,9 +126,68 @@ async function updateGraph(id, points, shouldAdd) {
     });
 }
 
+async function sendUpdateCommand(id, values) {
+    return new Promise(async (resolve, reject) => {
+        // Set update variables
+        let conditions = {
+            graphId: id
+        };
+        let update = {
+            values: JSON.stringify(values)
+        };
+        let options = {};
+
+        // Update
+        Graph.updateOne(conditions, update, options, (err, success) => {
+            if (err) {
+                reject(err);
+            }
+
+            if (success.ok === 1 && success.n === 1) {
+                resolve(true);
+            } else {
+                resolve(false);
+            }
+        });
+    });
+}
+
 /*
     SECTION: Helper Functions
 */
+
+async function createNewGraphIfNonExisting(graph, id) {
+    return new Promise(async (resolve, reject) => {
+        let values;
+        if (graph === null) {
+            graph = createDefaultGraph(id);
+            values = graph.values;
+            await createGraph(graph);
+        } else {
+            values = JSON.parse(graph.values);
+        }
+        resolve(values);
+    });
+}
+
+function updateValues(values, others, shouldSum) {
+    if (shouldSum) {
+        for (let i = 0; i < others.length; i++) {
+            if (others[i] === 'n') {
+                continue;
+            }
+            values[i] += others[i];
+        }
+    } else {
+        for (let i = 0; i < others.length; i++) {
+            if (others[i] === 'n') {
+                continue;
+            }
+            values[i] = others[i];
+        }
+    }
+    return values;
+}
 
 function createDefaultGraph(id) {
     let values = [
@@ -198,6 +224,6 @@ function deserilizeGraph(graph) {
     return graph;
 }
 
-function validUpdate(values) {
-    return values.length === 60;
+function isPointsValid(points) {
+    return points.length === 60;
 }

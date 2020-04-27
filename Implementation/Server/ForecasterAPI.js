@@ -81,11 +81,6 @@ function dateToId(prefix, date) {
     Math Functions
 */
 
-let d = 24;
-let h = 15;
-let m = 54;
-console.log("m: " + m + " = " + getProdutionAt(d * 24 + h + m * 60 / 100));
-
 function getDemandAt(x) {
     return Math.sin(0.9 * x - 5) * 2.2 + Math.sin(1.4 * x - 0.2) * 1.3 + Math.sin(2.1 * x - 2) * 2.8;
 }

@@ -19,6 +19,7 @@ const fs = require('fs');
 const io = require('socket.io-client');
 const updateInterval = 1000;
 const graphInterval = 60000;
+const constDeviceUpdateInterval = 60000;
 const tempGainPrSecond = 0.0033;
 const tempLossPrSecond = 0.0017;
 
@@ -27,6 +28,7 @@ let deviceInfo = {};
 let waterHeaterOnInterval;
 let waterHeaterOffInterval;
 let energyUsageInterval;
+let deviceUpdateInterval;
 
 getLocalDeviceInfo();
 initCurrentTemp();
@@ -200,10 +202,14 @@ socket.on('connect', function() {
         socket.emit('receiveDeviceId', deviceInfo.Id);
     });
 
+    deviceUpdateInterval = setInterval(function () {
+        socket.emit('deviceUpdate', deviceInfo);
+    }, constDeviceUpdateInterval);
+
 });
 
 socket.on('disconnect', function() {
     console.log('Lost connection with localhost:3000');
-
     deviceInfo.isConnected = false;
+    clearInterval(deviceUpdateInterval);
 });

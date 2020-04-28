@@ -16,4 +16,8 @@ deviceSpace.on('connection', function(socket) {
         console.log(Id);
     });
 
+    socket.on('deviceUpdate', function(device){
+            console.log(device);
+    });
+
 });

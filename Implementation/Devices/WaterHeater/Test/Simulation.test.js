@@ -1,9 +1,18 @@
 const assert = require('assert');
 const app = require('./../App.js');
 
+async function waitXMs(ms) {
+    return new Promise((resolve, reject) => {
+        setTimeout(function () {
+            resolve();
+        }, ms);
+    });
+}
+
 describe('Water heater stateMachine', () => {
 
-    it('device is too hot, not connected', () => {
+    it('device is too hot, not connected', async() => {
+        await waitXMs(15);
         let testDevice = {
             state: "on",
             isConnected: false,
@@ -16,7 +25,6 @@ describe('Water heater stateMachine', () => {
             }
         }
         app.checkState(testDevice);
-        console.log(testDevice);
         assert(testDevice.state === "off");
     })
 

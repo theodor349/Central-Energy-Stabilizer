@@ -217,7 +217,7 @@ async function updateDevice(id, field, value) {
                 Device.updateOne(conditions, update, options, (err, success) => {
                     if (err)
                         reject(err);
-                    if (success.ok === 1 && success.nModified === 1) {
+                    if (success.ok === 1 && success.n === 1) {
                         resolve(true);
                     } else
                         resolve(false);

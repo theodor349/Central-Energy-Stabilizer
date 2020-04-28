@@ -12,3 +12,4 @@ const functions = {
     receiveUpdate: (deviceInfo) => receiveUpdate(deviceInfo),
     removeSchedule: (id) => removeSchedule(id),
 }
+module.exports = functions;

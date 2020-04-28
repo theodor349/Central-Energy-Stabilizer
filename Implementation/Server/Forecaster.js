@@ -30,7 +30,7 @@ async function updateSurplus(startTime) {
 
         surplusGraph.graphId = utility.dateToId(surplusGraph, startTime);
         utility.updateValues(surplusGraph, apiProductionGraph, true);
-        utility.updateValues(surplusGraph, apiProductionGraph, true);
+        utility.updateValues(surplusGraph, apiDemandGraph, true);
         utility.updateValues(surplusGraph, demandGraph, true);
 
         da.updateGraph(surplusGraph.graphId, surplusGraph.values, false);

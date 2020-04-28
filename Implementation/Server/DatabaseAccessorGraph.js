@@ -1,5 +1,6 @@
 'use strict';
 const mongoose = require('mongoose');
+const utility = require('./Utilities.js');
 
 let Graph = mongoose.model("Graphs", new mongoose.Schema({
     graphId: String,
@@ -110,7 +111,7 @@ async function updateGraph(id, points, shouldSum) {
         getExistingGraph(id)
             .then(async (graph) => {
                 let values = await createNewGraphIfNonExisting(graph, id);
-                values = updateValues(values, points, shouldSum);
+                values = utility.updateValues(values, points, shouldSum);
 
                 sendUpdateCommand(id, values)
                     .then((val) => {
@@ -168,25 +169,6 @@ async function createNewGraphIfNonExisting(graph, id) {
         }
         resolve(values);
     });
-}
-
-function updateValues(values, others, shouldSum) {
-    if (shouldSum) {
-        for (let i = 0; i < others.length; i++) {
-            if (others[i] === 'n') {
-                continue;
-            }
-            values[i] += others[i];
-        }
-    } else {
-        for (let i = 0; i < others.length; i++) {
-            if (others[i] === 'n') {
-                continue;
-            }
-            values[i] = others[i];
-        }
-    }
-    return values;
 }
 
 function createDefaultGraph(id) {

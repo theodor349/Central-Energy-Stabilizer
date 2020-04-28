@@ -1,11 +1,20 @@
 const assert = require('assert');
 const app = require('./../App.js');
 
+async function waitXMs(ms) {
+    return new Promise((resolve, reject) => {
+        setTimeout(function () {
+            resolve();
+        }, ms);
+    });
+}
+
 describe('Water heater stateMachine', () => {
 
-    it('device is too hot, not connected', () => {
+    it('device is too hot, not connected', async() => {
+        await waitXMs(15);
         let testDevice = {
-            state: "On",
+            state: "on",
             isConnected: false,
             serverMessage: null,
             onDisconnect: false,
@@ -16,12 +25,12 @@ describe('Water heater stateMachine', () => {
             }
         }
         app.checkState(testDevice);
-        assert(testDevice.state === "Off");
+        assert(testDevice.state === "off");
     })
 
     it('device is too hot, connected', () => {
         let testDevice = {
-            state: "On",
+            state: "on",
             isConnected: true,
             serverMessage: null,
             onDisconnect: false,
@@ -32,12 +41,12 @@ describe('Water heater stateMachine', () => {
             }
         }
         app.checkState(testDevice);
-        assert(testDevice.state === "Off");
+        assert(testDevice.state === "off");
     })
 
     it('device is too cold, connected', () => {
         let testDevice = {
-            state: "On",
+            state: "on",
             isConnected: true,
             serverMessage: null,
             onDisconnect: false,
@@ -48,12 +57,12 @@ describe('Water heater stateMachine', () => {
             }
         }
         app.checkState(testDevice);
-        assert(testDevice.state === "On");
+        assert(testDevice.state === "on");
     })
 
     it('device is too cold, not connected', () => {
         let testDevice = {
-            state: "On",
+            state: "on",
             isConnected: false,
             serverMessage: null,
             onDisconnect: false,
@@ -64,12 +73,12 @@ describe('Water heater stateMachine', () => {
             }
         }
         app.checkState(testDevice);
-        assert(testDevice.state === "On");
+        assert(testDevice.state === "on");
     })
 
     it('device is disconnected', () => {
         let testDevice = {
-            state: "On",
+            state: "on",
             isConnected: true,
             serverMessage: null,
             onDisconnect: true,
@@ -80,12 +89,12 @@ describe('Water heater stateMachine', () => {
             }
         }
         app.checkState(testDevice);
-        assert(testDevice.state === "Off");
+        assert(testDevice.state === "off");
     })
 
     it('device is hotter than min temp while not connected', () => {
         let testDevice = {
-            state: "On",
+            state: "on",
             isConnected: false,
             serverMessage: null,
             onDisconnect: false,
@@ -96,12 +105,12 @@ describe('Water heater stateMachine', () => {
             }
         }
         app.checkState(testDevice);
-        assert(testDevice.state === "Off");
+        assert(testDevice.state === "off");
     })
 
     it('device is hotter than min temp while connected', () => {
         let testDevice = {
-            state: "On",
+            state: "on",
             isConnected: true,
             serverMessage: null,
             onDisconnect: false,
@@ -112,14 +121,14 @@ describe('Water heater stateMachine', () => {
             }
         }
         app.checkState(testDevice);
-        assert(testDevice.state === "On");
+        assert(testDevice.state === "on");
     })
 
-    it('device recieves serverMessage On', () => {
+    it('device recieves serverMessage on', () => {
         let testDevice = {
-            state: "On",
+            state: "on",
             isConnected: true,
-            serverMessage: "On",
+            serverMessage: "on",
             onDisconnect: false,
             uniqueProperties: {
                 currentTemp: 56,
@@ -128,14 +137,14 @@ describe('Water heater stateMachine', () => {
             }
         }
         app.checkState(testDevice);
-        assert(testDevice.state === "On");
+        assert(testDevice.state === "on");
     })
 
-    it('device recieves serverMessage Off', () => {
+    it('device recieves serverMessage off', () => {
         let testDevice = {
-            state: "On",
+            state: "on",
             isConnected: true,
-            serverMessage: "Off",
+            serverMessage: "off",
             onDisconnect: false,
             uniqueProperties: {
                 currentTemp: 56,
@@ -144,7 +153,7 @@ describe('Water heater stateMachine', () => {
             }
         }
         app.checkState(testDevice);
-        assert(testDevice.state === "Off");
+        assert(testDevice.state === "off");
     })
 
 });
@@ -156,7 +165,7 @@ describe('Water heater temperature while off/on', () => {
         let priorTemp = 66;
 
         let testDevice = {
-            state: "On",
+            state: "on",
             isConnected: false,
             serverMessage: null,
             uniqueProperties: {
@@ -175,7 +184,7 @@ describe('Water heater temperature while off/on', () => {
         let priorTemp = 66;
 
         let testDevice = {
-            state: "Off",
+            state: "off",
             isConnected: false,
             serverMessage: null,
             uniqueProperties: {

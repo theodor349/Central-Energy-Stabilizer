@@ -12,6 +12,7 @@ const functions = {
     setWaterHeaterOff: (waterHeater) => setWaterHeaterOff(waterHeater),
     setEnergyUsage: (waterHeater) => setEnergyUsage(waterHeater),
     stopEnergyUsageInterval: (waterHeater) => stopEnergyUsageInterval(waterHeater),
+    changeConnectionString: (connectionString) => changeConnectionString(connectionString),
 };
 module.exports = functions;
 
@@ -30,14 +31,30 @@ let waterHeaterOnInterval;
 let waterHeaterOffInterval;
 let energyUsageInterval;
 let deviceUpdateInterval;
+let updater;
+let socket;
 
-let socket = io.connect("http://localhost:3000/device", {
-    reconnection: true,
-});
+let connectionString = "http://localhost:3000/device";
+setTimeout(function () {
+    socket = io.connect(connectionString, {
+        reconnection: true,
+    });
 
-getLocalDeviceInfo();
-initCurrentTemp();
-initState(deviceInfo);
+    getLocalDeviceInfo();
+    initCurrentTemp();
+    initState(deviceInfo);
+
+    updater = setInterval(() => {
+        checkState(deviceInfo);
+    }, updateInterval);
+
+    connectionSetup();
+}, 50);
+
+function changeConnectionString(cs) {
+    connectionString = cs;
+}
+
 
 function getLocalDeviceInfo() {
     let idRawData = fs.readFileSync('DeviceId.json');
@@ -126,10 +143,6 @@ function initState(waterHeater) {
     }
 }
 
-let updater = setInterval(() => {
-    checkState(deviceInfo);
-}, updateInterval);
-
 function checkState(waterHeater) {
     let uniqueProperties = waterHeater.uniqueProperties;
 
@@ -207,34 +220,36 @@ function setWaterHeaterOff(waterHeater) {
 }
 
 // Connection
-socket.on('connect', function() {
-    console.log('Connected to localhost:3000');
-    deviceInfo.isConnected = true;
+function connectionSetup() {
+    socket.on('connect', function() {
+        console.log('Connected to localhost:3000');
+        deviceInfo.isConnected = true;
 
-    socket.on('askForId', function() {
-        socket.emit('receiveDeviceId', deviceInfo.Id);
+        socket.on('askForId', function() {
+            socket.emit('receiveDeviceId', deviceInfo.Id);
+        });
+
+        socket.on('setId', function(Id) {
+            setDeviceId(Id);
+            socket.emit('newDeviceWithId', deviceInfo);
+        });
+
+        socket.on('on', function() {
+            deviceInfo.serverMessage = "on";
+        });
+
+        socket.on('off', function() {
+            deviceInfo.serverMessage = "off";
+        });
+
+        deviceUpdateInterval = setInterval(function () {
+            socket.emit('deviceUpdate', deviceInfo);
+        }, constDeviceUpdateInterval);
     });
 
-    socket.on('setId', function(Id) {
-        setDeviceId(Id);
-        socket.emit('newDeviceWithId', deviceInfo);
+    socket.on('disconnect', function() {
+        console.log('Lost connection with localhost:3000');
+        deviceInfo.isConnected = false;
+        clearInterval(deviceUpdateInterval);
     });
-
-    socket.on('on', function() {
-        deviceInfo.serverMessage = "on";
-    });
-
-    socket.on('off', function() {
-        deviceInfo.serverMessage = "off";
-    });
-
-    deviceUpdateInterval = setInterval(function () {
-        socket.emit('deviceUpdate', deviceInfo);
-    }, constDeviceUpdateInterval);
-});
-
-socket.on('disconnect', function() {
-    console.log('Lost connection with localhost:3000');
-    deviceInfo.isConnected = false;
-    clearInterval(deviceUpdateInterval);
-});
+}

@@ -5,16 +5,42 @@ const state = {
     ON: 1,
 }
 
+/*
+    SECTION: device type definitions
+*/
+
+let waterHeater = {
+
+    update: (serverDevice) => {
+        getDevicePropertyContainer(serverDevice);
+        setCurrTemp(serverDevice);
+        setCurrPower(serverDevice);
+        setCurrState(serverDevice);
+    }
+};
 
 /*
     SECTION: testing functions
 */
 
+{
+
+}
+
 let testDevice = {
-    Id: "323123",
+    Id: "2222",
+    isAutomatic: true,
+    deviceType: "Water Heater",
+    uniqueProperties: {
+        minTemp: 55,
+        maxTemp: 90,
+        currentPower: 1299,
+        currentTemp: 66
+    }
 }
 
 addDevice(testDevice);
+updateDevice(testDevice);
 
 /*
     SECTION: adding, deleting and updating entire devices
@@ -32,16 +58,19 @@ function addDevice(serverDevice) {
 }
 
 function updateDevice(serverDevice) {
-    getDeviceAncher(device);
+    switch (serverDevice.deviceType) {
+        case "Water Heater":
+            waterHeater.update(serverDevice);
+            break;
 
-    // should be dymanic
-    setCurrTemp(device);
-    setCurrPower(device);
-    setCurrState(device);
+        default:
+            console.warn("Warning: can't update device because of unknown or undefined deviceType");
+            break;
+    }
 }
 
 /*
-    SECTION: get functions
+    SECTION: get html element functions
 */
 
 function getDevicePropertyContainer(device) {
@@ -69,15 +98,15 @@ function getCurrTemp(device) {
 }
 
 /*
-    SECTION: set functions
+    SECTION: set html element functions
 */
 
 function setCurrTemp(device) {
-    getCurrTemp().innerHTML = device.currentTemp;
+    getCurrTemp(device).innerHTML = device.uniqueProperties.currentTemp;
 }
 
 function setCurrPower(device) {
-    let value = getCurrPower();
+    let value = getCurrPower(device);
     if (device.state == state.ON) {
         value.innerHTML = "1000"
     } else if (device.state == state.KEEP_TEMP) {
@@ -88,8 +117,8 @@ function setCurrPower(device) {
 }
 
 function setCurrState(device) {
-    let value = getCurrState();
-    let unit = getCurrStateUnit();
+    let value = getCurrState(device);
+    let unit = getCurrStateUnit(device);
     if (device.state == state.ON) {
         value.innerHTML = "on"
         unit.innerHTML = " ↑";
@@ -123,24 +152,36 @@ function buildDeviceHeader(device) {
     let div = document.createElement("div");
     header.appendChild(div);
 
-    let img = document.createElement("img");
+    let img = setDeviceImage(device);
     div.appendChild(img);
 
-    // should be dymanic
-    img.setAttribute("src", "./Images/waterheaterIcon.svg");
-    img.setAttribute("alt", device.type);
-
     let name = document.createElement("h3");
-    name.innerHTML = device.type + " " + (device.Id + 1);
+    name.innerHTML = device.deviceType + " " + (device.Id + 1);
     header.appendChild(name);
 
-    let description = buildDeviceDescription(device);
+    let description = buildDeviceInfo(device);
     header.appendChild(description);
 
     return header;
 }
 
-function buildDeviceDescription(device) {
+function setDeviceImage(device) {
+    let img = document.createElement("img");
+
+    switch (device.deviceType) {
+        case "Water Heater":
+            img.setAttribute("src", "./Images/waterheaterIcon.svg");
+            break;
+
+        default:
+            console.warn("Warning: can't find the image for " + device.deviceType);
+    }
+    img.setAttribute("alt", device.deviceType);
+
+    return img;
+}
+
+function buildDeviceInfo(device) {
     let list = document.createElement("ul");
     let listItem = document.createElement("li");
     let name = document.createElement("p");
@@ -170,7 +211,7 @@ function buildDeviceDescription(device) {
     listItem.appendChild(unit);
     list.appendChild(listItem);
 
-    list = document.createElement("li");
+    listItem = document.createElement("li");
     name = document.createElement("p");
     name.innerHTML = "Status: ";
     value = document.createElement("p");

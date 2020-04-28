@@ -126,7 +126,7 @@ describe('Water heater stateMachine', () => {
 
     it('device recieves serverMessage on', () => {
         let testDevice = {
-            state: "on",
+            state: "off",
             isConnected: true,
             serverMessage: "on",
             onDisconnect: false,

@@ -18,22 +18,39 @@ module.exports = functions;
 
 async function updateSurplus(startTime) {
     return new Promise(async (resolve, reject) => {
-        let surplusGraph = {graphId: undefined, values: [] };
+        let surplusGraph = {graphId: undefined, values: [
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        ] };
 
-        let demandGraph = da.getGraph(utility.dateToId("demandGraph", startTime));
-        let apiProductionGraph = da.getGraph(
+        let demandGraph = await da.getGraph(utility.dateToId("demandGraph", startTime));
+        let apiProductionGraph = await da.getGraph(
                                     utility.dateToId("apiProduction", startTime));
-        let apiDemandGraph = da.getGraph(utility.dateToId("apiDemand", startTime));
+        let apiDemandGraph = await da.getGraph(utility.dateToId("apiDemand", startTime));
 
-        demandGraph = invertValues(demandGraph.values);
-        apiDemandGraph = invertValues(apiDemandGraph.values);
+        demandGraph.values = invertValues(demandGraph.values);
+        apiDemandGraph.values = invertValues(apiDemandGraph.values);
 
-        surplusGraph.graphId = utility.dateToId(surplusGraph, startTime);
-        utility.updateValues(surplusGraph, apiProductionGraph, true);
-        utility.updateValues(surplusGraph, apiDemandGraph, true);
-        utility.updateValues(surplusGraph, demandGraph, true);
+        surplusGraph.graphId = utility.dateToId("surplusGraph", startTime);
+        surplusGraph.values = await utility.updateValues(
+                                surplusGraph.values, apiProductionGraph.values, true);
+        surplusGraph.values = await utility.updateValues(
+                                surplusGraph.values, apiDemandGraph.values, true);
+        surplusGraph.values = await utility.updateValues(
+                                surplusGraph.values, demandGraph.values, true);
 
-        da.updateGraph(surplusGraph.graphId, surplusGraph.values, false);
+        console.log("apiDemandGraph: " + apiDemandGraph.values);
+        console.log("apiProductionGraph: " + apiProductionGraph.values);
+        console.log("demandGraph: " + demandGraph.values);
+        console.log("surplusGraph: " + surplusGraph.values);
+
+        console.log(surplusGraph);
+
+        await da.updateGraph(surplusGraph.graphId, surplusGraph.values, false);
 
         resolve(true);
     });
@@ -147,4 +164,4 @@ testGraph = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
 
 addDemand(testStartTime, testGraph);
 removeDemand(test2StartTime, testGraph);
-
+updateSurplus(testStartTime);

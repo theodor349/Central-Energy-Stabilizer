@@ -158,13 +158,11 @@ function checkState(waterHeater) {
     } else if (waterHeater.isConnected === true &&
         waterHeater.serverMessage === "off" &&
         waterHeater.state === "on") {
-        console.log("Server told me to off");
         changeStateToOff(waterHeater);
         waterHeater.serverMessage = null;
     } else if (waterHeater.isConnected === true &&
         waterHeater.serverMessage === "on" &&
         waterHeater.state === "off") {
-        console.log("Server told me to on");
         changeStateToOn(waterHeater);
         waterHeater.serverMessage = null;
     } else if (waterHeater.onDisconnect === true &&

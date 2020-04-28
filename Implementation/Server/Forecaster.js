@@ -11,18 +11,29 @@ const functions = {
     updateSurplus: () => updateSurplus,
     addDemand: (startTime, graph) => addDemand(startTime, graph),
     removeDemand: (startTime, graph) => removeDemand(startTime, graph),
-    invertValues: (demandGraphs) => invertValues(demandGraphs),
+    invertValues: (values) => invertValues(values),
     splitGraph: (startTime, graph) => splitGraph(startTime, graph),
 }
 module.exports = functions;
 
 async function updateSurplus(startTime) {
     return new Promise(async (resolve, reject) => {
+        let surplusGraph = {graphId: undefined, values: [] };
+
         let demandGraph = da.getGraph(utility.dateToId("demandGraph", startTime));
         let apiProductionGraph = da.getGraph(
                                     utility.dateToId("apiProduction", startTime));
         let apiDemandGraph = da.getGraph(utility.dateToId("apiDemand", startTime));
-        da.updateGraph(utility.dateToId("surplusGraph", startTime)), 
+
+        demandGraph = invertValues(demandGraph.values);
+        apiDemandGraph = invertValues(apiDemandGraph.values);
+
+        surplusGraph.graphId = utility.dateToId(surplusGraph, startTime);
+        utility.updateValues(surplusGraph, apiProductionGraph, true);
+        utility.updateValues(surplusGraph, apiProductionGraph, true);
+        utility.updateValues(surplusGraph, demandGraph, true);
+
+        da.updateGraph(surplusGraph.graphId, surplusGraph.values, false);
 
         resolve(true);
     });
@@ -45,6 +56,7 @@ async function addDemand(startTime, graph) {
 
         await updateGraph(lowerGraph);
         await updateGraph(upperGraph);
+
         resolve(true);
     });
 }
@@ -57,13 +69,14 @@ async function removeDemand(startTime, graph){
         let secondGraphStartTime = new Date(startTime.getTime() + 60 * 60 * 1000);
 
         demandGraphs = splitGraph(startTime, graph);
-        demandGraphs = invertValues(demandGraphs);
 
         // Puts the graphId and values into the lower and upper bound graphs
         lowerGraph.graphId = await utility.dateToId("demandGraph", startTime);
         upperGraph.graphId = await utility.dateToId("demandGraph", secondGraphStartTime);
         lowerGraph.values = demandGraphs.demandGraphLower;
         upperGraph.values = demandGraphs.demandGraphUpper;
+        lowerGraph.values = invertValues(lowerGraph.values);
+        upperGraph.values = invertValues(upperGraph.values);
 
         await updateGraph(lowerGraph);
         await updateGraph(upperGraph);
@@ -84,12 +97,11 @@ function updateGraph(graph) {
     }); 
 }
 
-function invertValues(demandGraphs) {
+function invertValues(values) {
     for (i = 0; i < 60; i++) {
-        demandGraphs.demandGraphLower[i] *= -1;
-        demandGraphs.demandGraphUpper[i] *= -1;
+        values[i] *= -1;
     }
-    return demandGraphs;
+    return values;
 
 }
 
@@ -124,6 +136,7 @@ function splitGraph(startTime, graph) {
 
 
 let testStartTime = new Date(2010, 1, 24, 15, 24);
+let test2StartTime = new Date (2010, 1, 24, 18, 24);
 
 testGraph = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
                 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
@@ -133,5 +146,5 @@ testGraph = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
                 51, 52, 53, 54, 55, 56, 57, 58, 59, 60 ];
 
 addDemand(testStartTime, testGraph);
-removeDemand(testStartTime, testGraph);
+removeDemand(test2StartTime, testGraph);
 

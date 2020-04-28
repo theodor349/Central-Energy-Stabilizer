@@ -12,7 +12,7 @@ function dateToId(prefix, date) {
         "-H" + date.getHours();
 }
 
-function updateValues(values,others, shouldSum) {
+function updateValues(values, others, shouldSum) {
     if (shouldSum) {
         for (let i = 0; i < others.length; i++) {
             if (others[i] === 'n') {

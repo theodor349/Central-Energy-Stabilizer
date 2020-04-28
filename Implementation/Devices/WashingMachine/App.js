@@ -33,7 +33,7 @@ function setDeviceId(id) {
 
 getLocalDeviceInfo();
 console.log(deviceInfo);
-setDeviceId('10222P1-11');
+setDeviceId('10222P1-12');
 console.log(deviceInfo);
 
 // Unique function for washing machine
@@ -46,7 +46,7 @@ function checkState() {
     let uniqueProperties = deviceInfo.uniqueProperties;
 
     if () {
-        
+
         deviceInfo.state = "Off";
     }
     if (uniqueProperties.currentTemp <= uniqueProperties.minTemp) {

@@ -1,4 +1,5 @@
 const da = require('./DatabaseAccessorGraph.js');
+const util = require('./Utilities.js');
 /*
     Graphs it works with
         apiDemand
@@ -40,7 +41,7 @@ async function updateApiDemand(date) {
             values[m] = getDemandAt(d * 24 + h + m * 60 / 100);
         }
 
-        let id = dateToId("apiDemand", date);
+        let id = util.dateToId("apiDemand", date);
         let res = await da.updateGraph(id, values, false);
         resolve(res);
     })
@@ -55,7 +56,7 @@ async function updateApiProduction(date) {
             values[m] = getProdutionAt(d * 24 + h + m * 60 / 100);
         }
 
-        let id = dateToId("apiProduction", date);
+        let id = util.dateToId("apiProduction", date);
         let res = await da.updateGraph(id, values, false);
         resolve(res);
     })
@@ -63,18 +64,6 @@ async function updateApiProduction(date) {
 
 function getSurplusAt(x) {
     return getProdutionAt(x) - getDemandAt(x);
-}
-
-/*
-    Helper functions
-*/
-
-function dateToId(prefix, date) {
-    return prefix +
-        "-Y" + date.getFullYear() +
-        "-M" + date.getMonth() +
-        "-D" + date.getDate() +
-        "-H" + date.getHours();
 }
 
 /*

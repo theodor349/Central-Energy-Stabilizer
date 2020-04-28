@@ -18,7 +18,9 @@ module.exports = functions;
 let commandQueue = [];
 
 function getCommandQueue() {
-    return commandQueue;
+    let cq = commandQueue;
+    commandQueue.clear();
+    return cq;
 }
 
 function createCommand(command, payload) {

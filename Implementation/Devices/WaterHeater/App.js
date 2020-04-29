@@ -64,7 +64,8 @@ function getLocalDeviceInfo() {
     let infoDataObject = JSON.parse(infoRawData);
 
     deviceInfo = infoDataObject;
-    deviceInfo.state = null;
+    deviceInfo.currentState = null;
+    deviceInfo.currentPower = 0;
     deviceInfo.isConnected = false;
     deviceInfo.serverMessage = null;
     deviceInfo.onDisconnect = false;
@@ -95,19 +96,19 @@ function setEnergyUsage(waterHeater) {
     if (waterHeater.programs[0].pointArray[waterHeater.graphIndex + 1] !== Infinity) {
         waterHeater.graphIndex++;
     }
-    uniqueProperties.currentPower = waterHeater.programs[0].pointArray[waterHeater.graphIndex];
+    waterHeater.currentPower = waterHeater.programs[0].pointArray[waterHeater.graphIndex];
 }
 
 function stopEnergyUsageInterval(waterHeater) {
     let uniqueProperties = waterHeater.uniqueProperties;
     clearInterval(energyUsageInterval);
     waterHeater.graphIndex = 0;
-    uniqueProperties.currentPower = 0;
+    waterHeater.currentPower = 0;
 }
 
 function getCurrentPower(waterHeater) {
     let uniqueProperties = waterHeater.uniqueProperties;
-    console.log(uniqueProperties.currentPower);
+    console.log(deviceInfo.currentPower);
 }
 
 function setDeviceId(deviceId) {
@@ -135,10 +136,10 @@ function initCurrentTemp() {
 function initState(waterHeater) {
     let uniqueProperties = waterHeater.uniqueProperties;
     if (uniqueProperties.currentTemp < uniqueProperties.minTemp) {
-        waterHeater.state = "on";
+        waterHeater.currentState = "on";
         waterHeaterOn(waterHeater);
     } else {
-        waterHeater.state = "off";
+        waterHeater.currentState = "off";
         waterHeaterOff(waterHeater);
     }
 }
@@ -150,23 +151,23 @@ function checkState(waterHeater) {
         changeStateToOff(waterHeater);
     } else if (waterHeater.isConnected === false &&
         uniqueProperties.currentTemp > uniqueProperties.minTemp &&
-        waterHeater.state === "on") {
+        waterHeater.currentState === "on") {
         changeStateToOff(waterHeater);
     } else if (uniqueProperties.currentTemp <= uniqueProperties.minTemp &&
-        waterHeater.state === "off") {
+        waterHeater.currentState === "off") {
         changeStateToOn(waterHeater);
     } else if (waterHeater.isConnected === true &&
         waterHeater.serverMessage === "off" &&
-        waterHeater.state === "on") {
+        waterHeater.currentState === "on") {
         changeStateToOff(waterHeater);
         waterHeater.serverMessage = null;
     } else if (waterHeater.isConnected === true &&
         waterHeater.serverMessage === "on" &&
-        waterHeater.state === "off") {
+        waterHeater.currentState === "off") {
         changeStateToOn(waterHeater);
         waterHeater.serverMessage = null;
     } else if (waterHeater.onDisconnect === true &&
-        waterHeater.state === "on") {
+        waterHeater.currentState === "on") {
         changeStateToOff(waterHeater);
         waterHeater.serverMessage = null;
     }
@@ -176,20 +177,20 @@ function changeStateToOff(waterHeater) {
     waterHeater.onDisconnect = false;
     clearInterval(waterHeaterOnInterval);
     waterHeaterOff(waterHeater);
-    waterHeater.state = "off";
+    waterHeater.currentState = "off";
 
     if (socket.connected === true) {
-        socket.emit("stateChanged", waterHeater.state, waterHeater.deviceId);
+        socket.emit("currentStateChanged", waterHeater.currentState, waterHeater.deviceId);
     }
 }
 
 function changeStateToOn(waterHeater) {
     clearInterval(waterHeaterOffInterval);
     waterHeaterOn(waterHeater);
-    waterHeater.state = "on";
+    waterHeater.currentState = "on";
 
     if (socket.connected === true) {
-        socket.emit("stateChanged", waterHeater.state, waterHeater.deviceId);
+        socket.emit("currentStateChanged", waterHeater.currentState, waterHeater.deviceId);
     }
 }
 

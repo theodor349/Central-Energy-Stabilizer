@@ -5,8 +5,8 @@ let Device = mongoose.model("Devices", new mongoose.Schema({
     scheduledByUser: Boolean,
     isScheduled: Boolean,
     nextState: String,
-    scheduled: String,
-    scheduledInterval: String,
+    scheduled: String, // Object with Start and End Time
+    scheduledInterval: String, // Object with Start and End Time
 
     // From Device
     deviceId: String,

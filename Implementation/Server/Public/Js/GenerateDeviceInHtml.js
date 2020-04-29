@@ -1,36 +1,23 @@
 'use strict';
 
-const state = {
-    OFF: 0,
-    ON: 1,
-}
-
 /*
     SECTION: device type definitions
 */
 
 let waterHeater = {
-
-    update: (serverDevice) => {
-        getDevicePropertyContainer(serverDevice);
-        setCurrTemp(serverDevice);
-        setCurrPower(serverDevice);
-        setCurrState(serverDevice);
-    }
+    imageSrc: "./Images/waterheaterIcon.svg",
+    headerProperties: ["currentTemp", "currentPower", "currentStatus"]
 };
 
 /*
     SECTION: testing functions
 */
 
-{
-
-}
-
 let testDevice = {
     Id: "2222",
     isAutomatic: true,
     deviceType: "Water Heater",
+    state: "on",
     uniqueProperties: {
         minTemp: 55,
         maxTemp: 90,
@@ -39,8 +26,21 @@ let testDevice = {
     }
 }
 
+let testDeviceUpdate = {
+    Id: "2222",
+    isAutomatic: true,
+    deviceType: "Water Heater",
+    state: "off",
+    uniqueProperties: {
+        minTemp: 55,
+        maxTemp: 90,
+        currentPower: 0,
+        currentTemp: 90
+    }
+}
+
 addDevice(testDevice);
-updateDevice(testDevice);
+updateDevice(testDeviceUpdate);
 
 /*
     SECTION: adding, deleting and updating entire devices
@@ -60,11 +60,13 @@ function addDevice(serverDevice) {
 function updateDevice(serverDevice) {
     switch (serverDevice.deviceType) {
         case "Water Heater":
-            waterHeater.update(serverDevice);
+            waterHeater.headerProperties.forEach((propertyItem, propertyIdex) => {
+                updateHeaderProperty(propertyItem, propertyIdex, serverDevice);
+            });
             break;
 
         default:
-            console.warn("Warning: can't update device because of unknown or undefined deviceType");
+            console.warn("Warning: Can't find header properties for " + device.deviceType);
             break;
     }
 }
@@ -77,56 +79,21 @@ function getDevicePropertyContainer(device) {
     return document.getElementById(("device" + device.Id)).children[0].children[2];
 }
 
-function getCurrState(device) {
-    let devicePropertyContainer = getDevicePropertyContainer(device);
-    return devicePropertyContainer.children[2].children[1];
-}
-
-function getCurrPower(device) {
-    let devicePropertyContainer = getDevicePropertyContainer(device);
-    return devicePropertyContainer.children[1].children[1];
-}
-
-function getCurrStateUnit(device) {
-    let devicePropertyContainer = getDevicePropertyContainer(device);
-    return devicePropertyContainer.children[2].children[2];
-}
-
-function getCurrTemp(device) {
-    let devicePropertyContainer = getDevicePropertyContainer(device);
-    return devicePropertyContainer.children[0].children[1];
-}
-
 /*
-    SECTION: set html element functions
+    SECTION: update html element functions
 */
 
-function setCurrTemp(device) {
-    getCurrTemp(device).innerHTML = device.uniqueProperties.currentTemp;
+function updateHeaderProperty(propertyItem, propertyIndex, device) {
+    let devicePropertyContainer = getDevicePropertyContainer(device);
+    let propertyContainer = devicePropertyContainer.children[propertyIndex];
+
+    let property = getPropertyInformation(device, propertyItem);
+
+    propertyContainer.children[0].innerHTML = property.name + ": ";
+    propertyContainer.children[1].innerHTML = property.value;
+    propertyContainer.children[2].innerHTML = " " + property.unit;
 }
 
-function setCurrPower(device) {
-    let value = getCurrPower(device);
-    if (device.state == state.ON) {
-        value.innerHTML = "1000"
-    } else if (device.state == state.KEEP_TEMP) {
-        value.innerHTML = "10"
-    } else {
-        value.innerHTML = "0"
-    }
-}
-
-function setCurrState(device) {
-    let value = getCurrState(device);
-    let unit = getCurrStateUnit(device);
-    if (device.state == state.ON) {
-        value.innerHTML = "on"
-        unit.innerHTML = " ↑";
-    } else {
-        value.innerHTML = "off"
-        unit.innerHTML = " ↓";
-    }
-}
 
 /*
     SECTION: html generating functions
@@ -156,10 +123,10 @@ function buildDeviceHeader(device) {
     div.appendChild(img);
 
     let name = document.createElement("h3");
-    name.innerHTML = device.deviceType + " " + (device.Id + 1);
+    name.innerHTML = device.deviceType;
     header.appendChild(name);
 
-    let description = buildDeviceInfo(device);
+    let description = buildHeaderProperties(device);
     header.appendChild(description);
 
     return header;
@@ -170,66 +137,85 @@ function setDeviceImage(device) {
 
     switch (device.deviceType) {
         case "Water Heater":
-            img.setAttribute("src", "./Images/waterheaterIcon.svg");
+            img.setAttribute("src", waterHeater.imageSrc);
             break;
 
         default:
             console.warn("Warning: can't find the image for " + device.deviceType);
     }
     img.setAttribute("alt", device.deviceType);
-
     return img;
 }
 
-function buildDeviceInfo(device) {
+function buildHeaderProperties(device) {
     let list = document.createElement("ul");
-    let listItem = document.createElement("li");
-    let name = document.createElement("p");
-    name.innerHTML = "Temp: ";
 
-    let value = document.createElement("p");
-    value.innerHTML = device.currentTemp;
+    switch (device.deviceType) {
+        case "Water Heater":
+            waterHeater.headerProperties.forEach((propertyItem) => {
+                buildHeaderProperty(propertyItem, device, list);
+            });
+            break;
 
-    let unit = document.createElement("p");
-    unit.innerHTML = "℃";
-
-    listItem.appendChild(name);
-    listItem.appendChild(value);
-    listItem.appendChild(unit);
-    list.appendChild(listItem);
-
-    listItem = document.createElement("li");
-    name = document.createElement("p");
-    name.innerHTML = "Power: ";
-    value = document.createElement("p");
-    value.innerHTML = device.currentPower;
-    unit = document.createElement("p");
-    unit.innerHTML = " watt";
-
-    listItem.appendChild(name);
-    listItem.appendChild(value);
-    listItem.appendChild(unit);
-    list.appendChild(listItem);
-
-    listItem = document.createElement("li");
-    name = document.createElement("p");
-    name.innerHTML = "Status: ";
-    value = document.createElement("p");
-    unit = document.createElement("p");
-    if (device.state == state.ON) {
-        value.innerHTML = "on";
-        unit.innerHTML = " ↑";
-    } else {
-        value.innerHTML = "off";
-        unit.innerHTML = " ↓";
+        default:
+            console.warn("Warning: Can't find header properties for " + device.deviceType);
+            break;
     }
 
-    listItem.appendChild(name);
-    listItem.appendChild(value);
-    listItem.appendChild(unit);
-    list.appendChild(listItem);
-
     return list;
+}
+
+function buildHeaderProperty(propertyItem, device, list) {
+    let listItem = document.createElement("li");
+    let nameContainer = document.createElement("p");
+    let valueContainer = document.createElement("p");
+    let unitContainer = document.createElement("p");
+
+    let property = getPropertyInformation(device, propertyItem);
+
+    nameContainer.innerHTML = property.name + ": ";
+    valueContainer.innerHTML = property.value;
+    unitContainer.innerHTML = " " + property.unit;
+
+    listItem.appendChild(nameContainer);
+    listItem.appendChild(valueContainer);
+    listItem.appendChild(unitContainer);
+    list.appendChild(listItem);
+}
+
+
+function getPropertyInformation(device, propertyItem) {
+    let property = {};
+
+    switch (propertyItem) {
+        case "currentTemp":
+            property.name = "Temp";
+            property.value = device.uniqueProperties.currentTemp;
+            property.unit = "℃";
+            break;
+
+        case "currentPower":
+            property.name = "Power";
+            property.value = device.uniqueProperties.currentPower;
+            property.unit = "Watt";
+            break;
+
+        case "currentStatus":
+            property.name = "Status";
+            property.value = device.state;
+
+            if (device.state === "on") {
+                property.unit = "↑";
+            } else {
+                property.unit = "↓";
+            }
+            break;
+
+        default:
+            console.warn("Warning: build for header property " + propertyItem + " Not defined");
+            break;
+    }
+    return property;
 }
 
 function buildDeviceSettings(device) {

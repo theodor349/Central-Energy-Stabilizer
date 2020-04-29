@@ -52,7 +52,7 @@ async function updateSurplus(startTime) {
 */
         await da.updateGraph(surplusGraph.graphId, surplusGraph.values, false);
         
-        resolve(true);
+        resolve(da.getGraph(surplus.Graph.graphId));
     });
 }
 

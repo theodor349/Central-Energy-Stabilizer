@@ -1,4 +1,4 @@
-/*
+
 // Not finished, very early stages 
 
 const forecaster = require('./Forecaster.js');
@@ -18,15 +18,13 @@ function requestTimeToRun (graph, isScheduled, timeIntervalObject) {
             outputIntervalFinish: undefined
         };
         
-        
-        // Checks if the device is already scheduled
-        if (isScheduled === true) {
-            forecaster.removeDemand(); //Husk parametre
-        }
-        else if (isScheduled === false) {
-            gatherSurplusGraph();
-        } 
-        resolve(outputIntervalObject);
+       resolve(outputIntervalObject);
     });
 }
-*/
+
+function gatherSurplusGraph() {
+    return new Promise(async (resolve, reject) => {
+        forecaster.updateSurplus();
+    });
+}
+

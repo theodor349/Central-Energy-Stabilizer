@@ -40,16 +40,6 @@ function deviceInit(deviceInfo, socket) {
     if (uuid.isUuid(deviceInfo.deviceId) === false) {
         return false;
     }
-    /*  Check Id
-        Add server props to device
-            scheduledByUser = false
-            isScheduled = false
-            nextState = ""
-            schedule = ""
-            scheduledInterval = ""
-        Send to databse
-        Add connection
-    */
     deviceInfo.scheduledByUser = false;
     deviceInfo.isScheduled = false;
     deviceInfo.nextState = undefined;

@@ -8,7 +8,7 @@ const da = require('./DatabaseAccessorGraph.js');
 const utility = require('./Utilities.js');
 
 const functions = {
-    updateSurplus: () => updateSurplus,
+    updateSurplus: () => updateSurplus(),
     addDemand: (startTime, graph) => addDemand(startTime, graph),
     removeDemand: (startTime, graph) => removeDemand(startTime, graph),
     invertValues: (values) => invertValues(values),

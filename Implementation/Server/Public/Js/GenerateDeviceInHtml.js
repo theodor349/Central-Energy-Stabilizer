@@ -10,6 +10,44 @@ let waterHeater = {
 };
 
 /*
+    SECTION: device property definitions
+*/
+
+function getPropertyInformation(device, propertyItem) {
+    let property = {};
+
+    switch (propertyItem) {
+        case "currentTemp":
+            property.name = "Temp";
+            property.value = device.uniqueProperties.currentTemp;
+            property.unit = "℃";
+            break;
+
+        case "currentPower":
+            property.name = "Power";
+            property.value = device.uniqueProperties.currentPower;
+            property.unit = "Watt";
+            break;
+
+        case "currentStatus":
+            property.name = "Status";
+            property.value = device.state;
+
+            if (device.state === "on") {
+                property.unit = "↑";
+            } else {
+                property.unit = "↓";
+            }
+            break;
+
+        default:
+            console.warn("Warning: build for header property " + propertyItem + " Not defined");
+            break;
+    }
+    return property;
+}
+
+/*
     SECTION: testing functions
 */
 
@@ -181,41 +219,6 @@ function buildHeaderProperty(propertyItem, device, list) {
     listItem.appendChild(valueContainer);
     listItem.appendChild(unitContainer);
     list.appendChild(listItem);
-}
-
-
-function getPropertyInformation(device, propertyItem) {
-    let property = {};
-
-    switch (propertyItem) {
-        case "currentTemp":
-            property.name = "Temp";
-            property.value = device.uniqueProperties.currentTemp;
-            property.unit = "℃";
-            break;
-
-        case "currentPower":
-            property.name = "Power";
-            property.value = device.uniqueProperties.currentPower;
-            property.unit = "Watt";
-            break;
-
-        case "currentStatus":
-            property.name = "Status";
-            property.value = device.state;
-
-            if (device.state === "on") {
-                property.unit = "↑";
-            } else {
-                property.unit = "↓";
-            }
-            break;
-
-        default:
-            console.warn("Warning: build for header property " + propertyItem + " Not defined");
-            break;
-    }
-    return property;
 }
 
 function buildDeviceSettings(device) {

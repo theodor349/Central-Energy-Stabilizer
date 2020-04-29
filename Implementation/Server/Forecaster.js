@@ -42,16 +42,16 @@ async function updateSurplus(startTime) {
                                 surplusGraph.values, apiDemandGraph.values, true);
         surplusGraph.values = await utility.updateValues(
                                 surplusGraph.values, demandGraph.values, true);
-
+/*
         console.log("apiDemandGraph: " + apiDemandGraph.values);
         console.log("apiProductionGraph: " + apiProductionGraph.values);
         console.log("demandGraph: " + demandGraph.values);
         console.log("surplusGraph: " + surplusGraph.values);
 
         console.log(surplusGraph);
-
+*/
         await da.updateGraph(surplusGraph.graphId, surplusGraph.values, false);
-
+        
         resolve(true);
     });
 }
@@ -161,7 +161,8 @@ testGraph = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
                 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
                 41, 42, 43, 44, 45, 46, 47, 38, 39, 50,
                 51, 52, 53, 54, 55, 56, 57, 58, 59, 60 ];
-
+/*
 addDemand(testStartTime, testGraph);
 removeDemand(test2StartTime, testGraph);
 updateSurplus(testStartTime);
+*/

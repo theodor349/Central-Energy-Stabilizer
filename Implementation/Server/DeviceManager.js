@@ -1,5 +1,6 @@
 'use strict';
 const uuid = require('uuidv4');
+const db = require('./DatabaseAccessorDevice.js');
 
 const functions = {
     onConnect: (socket) => onConnect(socket),
@@ -15,6 +16,7 @@ const functions = {
     receiveUpdate: (deviceInfo) => receiveUpdate(deviceInfo),
     removeSchedule: (id) => removeSchedule(id),
     getCommandQueue: () => getCommandQueue(),
+    getActiveConnections: () => getActiveConnections(),
 }
 module.exports = functions;
 let commandQueue = [];
@@ -32,6 +34,41 @@ function receiveId(id, socket) {
         sendNewId(socket);
         return false;
     }
+}
+
+function deviceInit(deviceInfo, socket) {
+    if (uuid.isUuid(deviceInfo.deviceId) === false) {
+        return false;
+    }
+    /*  Check Id
+        Add server props to device
+            scheduledByUser = false
+            isScheduled = false
+            nextState = ""
+            schedule = ""
+            scheduledInterval = ""
+        Send to databse
+        Add connection
+    */
+    deviceInfo.scheduledByUser = false;
+    deviceInfo.isScheduled = false;
+    deviceInfo.nextState = undefined;
+    deviceInfo.schedule = undefined;
+    deviceInfo.scheduledInterval = undefined;
+    return new Promise(async (resolve, reject) => {
+        db.createDevice(deviceInfo)
+            .then((val) => {
+                if (val !== null) {
+                    addConnection(val.deviceId, socket);
+                    resolve(true);
+                } else {
+                    resolve(false)
+                }
+            })
+            .catch((err) => {
+                reject(err);
+            })
+    })
 }
 
 /*
@@ -55,6 +92,10 @@ function isIdValid(id) {
     if (id === undefined) {
         return false;
     }
+}
+
+function getActiveConnections() {
+    return activeConnections;
 }
 
 function getCommandQueue() {

@@ -18,7 +18,8 @@ if (true) {
 
         // Receive ID
         it('receiveId: Connection with good uuId', async () => {
-            let res = dm.receiveId("3d71d761-72ea-4955-ae8c-e7700099e41a", "socket");
+            let id = uuid.uuid();
+            let res = dm.receiveId(id, "socket");
             let commandQueue = dm.getCommandQueue();
             assert(res === true &&
                 commandQueue !== undefined &&
@@ -46,6 +47,87 @@ if (true) {
                 uuid.isUuid(commandQueue[0].payload));
         })
 
-        // Device initTemp
+        // Device init
+        it('deviceInit: Add device with correct id', async () => {
+            // Setup
+            db.dropDatabase();
+            let testDevice = createAutoTestDevice();
+            let id = testDevice.deviceId;
+            // Run
+            let res = await dm.deviceInit(testDevice, "socket")
+            // Get things to check
+            let commandQueue = dm.getCommandQueue();
+            testDevice = createAutoTestDevice();
+            let dbDevice = await db.getDevice(id);
+            assert(res === true &&
+                commandQueue !== undefined &&
+                commandQueue.length === 0 &&
+                dbDevice.scheduledByUser === false &&
+                dbDevice.isScheduled === false &&
+                dbDevice.nextState === undefined &&
+                dbDevice.schedule === undefined &&
+                dbDevice.scheduledInterval === undefined &&
+                dbDevice.uniqueProperties.currentTemp === testDevice.uniqueProperties.currentTemp &&
+                dbDevice.programs.length === testDevice.programs.length &&
+                dbDevice.deviceType === testDevice.deviceType
+            );
+        })
+        it('deviceInit: Add device with bad id', async () => {
+            db.dropDatabase();
+            let testDevice = createAutoTestDevice();
+            testDevice.deviceId = "PLZ return false"
+            let res = await dm.deviceInit(testDevice, "socket")
+            let commandQueue = dm.getCommandQueue();
+            let dbDevice = await db.getDevice(testDevice.deviceId);
+            assert(res === false &&
+                commandQueue !== undefined &&
+                commandQueue.length === 0 &&
+                dbDevice === null
+            );
+        })
+
     })
+}
+
+/*
+    SECTION: Helper Functions
+*/
+
+function createAutoTestDevice() {
+    let testDevice = {
+        deviceId: uuid.uuid(),
+        isAutomatic: true,
+        currentPower: 123,
+        currentState: "on",
+        deviceType: "Water Heater",
+        isConnected: false,
+        onDisconnect: false,
+        serverMessage: null,
+        graphIndex: 0,
+        programs: [{
+                pointArray: [
+                    45,
+                    53,
+                    56,
+                    60,
+                    69
+                ]
+            },
+            {
+                pointArray: [
+                    47,
+                    43,
+                    49,
+                    56,
+                    60
+                ]
+            }
+        ],
+        uniqueProperties: {
+            currentTemp: 91,
+            minTemp: 55,
+            maxTemp: 90
+        }
+    };
+    return testDevice;
 }

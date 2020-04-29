@@ -5,8 +5,8 @@ let Device = mongoose.model("Devices", new mongoose.Schema({
     scheduledByUser: Boolean,
     isScheduled: Boolean,
     nextState: String,
-    scheduled: String,
-    scheduledInterval: String,
+    schedule: String, // Object with Start and End Time (actual Running time)
+    scheduledInterval: String, // Object with Start and End Time (Scheduled Time)
 
     // From Device
     deviceId: String,
@@ -71,7 +71,7 @@ async function createDevice(device) {
                 scheduledByUser: serilizedDevice.scheduledByUser,
                 isScheduled: serilizedDevice.isScheduled,
                 nextState: serilizedDevice.nextState,
-                scheduled: serilizedDevice.scheduled,
+                schedule: serilizedDevice.schedule,
                 scheduledInterval: serilizedDevice.scheduledInterval,
 
                 // From Device
@@ -161,7 +161,7 @@ async function updateDevice(id, field, value) {
                             nextState: value
                         };
                         break;
-                    case "scheduled":
+                    case "schedule":
                         update = {
                             schedule: value
                         };

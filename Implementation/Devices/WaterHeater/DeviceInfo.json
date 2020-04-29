@@ -4,7 +4,6 @@
 "uniqueProperties": {
     "minTemp": 55,
     "maxTemp": 90,
-    "currentPower": 0,
     "currentTemp": null
     }
 }

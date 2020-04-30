@@ -165,12 +165,94 @@ if (true) {
             let fieldsUpdated = await dm.updateDevice(testDevice);
             assert(fieldsUpdated === 0);
         });
+
+        // Manage device
+        /*
+        it('manageDevice: change state from on to off', async () => {
+            db.dropDatabase();
+            dm.getCommandQueue();
+            let testDevice = createAutoServerTestDevice();
+            testDevice.currentState = "on";
+            testDevice.schedule = {
+                start: getRelativeDate(120, '-'),
+                end: getRelativeDate(60, '-')
+            }
+            let changedState = dm.manageDevice(testDevice);
+            let commands = dm.getCommandQueue();
+            assert(commands.length === 1 &&
+                commands[0].command === "off" &&
+                changedState === true);
+        });
+        it('manageDevice: change state from off to on', async () => {
+            db.dropDatabase();
+            dm.getCommandQueue();
+            let testDevice = createAutoServerTestDevice();
+            testDevice.currentState = "off";
+            testDevice.nextState = "on";
+            testDevice.schedule = {
+                start: getRelativeDate(120, '-'),
+                end: getRelativeDate(60, '+')
+            }
+            await dm.deviceInit(testDevice, "socket");
+            let changedState = dm.manageDevice(testDevice);
+            let commands = dm.getCommandQueue();
+            console.log(changedState);
+            console.log(commands);
+            assert(commands.length === 1 &&
+                commands[0].command === "on" &&
+                commands[0].payload === "on" &&
+                changedState === true);
+        });
+
+        it('manageDevice: keep on state when scheduled', async () => {
+            db.dropDatabase();
+            dm.getCommandQueue();
+            let testDevice = createAutoServerTestDevice();
+            testDevice.currentState = "on";
+            testDevice.nextState = "on";
+            testDevice.schedule = {
+                start: getRelativeDate(120, '-'),
+                end: getRelativeDate(60, '+')
+            }
+            let changedState = dm.manageDevice(testDevice);
+            let commands = dm.getCommandQueue();
+            assert(commands.length === 0 &&
+            changedState === false);
+        });
+        it('manageDevice: keep off state when scheduled', async () => {
+            db.dropDatabase();
+            dm.getCommandQueue();
+            let testDevice = createAutoServerTestDevice();
+            testDevice.currentState = "off";
+            testDevice.nextState = "on";
+            testDevice.schedule = {
+                start: getRelativeDate(60, '+'),
+                end: getRelativeDate(120, '+')
+            }
+            let changedState = dm.manageDevice(testDevice);
+            let commands = dm.getCommandQueue();
+            assert(commands.length === 0 &&
+            changedState === false);
+        });
+        */
     })
 }
 
 /*
     SECTION: Helper Functions
 */
+
+function getRelativeDate(mins, operator) {
+    let date = new Date();
+    if (operator === '+') {
+        date.setHours(date.getHours() + mins / 60);
+        date.setMinutes(date.getMinutes() + mins % 60);
+    } else {
+        date.setHours(date.getHours() - mins / 60);
+        date.setMinutes(date.getMinutes() - mins % 60);
+    }
+    return date;
+}
 
 function createAutoTestDevice() {
     let testDevice = {
@@ -208,4 +290,54 @@ function createAutoTestDevice() {
         }
     };
     return testDevice;
+}
+
+function createAutoServerTestDevice() {
+    let serverTestDevice = {
+        scheduledByUser: false,
+        isScheduled: false,
+        nextState: "",
+        schedule: {
+            start: new Date(),
+            end: new Date()
+        },
+        scheduledInterval: {
+            start: new Date(),
+            end: new Date()
+        },
+
+        deviceId: uuid.uuid(),
+        isAutomatic: true,
+        currentPower: 123,
+        currentState: "on",
+        deviceType: "Water Heater",
+        onDisconnect: false,
+        serverMessage: null,
+        graphIndex: 0,
+        programs: [{
+                pointArray: [
+                    45,
+                    53,
+                    56,
+                    60,
+                    69
+                ]
+            },
+            {
+                pointArray: [
+                    47,
+                    43,
+                    49,
+                    56,
+                    60
+                ]
+            }
+        ],
+        uniqueProperties: {
+            currentTemp: 91,
+            minTemp: 55,
+            maxTemp: 90
+        }
+    };
+    return serverTestDevice;
 }

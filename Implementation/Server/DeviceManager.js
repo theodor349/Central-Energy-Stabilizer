@@ -11,7 +11,7 @@ const functions = {
     updateDevice: (deviceInfo) => updateDevice(deviceInfo),
     manageDevice: (deviceInfo) => manageDevice(deviceInfo),
     getScheduledState: (deviceInfo, time) => getScheduledState(deviceInfo, time),
-    changeState: (id) => changeState(id),
+    changeState: (id, nextState) => changeState(id, nextState),
     stateChanged: (id, newState) => stateChanged(id, newState),
     receiveUpdate: (deviceInfo) => receiveUpdate(deviceInfo),
     removeSchedule: (id) => removeSchedule(id),
@@ -98,13 +98,53 @@ async function updateDevice(deviceInfo) {
     return fieldsToUpdate.length;
 }
 
+function manageDevice(deviceInfo) {
+    let time = new Date();
+    let nextState = getScheduledState(deviceInfo, time);
+    if (nextState === null) {
+        return false;
+    }
+    changeState(deviceInfo.deviceId, nextState);
+    return true;
+}
+
+
 /*
     SECTION: Helper Functions
 */
 
+function getScheduledState(deviceInfo, time) {
+    if (deviceInfo.schedule.start < time &&
+        deviceInfo.schedule.end > time) {
+        if (deviceInfo.nextState === deviceInfo.currentState) {
+            return null;
+        } else {
+            return deviceInfo.nextState;
+        }
+    } else {
+        if (deviceInfo.currentState === "off") {
+            return null;
+        } else {
+            return "off";
+        }
+    }
+}
+
+function changeState(id, nextState) {
+    let index = getConnectionIndexId(id);
+    if (index === null) {
+        return false;
+    }
+    if (nextState === "off") {
+        createCommand(activeConnections[index].socket, "off", nextState);
+    } else {
+        createCommand(activeConnections[index].socket, "on", nextState);
+    }
+    return true;
+}
+
 function getFieldsToUpdate(device, other) {
     let fieldsToUpdate = [];
-
     if (device.isAutomatic !== other.isAutomatic) {
         fieldsToUpdate.push({
             field: "isAutomatic",
@@ -154,23 +194,39 @@ function clearAllConnections() {
 }
 
 function removeConnectionWithSocket(socket) {
-    for (let i = 0; i < activeConnections.length; i++) {
-        if (activeConnections[i].socket === socket) {
-            activeConnections.splice(i, 1);
-            return true;
-        }
+    let index = getConnectionIndexSocket(socket)
+    if (index !== null) {
+        activeConnections.splice(index, 1);
+        return true;
     }
     return false;
 }
 
 function removeConnectionWithId(id) {
-    for (let i = 0; i < activeConnections.length; i++) {
-        if (activeConnections[i].deviceId === id) {
-            activeConnections.splice(i, 1);
-            return true;
-        }
+    let index = getConnectionIndexId(id);
+    if (index !== null) {
+        activeConnections.splice(index, 1);
+        return true;
     }
     return false;
+}
+
+function getConnectionIndexId(id) {
+    for (let i = 0; i < activeConnections.length; i++) {
+        if (activeConnections[i].deviceId === id) {
+            return i;
+        }
+    }
+    return null;
+}
+
+function getConnectionIndexSocket(socket) {
+    for (let i = 0; i < activeConnections.length; i++) {
+        if (activeConnections[i].socket === socket) {
+            return i;
+        }
+    }
+    return null;
 }
 
 function addConnection(id, socket) {
@@ -179,12 +235,6 @@ function addConnection(id, socket) {
         socket: socket
     };
     activeConnections.push(connection);
-}
-
-function isIdValid(id) {
-    if (id === undefined) {
-        return false;
-    }
 }
 
 function getActiveConnections() {

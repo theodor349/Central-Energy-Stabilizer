@@ -52,7 +52,7 @@ async function updateSurplus(startTime) {
 */
         await da.updateGraph(surplusGraph.graphId, surplusGraph.values, false);
         
-        resolve(da.getGraph(surplus.Graph.graphId));
+        resolve(da.getGraph(surplusGraph.graphId));
     });
 }
 
@@ -95,6 +95,10 @@ async function removeDemand(startTime, graph){
         lowerGraph.values = invertValues(lowerGraph.values);
         upperGraph.values = invertValues(upperGraph.values);
 
+        if (isGraphValid(lowerGraph.values) !== true && isGraphValid(upperGraph.values) !== true) {
+            reject(err);
+        }
+
         await updateGraph(lowerGraph);
         await updateGraph(upperGraph);
 
@@ -120,6 +124,10 @@ function invertValues(values) {
     }
     return values;
 
+}
+
+function isGraphValid(graph) {
+    return (typeof(graph) === "object");
 }
 
 function splitGraph(startTime, graph) {

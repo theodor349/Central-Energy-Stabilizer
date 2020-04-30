@@ -7,12 +7,39 @@ p {
 }
 
 html{
-    background-color: #52B157;
+    background: rgb(113,201,132);
+    background: radial-gradient(circle, rgba(113,201,132,1) 0%, rgba(115,181,119,1) 56%, rgba(82,177,134,1) 100%);
 }
 
 body{
     margin: 0 auto;
     text-align: center;
+    overflow-y:scroll;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #b6ffc2;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #6bc97b;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #619958;
+}
+
+::selection {
+  color: #eee;
+  background: #f2c172;
 }
 
 header {
@@ -24,15 +51,27 @@ header {
     header h1{
         margin-top:0;
         margin-bottom: 0;
+        text-transform: uppercase;
+        font-weight: 700;
     }
 
     header h2{
         margin-top: 0;
+        line-height: 0.8;
         margin-bottom: 0;
+        font-weight: 550;
+    }
+
+    header > hr{
+        margin-top: 25px;
+        width: 300px;
+        border: solid 0.5px #333;
     }
 
     #serverDevices{
         display: inline-block;
+        position: relative;
+        background: rgba(120,150,120, 1);
     }
 
     #serverDevices section div{
@@ -54,16 +93,18 @@ header {
         text-align: left;
     }
         #serverDevices section ul li{
-            display: inline;
-            margin: 12px;
-            line-height: 50px;
+            display: inline-block;
+            margin: 6px 12px;
+        }
+
+        #serverDevices > section > header > ul > li{
+            line-height: 38px;
         }
 
     #serverDevices section header{
-        background: rgba(255,255,255, 0.7);
+        background: rgba(205,225,205, 1);
         height: 50px;
         display:flex;
-        max-width: 900px;
         margin: 0 auto;
         cursor: pointer;
         padding: 4px;
@@ -76,7 +117,7 @@ header {
 
         #serverDevices section header h3{
             margin: 0;
-            width: 200px;
+            width: 400px;
             text-align: left;
             padding-left: 20px;
             line-height: 50px;
@@ -92,15 +133,13 @@ header {
 
         #serverDevices section header p, #serverDevices section section p{
             display: inline;
-            font-size: 0.8em;
+            font-size: 1.1em;
         }
 
 
     /* THE SETTINGS BOX */
     #serverDevices > section > section{
-        background: rgba(100,100,100, 0.4);
         display:block;
-        max-width: 900px;
         margin: 0 auto;
         transform: scaleY(0);
         transition-duration: 0.3s;
@@ -112,7 +151,7 @@ header {
             display: block;
             margin: 0;
             padding-top: 8px;
-            font-weight: 600;
+            font-weight: 800;
         }
 
             #serverDevices > section > section > section{
@@ -121,108 +160,94 @@ header {
             }
 
                 #serverDevices > section > section > section > h4{
+                    line-height:1.7;
                     margin: 0;
-                    font-weight: 500;
-                    font-size: 1em;
+                    font-weight: 600;
+                    font-size: 1.2em;
                 }
 
 
-
-
-.background{
-    position: fixed;
-    bottom: 0;
-    pointer-events: none;
-    opacity: 0.6;
-    text-align: center;
-    margin: 0 auto;
-    z-index: -1
-}
-
-.background p{
+.pebert{
+    height: 300px;
     position: absolute;
-    bottom: 0;
-    width: 100%;
-    left: 0;
+    z-index: -1;
+    right: 2%;
+    top:-150px;
+    transition-duration: 0.4s;
 }
 
-.background > section:first-child{
-    bottom: 7vw;
-}
-
-.background > section:nth-child(2){
-    bottom: 6vw;
-    left: 7vw;
-}
-
-    .background > section:nth-child(2) > img:last-child{
-        animation-delay: -0.4s;
-    }
-
-.background .fields{
-    width: 100vw;
-    margin-bottom: -4px;
-}
-
-.windmill{
-    width: 200px;
+.headerGraph{
+    height: 300px;
     position: absolute;
-    height: 274px;
+    z-index: -1;
+    left: 2%;
+    top:-150px;
+    transition-duration: 0.4s;
 }
 
-    .windmill img:first-child{
-        height: 180px;
-        position: absolute;
-        left: 46%;
-        bottom: 0;
-    }
-
-    .windmill img:last-child{
-        position: absolute;
-        width: 200px;
-        left: 0;
-        top: 0;
-        animation-name: windmillTurn;
-        animation-duration: 2s;
-        animation-iteration-count: infinite;
-        animation-timing-function: linear;
-    }
-
-
-    @keyframes windmillTurn {
-        from {transform: rotate(0);}
-        to {transform: rotate(360deg);}
-    }
 
 
 
 
-form{
-    margin: 40px auto 10px;
-    display: inline-block;
+
+
+
+
+
+
+
+#mainGraph{
+    display: block;
+    margin: 0 auto 2.5vw;
 }
-    form input{
-        padding: 6px 4px;
-        width: 200px;
-        margin: 10px;
+
+
+.graphBgLine{
+    stroke: rgba(74, 102, 70, 0.15);
+    stroke-width: 1px;
+}
+
+.graphBgLineDevider{
+    stroke: rgba(74, 102, 70, 0.3);
+    stroke-width: 1px;
+}
+
+
+
+
+@media only screen and (max-width: 1000px) {
+    #serverDevices section header{
+        height: auto;
         text-align: center;
-        background: #ddd;
-        border: none;
         display: block;
-        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
     }
 
-    form button{
-        background: #ccc;
-        transition: 0.3s;
-        color: #2B2B2B;
-        cursor: pointer;
-        padding: 4px;
-        width: 180px;
-        border: none;
+    #serverDevices section header h3{
+        height: 40px;
+        line-height: 40px;
+        display: block;
+        text-align: center;
+        margin: 0 auto;
     }
 
-    form button:hover{
-        background: #2B2B2B;
-        color: #CCCCCC;
+    #serverDevices section header ul{
+        display: block;
+        text-align: center;
     }
+
+    #serverDevices > section > header > ul{
+        height: 30px;
+    }
+
+    #serverDevices > section > header > ul > li{
+        line-height: 20px;
+    }
+
+    .pebert{
+        top: 0px;
+    }
+
+    .headerGraph{
+        top:0px;
+    }
+}

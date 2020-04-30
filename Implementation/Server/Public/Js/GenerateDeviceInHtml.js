@@ -6,7 +6,8 @@
 
 let waterHeater = {
     imageSrc: "./Images/waterheaterIcon.svg",
-    headerProperties: ["currentTemp", "currentPower", "currentStatus"]
+    headerProperties: ["currentTemp", "currentPower", "currentStatus"],
+    settingsProperties: ["tempInterval", "maxPower", "deviceId"]
 };
 
 /*
@@ -20,72 +21,173 @@ function getPropertyInformation(device, propertyItem) {
         case "currentTemp":
             property.name = "Temp";
             property.value = device.uniqueProperties.currentTemp;
+            property.value2 = null;
             property.unit = "℃";
             break;
 
         case "currentPower":
             property.name = "Power";
-            property.value = device.uniqueProperties.currentPower;
+            property.value = device.currentPower;
+            property.value2 = null;
             property.unit = "Watt";
             break;
 
         case "currentStatus":
             property.name = "Status";
-            property.value = device.state;
-
-            if (device.state === "on") {
+            property.value = device.currentState;
+            property.value2 = null;
+            if (device.currentState === "on") {
                 property.unit = "↑";
             } else {
                 property.unit = "↓";
             }
             break;
 
+        case "tempInterval":
+            property.name = "Temp";
+            property.value = device.uniqueProperties.minTemp;
+            property.value2 = device.uniqueProperties.maxTemp;
+            property.unit = "℃";
+            break;
+
+        case "maxPower":
+            property.name = "Power";
+            property.value = device.maxPower;
+            property.value2 = null;
+            property.unit = "Watt";
+            break;
+
+        case "deviceId":
+            property.name = "Device ID";
+            property.value = device.Id;
+            property.value2 = null;
+            property.unit = "";
+            break;
+
         default:
-            console.warn("Warning: build for header property " + propertyItem + " Not defined");
+            console.warn("Warning: build for property " + propertyItem + " Not defined");
             break;
     }
+
+    if (property.name === undefined || property.value === undefined ||
+        property.value2 === undefined || property.unit === undefined) {
+        console.warn("Warning: build for property " + propertyItem + " missing definition");
+    }
+
     return property;
 }
 
 /*
-    SECTION: testing functions
+    SECTION: testing definitions
 */
 
 let testDevice = {
-    Id: "2222",
+    Id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+    name: "Metro El-vandvarmer, model 15",
     isAutomatic: true,
     deviceType: "Water Heater",
-    state: "on",
+    currentState: "on",
+    currentPower: 1299,
+    maxPower: 3000,
     uniqueProperties: {
         minTemp: 55,
         maxTemp: 90,
-        currentPower: 1299,
+        currentTemp: 66
+    }
+}
+
+let testDevice2 = {
+    Id: "9b1deb4d-3b7d-4bad-9bdd-2b0dcb6d",
+    name: "Metro El-vandvarmer, model 15",
+    isAutomatic: true,
+    deviceType: "Water Heater",
+    currentState: "on",
+    currentPower: 1299,
+    maxPower: 3000,
+    uniqueProperties: {
+        minTemp: 55,
+        maxTemp: 90,
+        currentTemp: 66
+    }
+}
+
+let testDevice3 = {
+    Id: "9b1d4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+    name: "Metro El-vandvarmer, model 15",
+    isAutomatic: true,
+    deviceType: "Water Heater",
+    currentState: "on",
+    currentPower: 1299,
+    maxPower: 3000,
+    uniqueProperties: {
+        minTemp: 55,
+        maxTemp: 90,
+        currentTemp: 66
+    }
+}
+let testDevice4 = {
+    Id: "9b1deb4bad-9bdd-2b0d7b3dcb6d",
+    name: "Metro El-vandvarmer, model 15",
+    isAutomatic: true,
+    deviceType: "Water Heater",
+    currentState: "on",
+    currentPower: 1299,
+    maxPower: 3000,
+    uniqueProperties: {
+        minTemp: 55,
+        maxTemp: 90,
+        currentTemp: 66
+    }
+}
+let testDevice5 = {
+    Id: "9b1deb4d-3b7d-4bad-b0d7b3dcb6d",
+    name: "Metro El-vandvarmer, model 15",
+    isAutomatic: true,
+    deviceType: "Water Heater",
+    currentState: "on",
+    currentPower: 1299,
+    maxPower: 3000,
+    uniqueProperties: {
+        minTemp: 55,
+        maxTemp: 90,
         currentTemp: 66
     }
 }
 
 let testDeviceUpdate = {
-    Id: "2222",
+    Id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+    name: "Metro El-vandvarmer, model 15",
     isAutomatic: true,
     deviceType: "Water Heater",
-    state: "off",
+    currentState: "off",
+    currentPower: 0,
+    maxPower: 3000,
     uniqueProperties: {
         minTemp: 55,
         maxTemp: 90,
-        currentPower: 0,
         currentTemp: 90
     }
 }
 
 addDevice(testDevice);
+addDevice(testDevice2);
+addDevice(testDevice3);
+addDevice(testDevice4);
+addDevice(testDevice5);
 updateDevice(testDeviceUpdate);
 
 /*
-    SECTION: adding, deleting and updating entire devices
+--------------------------------------------------------------------------------
+END OF DEFINITIONS
+________________________________________________________________________________
+*/
+
+/*
+    SECTION: adding, deleting and updating devices
 */
 
 function removeDevice(serverDevice) {
-    let deviceElem = document.getElementById(("device" + device.Id));
+    let deviceElem = document.getElementById((device.Id));
     deviceElem.parentNode.removeChild(deviceElem);
 }
 
@@ -114,7 +216,7 @@ function updateDevice(serverDevice) {
 */
 
 function getDevicePropertyContainer(device) {
-    return document.getElementById(("device" + device.Id)).children[0].children[2];
+    return document.getElementById((device.Id)).children[0].children[2];
 }
 
 /*
@@ -129,7 +231,15 @@ function updateHeaderProperty(propertyItem, propertyIndex, device) {
 
     propertyContainer.children[0].innerHTML = property.name + ": ";
     propertyContainer.children[1].innerHTML = property.value;
-    propertyContainer.children[2].innerHTML = " " + property.unit;
+
+    // update values according to amount of values presented
+    if (property.value2 !== null) {
+        propertyContainer.children[2].innerHTML = " – " + property.value2;
+        propertyContainer.children[3].innerHTML = " " + property.unit;
+    } else {
+        propertyContainer.children[2].innerHTML = " " + property.unit;
+    }
+
 }
 
 
@@ -140,8 +250,8 @@ function updateHeaderProperty(propertyItem, propertyIndex, device) {
 
 function buildDeviceInHTML(device) {
     let deviceContainer = document.createElement("section");
-    deviceContainer.id = "device" + device.Id;
-    deviceContainer.setAttribute("onClick", "displayDeviceSetting(" + "device" + device.Id + ")");
+    deviceContainer.id = device.Id;
+    deviceContainer.setAttribute("onClick", "displayDeviceSetting('" + device.Id + "')");
 
     let header = buildDeviceHeader(device);
     deviceContainer.appendChild(header);
@@ -161,7 +271,7 @@ function buildDeviceHeader(device) {
     div.appendChild(img);
 
     let name = document.createElement("h3");
-    name.innerHTML = device.deviceType;
+    name.innerHTML = device.name;
     header.appendChild(name);
 
     let description = buildHeaderProperties(device);
@@ -191,7 +301,7 @@ function buildHeaderProperties(device) {
     switch (device.deviceType) {
         case "Water Heater":
             waterHeater.headerProperties.forEach((propertyItem) => {
-                buildHeaderProperty(propertyItem, device, list);
+                buildProperty(propertyItem, device, list);
             });
             break;
 
@@ -203,7 +313,45 @@ function buildHeaderProperties(device) {
     return list;
 }
 
-function buildHeaderProperty(propertyItem, device, list) {
+function buildDeviceSettings(device) {
+    let settingssection = document.createElement("section");
+    let title = document.createElement("h3");
+    title.innerHTML = "Settings";
+
+    settingssection.appendChild(title);
+
+    let specs = document.createElement("section");
+    title = document.createElement("h4");
+    title.innerHTML = "spec:";
+
+    settingssection.appendChild(specs);
+    specs.appendChild(title);
+
+    let list = buildSettingsProperties(device);
+    specs.appendChild(list);
+
+    return settingssection;
+}
+
+function buildSettingsProperties(device) {
+    let list = document.createElement("ul");
+
+    switch (device.deviceType) {
+        case "Water Heater":
+            waterHeater.settingsProperties.forEach((propertyItem) => {
+                buildProperty(propertyItem, device, list);
+            });
+            break;
+
+        default:
+            console.warn("Warning: Can't find settings properties for " + device.deviceType);
+            break;
+    }
+
+    return list;
+}
+
+function buildProperty(propertyItem, device, list) {
     let listItem = document.createElement("li");
     let nameContainer = document.createElement("p");
     let valueContainer = document.createElement("p");
@@ -217,64 +365,13 @@ function buildHeaderProperty(propertyItem, device, list) {
 
     listItem.appendChild(nameContainer);
     listItem.appendChild(valueContainer);
+
+    if (property.value2 !== null) {
+        let valueContainer2 = document.createElement("p");
+        valueContainer2.innerHTML = " – " + property.value2;
+        listItem.appendChild(valueContainer2);
+    }
+
     listItem.appendChild(unitContainer);
     list.appendChild(listItem);
-}
-
-function buildDeviceSettings(device) {
-    let section = document.createElement("section");
-    let title = document.createElement("h3");
-    section.appendChild(title);
-    title.innerHTML = "Settings";
-    let specs = document.createElement("section");
-    section.appendChild(specs);
-    title = document.createElement("h4");
-    specs.appendChild(title);
-    title.innerHTML = "spec:";
-
-    let list = document.createElement("ul");
-    specs.appendChild(list);
-
-    // should be dynamic
-    let listItem = document.createElement("li");
-    listItem.setAttribute("class", "minMaxTemp");
-    let name = document.createElement("p");
-    name.innerHTML = "Temp: ";
-    let val1 = document.createElement("p");
-    val1.innerHTML = device.lowerLimit;
-    let val2 = document.createElement("p");
-    val2.innerHTML = device.upperLimit;
-    let unit = document.createElement("p");
-    unit.innerHTML = "℃";
-
-    listItem.appendChild(name);
-    listItem.appendChild(val1);
-
-    listItem.innerHTML += " - ";
-
-    listItem.appendChild(val2);
-    listItem.appendChild(unit);
-    list.appendChild(listItem);
-
-    listItem = document.createElement("li");
-    listItem.setAttribute("class", "minMaxEffect");
-    name = document.createElement("p");
-    name.innerHTML = "Power: ";
-    val1 = document.createElement("p");
-    val1.innerHTML = 0;
-    val2 = document.createElement("p");
-    val2.innerHTML = device.maxEffect;
-    unit = document.createElement("p");
-    unit.innerHTML = "watt";
-
-    listItem.appendChild(name);
-    listItem.appendChild(val1);
-
-    listItem.innerHTML += " - ";
-
-    listItem.appendChild(val2);
-    listItem.appendChild(unit);
-    list.appendChild(listItem);
-
-    return section;
 }

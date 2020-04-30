@@ -13,17 +13,18 @@ const functions = {
     getScheduledState: (deviceInfo, time) => getScheduledState(deviceInfo, time),
     changeState: (id, nextState) => changeState(id, nextState),
     stateChanged: (id, newState) => stateChanged(id, newState),
-    receiveUpdate: (deviceInfo) => receiveUpdate(deviceInfo),
     removeSchedule: (id) => removeSchedule(id),
     getCommandQueue: () => getCommandQueue(),
     getActiveConnections: () => getActiveConnections(),
     clearAllConnections: () => clearAllConnections(),
+    getUpdatedDevices: () => getUpdatedDevices(),
     // FOR TESTING
     testDeviceInit: (deviceInfo, socket) => testDeviceInit(deviceInfo, socket),
 }
 module.exports = functions;
 let commandQueue = [];
 let activeConnections = [];
+let updatedDevices = [];
 
 function onConnect(socket) {
     createCommand(socket, "askForId");
@@ -96,6 +97,9 @@ async function updateDevice(deviceInfo) {
         await db.updateDevice(deviceInfo.deviceId,
             fieldsToUpdate[i].field,
             fieldsToUpdate[i].value);
+    }
+    if (fieldsToUpdate.length > 0) {
+        updatedDevices.push(deviceInfo.deviceId);
     }
     return fieldsToUpdate.length;
 }
@@ -248,6 +252,12 @@ function addConnection(id, socket) {
         socket: socket
     };
     activeConnections.push(connection);
+}
+
+function getUpdatedDevices() {
+    let devices = updatedDevices;
+    updatedDevices = [];
+    return devices;
 }
 
 function getActiveConnections() {

@@ -130,7 +130,9 @@ if (true) {
             testDevice.deviceId = id;
             let fieldsUpdated = await dm.updateDevice(testDevice);
             let dbDevice = await db.getDevice(id);
+            let updatedDevices = dm.getUpdatedDevices();
             assert(fieldsUpdated === 1 &&
+                updatedDevices[0] === id &&
                 dbDevice.currentState === "off");
         });
         it('updateDevice: changed uniqueProperties', async () => {
@@ -147,7 +149,9 @@ if (true) {
             testDevice.deviceId = id;
             let fieldsUpdated = await dm.updateDevice(testDevice);
             let dbDevice = await db.getDevice(id);
+            let updatedDevices = dm.getUpdatedDevices();
             assert(fieldsUpdated === 1 &&
+                updatedDevices[0] === id &&
                 dbDevice.uniqueProperties.currentTemp === 80);
         });
         it('updateDevice: with no changes to device', async () => {
@@ -156,14 +160,18 @@ if (true) {
             let id = testDevice.deviceId;
             await dm.deviceInit(testDevice);
             let fieldsUpdated = await dm.updateDevice(testDevice);
-            assert(fieldsUpdated === 0);
+            let updatedDevices = dm.getUpdatedDevices();
+            assert(fieldsUpdated === 0 &&
+                updatedDevices.length === 0);
         });
         it('updateDevice: no device on DB', async () => {
             db.dropDatabase();
             let testDevice = createAutoTestDevice();
             let id = testDevice.deviceId;
             let fieldsUpdated = await dm.updateDevice(testDevice);
-            assert(fieldsUpdated === 0);
+            let updatedDevices = dm.getUpdatedDevices();
+            assert(fieldsUpdated === 0 &&
+                updatedDevices.length === 0);
         });
 
         // Manage device

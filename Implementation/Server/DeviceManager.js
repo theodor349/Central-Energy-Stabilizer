@@ -8,7 +8,7 @@ const functions = {
     deviceInit: (deviceInfo, socket) => deviceInit(deviceInfo, socket),
     onDisconnect: (socket) => onDisconnect(socket),
     deleteDevice: (id) => deleteDevice(id),
-    updateDevice: (id) => updateDevice(id),
+    updateDevice: (deviceInfo) => updateDevice(deviceInfo),
     manageDevice: (deviceInfo) => manageDevice(deviceInfo),
     getScheduledState: (deviceInfo, time) => getScheduledState(deviceInfo, time),
     changeState: (id) => changeState(id),
@@ -84,9 +84,65 @@ function deleteDevice(id) {
     })
 }
 
+async function updateDevice(deviceInfo) {
+    let dbDevice = await db.getDevice(deviceInfo.deviceId);
+    if (dbDevice === null) {
+        return 0;
+    }
+    let fieldsToUpdate = getFieldsToUpdate(deviceInfo, dbDevice);
+    for (let i = 0; i < fieldsToUpdate.length; i++) {
+        await db.updateDevice(deviceInfo.deviceId,
+            fieldsToUpdate[i].field,
+            fieldsToUpdate[i].value);
+    }
+    return fieldsToUpdate.length;
+}
+
 /*
     SECTION: Helper Functions
 */
+
+function getFieldsToUpdate(device, other) {
+    let fieldsToUpdate = [];
+
+    if (device.isAutomatic !== other.isAutomatic) {
+        fieldsToUpdate.push({
+            field: "isAutomatic",
+            value: device.isAutomatic
+        });
+    }
+    if (device.currentPower !== other.currentPower) {
+        fieldsToUpdate.push({
+            field: "currentPower",
+            value: device.currentPower
+        });
+    }
+    if (device.currentState !== other.currentState) {
+        fieldsToUpdate.push({
+            field: "currentState",
+            value: device.currentState
+        });
+    }
+    if (device.deviceType !== other.deviceType) {
+        fieldsToUpdate.push({
+            field: "deviceType",
+            value: device.deviceType
+        });
+    }
+    if (JSON.stringify(device.programs) !== JSON.stringify(other.programs)) {
+        fieldsToUpdate.push({
+            field: "programs",
+            value: device.programs
+        });
+    }
+    if (JSON.stringify(device.uniqueProperties) !== JSON.stringify(other.uniqueProperties)) {
+        fieldsToUpdate.push({
+            field: "uniqueProperties",
+            value: device.uniqueProperties
+        });
+    }
+    return fieldsToUpdate;
+}
 
 function sendNewId(socket) {
     let id = uuid.uuid();

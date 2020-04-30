@@ -118,6 +118,55 @@ if (true) {
             assert(dbDevice === null &&
                 didRemove === false);
         });
+
+        // Update device
+        it('updateDevice: changed currentState', async () => {
+            db.dropDatabase();
+            let testDevice = createAutoTestDevice();
+            let id = testDevice.deviceId;
+            await dm.deviceInit(testDevice);
+            testDevice = createAutoTestDevice();
+            testDevice.currentState = "off";
+            testDevice.deviceId = id;
+            let fieldsUpdated = await dm.updateDevice(testDevice);
+            let dbDevice = await db.getDevice(id);
+            assert(fieldsUpdated === 1 &&
+                dbDevice.currentState === "off");
+        });
+        it('updateDevice: changed uniqueProperties', async () => {
+            db.dropDatabase();
+            let testDevice = createAutoTestDevice();
+            let id = testDevice.deviceId;
+            await dm.deviceInit(testDevice);
+            testDevice = createAutoTestDevice();
+            testDevice.uniqueProperties = {
+                currentTemp: 80,
+                minTemp: 55,
+                maxTemp: 90
+            };
+            testDevice.deviceId = id;
+            let fieldsUpdated = await dm.updateDevice(testDevice);
+            let dbDevice = await db.getDevice(id);
+            assert(fieldsUpdated === 1 &&
+                dbDevice.uniqueProperties.currentTemp === 80);
+        });
+        it('updateDevice: with no changes to device', async () => {
+            db.dropDatabase();
+            let testDevice = createAutoTestDevice();
+            let id = testDevice.deviceId;
+            await dm.deviceInit(testDevice);
+            testDevice = createAutoTestDevice();
+            testDevice.deviceId = id;
+            let fieldsUpdated = await dm.updateDevice(testDevice);
+            assert(fieldsUpdated === 0);
+        });
+        it('updateDevice: no device on DB', async () => {
+            db.dropDatabase();
+            let testDevice = createAutoTestDevice();
+            let id = testDevice.deviceId;
+            let fieldsUpdated = await dm.updateDevice(testDevice);
+            assert(fieldsUpdated === 0);
+        });
     })
 }
 
@@ -132,7 +181,6 @@ function createAutoTestDevice() {
         currentPower: 123,
         currentState: "on",
         deviceType: "Water Heater",
-        isConnected: false,
         onDisconnect: false,
         serverMessage: null,
         graphIndex: 0,

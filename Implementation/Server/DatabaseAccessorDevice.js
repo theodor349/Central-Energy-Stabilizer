@@ -80,7 +80,6 @@ async function createDevice(device) {
                 currentPower: serilizedDevice.currentPower,
                 currentState: serilizedDevice.currentState,
                 deviceType: serilizedDevice.deviceType,
-                isConnected: serilizedDevice.isConnected,
                 programs: serilizedDevice.programs,
                 uniqueProperties: serilizedDevice.uniqueProperties
             });
@@ -197,11 +196,6 @@ async function updateDevice(id, field, value) {
                     case "deviceType":
                         update = {
                             deviceType: value
-                        };
-                        break;
-                    case "isConnected":
-                        update = {
-                            isConnected: value
                         };
                         break;
                     case "programs":

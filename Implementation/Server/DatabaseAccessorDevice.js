@@ -123,10 +123,13 @@ async function deleteDevice(id) {
     return new Promise((resolve, reject) => {
         Device.deleteOne({
             deviceId: id
-        }, (err) => {
+        }, (err, val) => {
             if (err) {
                 reject(err);
             } else {
+                if (val.n === 0) {
+                    resolve(false);
+                }
                 resolve(true);
             }
         });

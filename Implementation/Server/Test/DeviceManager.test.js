@@ -86,6 +86,16 @@ if (true) {
             );
         })
 
+        // On disconnect
+        it('onDisconnect: Removes active connection', async () => {
+            dm.clearAllConnections();
+            let didRecievedId = dm.receiveId(uuid.uuid(), "socket");
+            let didDisconnect = dm.onDisconnect("socket");
+            let activeConnections = dm.getActiveConnections();
+            assert(didRecievedId === true &&
+                didDisconnect === true &&
+                activeConnections.length === 0);
+        });
     })
 }
 

@@ -17,6 +17,7 @@ const functions = {
     removeSchedule: (id) => removeSchedule(id),
     getCommandQueue: () => getCommandQueue(),
     getActiveConnections: () => getActiveConnections(),
+    clearAllConnections: () => clearAllConnections(),
 }
 module.exports = functions;
 let commandQueue = [];
@@ -61,6 +62,12 @@ function deviceInit(deviceInfo, socket) {
     })
 }
 
+function onDisconnect(socket) {
+    return removeConnection(socket);
+}
+
+
+
 /*
     SECTION: Helper Functions
 */
@@ -68,6 +75,20 @@ function deviceInit(deviceInfo, socket) {
 function sendNewId(socket) {
     let id = uuid.uuid();
     createCommand(socket, "setId", id);
+}
+
+function clearAllConnections() {
+    activeConnections = [];
+}
+
+function removeConnection(socket) {
+    for (let i = 0; i < activeConnections.length; i++) {
+        if (activeConnections[i].socket === socket) {
+            activeConnections.splice(i, 1);
+            return true;
+        }
+    }
+    return false;
 }
 
 function addConnection(id, socket) {

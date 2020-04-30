@@ -96,6 +96,28 @@ if (true) {
                 didDisconnect === true &&
                 activeConnections.length === 0);
         });
+
+        // Delete device
+        it('deleteDevice: delete existing device', async () => {
+            db.dropDatabase();
+            dm.clearAllConnections();
+            let testDevice = createAutoTestDevice();
+            await dm.deviceInit(testDevice);
+            let didRemove = await dm.deleteDevice(testDevice.deviceId);
+            let activeConnections = dm.getActiveConnections();
+            let dbDevice = await db.getDevice(testDevice.deviceId);
+            assert(activeConnections.length === 0 &&
+                dbDevice === null &&
+                didRemove === true);
+        });
+        it('deleteDevice: delete non-existing device', async () => {
+            db.dropDatabase();
+            let id = uuid.uuid();
+            let didRemove = await dm.deleteDevice(id);
+            let dbDevice = await db.getDevice(id);
+            assert(dbDevice === null &&
+                didRemove === false);
+        });
     })
 }
 

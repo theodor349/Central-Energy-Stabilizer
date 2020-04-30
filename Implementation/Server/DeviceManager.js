@@ -28,6 +28,7 @@ function onConnect(socket) {
 }
 
 function receiveId(id, socket) {
+    // TODO: Check for existing ID on DB
     if (uuid.isUuid(id) === true) {
         addConnection(id, socket);
         return true;
@@ -63,10 +64,25 @@ function deviceInit(deviceInfo, socket) {
 }
 
 function onDisconnect(socket) {
-    return removeConnection(socket);
+    return removeConnectionWithSocket(socket);
 }
 
-
+function deleteDevice(id) {
+    return new Promise(async (resolve, reject) => {
+        db.deleteDevice(id)
+            .then((val) => {
+                if (val === true) {
+                    removeConnectionWithId(id);
+                    resolve(true);
+                } else {
+                    resolve(false);
+                }
+            })
+            .catch((err) => {
+                reject(err);
+            })
+    })
+}
 
 /*
     SECTION: Helper Functions
@@ -81,9 +97,19 @@ function clearAllConnections() {
     activeConnections = [];
 }
 
-function removeConnection(socket) {
+function removeConnectionWithSocket(socket) {
     for (let i = 0; i < activeConnections.length; i++) {
         if (activeConnections[i].socket === socket) {
+            activeConnections.splice(i, 1);
+            return true;
+        }
+    }
+    return false;
+}
+
+function removeConnectionWithId(id) {
+    for (let i = 0; i < activeConnections.length; i++) {
+        if (activeConnections[i].deviceId === id) {
             activeConnections.splice(i, 1);
             return true;
         }

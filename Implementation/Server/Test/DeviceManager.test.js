@@ -167,7 +167,6 @@ if (true) {
         });
 
         // Manage device
-
         it('manageDevice: change state from on to off', async () => {
             db.dropDatabase();
             dm.getCommandQueue();
@@ -231,6 +230,38 @@ if (true) {
             let commands = dm.getCommandQueue();
             assert(commands.length === 0 &&
             changedState === false);
+        });
+
+        // State Changed
+        it('stateChanged: changed from on to off', async () => {
+            db.dropDatabase();
+            dm.getCommandQueue();
+            let testDevice = createAutoServerTestDevice();
+            testDevice.currentState = "on";
+            await dm.testDeviceInit(testDevice, "socket");
+            let res = await dm.stateChanged(testDevice.deviceId, "off");
+            let dbDevice = await db.getDevice(testDevice.deviceId);
+            assert(dbDevice.currentState === "off" &&
+            res === true);
+        });
+        it('stateChanged: changed from on to on', async () => {
+            db.dropDatabase();
+            dm.getCommandQueue();
+            let testDevice = createAutoServerTestDevice();
+            testDevice.currentState = "on";
+            await dm.testDeviceInit(testDevice, "socket");
+            let res = await dm.stateChanged(testDevice.deviceId, "on");
+            let dbDevice = await db.getDevice(testDevice.deviceId);
+            assert(dbDevice.currentState === "on" &&
+            res === true);
+        });
+        it('stateChanged: no device in DB', async () => {
+            db.dropDatabase();
+            dm.getCommandQueue();
+            let testDevice = createAutoServerTestDevice();
+            testDevice.currentState = "on";
+            let res = await dm.stateChanged(testDevice.deviceId, "onDisconnect()");
+            assert(res === false);
         });
     })
 }

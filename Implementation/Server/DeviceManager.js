@@ -110,6 +110,17 @@ function manageDevice(deviceInfo) {
     return true;
 }
 
+async function stateChanged(id, newState) {
+    return new Promise((resolve, reject) => {
+        db.updateDevice(id, "currentState", newState)
+            .then((val) => {
+                resolve(val);
+            })
+            .catch((err) => {
+                reject(err);
+            })
+    })
+}
 
 /*
     SECTION: Helper Functions

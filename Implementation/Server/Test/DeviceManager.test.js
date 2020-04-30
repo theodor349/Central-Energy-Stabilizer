@@ -155,8 +155,6 @@ if (true) {
             let testDevice = createAutoTestDevice();
             let id = testDevice.deviceId;
             await dm.deviceInit(testDevice);
-            testDevice = createAutoTestDevice();
-            testDevice.deviceId = id;
             let fieldsUpdated = await dm.updateDevice(testDevice);
             assert(fieldsUpdated === 0);
         });

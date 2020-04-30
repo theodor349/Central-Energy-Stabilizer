@@ -231,9 +231,10 @@ async function updateDevice(id, field, value) {
 */
 
 function serializeDevice(device) {
-    device.programs = JSON.stringify(device.programs);
-    device.uniqueProperties = JSON.stringify(device.uniqueProperties);
-    return device;
+    let sDevice = JSON.parse(JSON.stringify(device));
+    sDevice.programs = JSON.stringify(sDevice.programs);
+    sDevice.uniqueProperties = JSON.stringify(sDevice.uniqueProperties);
+    return sDevice;
 }
 
 function deserializeDevice(device) {

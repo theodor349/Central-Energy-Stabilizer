@@ -120,7 +120,7 @@ if (true) {
             let device = createDevicePrototype();
             await da.createDevice(device);
 
-            let props = JSON.parse(device.uniqueProperties);
+            let props = device.uniqueProperties;
             props.mintemp = 10;
             let res = await da.updateDevice(device.deviceId, "uniqueProperties", props);
             let resD = await da.getDevice(device.deviceId);

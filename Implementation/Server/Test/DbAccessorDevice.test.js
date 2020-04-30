@@ -78,10 +78,10 @@ if (true) {
         });
 
         it('get: device wrong with ID', async () => {
-                da.dropDatabase();
+            da.dropDatabase();
             let device = createDevicePrototype();
             await da.createDevice(device);
-    
+
             let res = await da.getDevice("PLZ return an Error");
             assert(res === null);
         });
@@ -93,24 +93,24 @@ if (true) {
             let resD = await da.getDevice(device.deviceId);
             assert(res === true && resD === null);
         });
-    
+
         it('delete: device with wrong ID', async () => {
             da.dropDatabase();
             let device = createDevicePrototype();
             await da.createDevice(device);
             await da.deleteDevice(device.deviceId);
-    
+
             let res = await da.deleteDevice(device.deviceId);
             let resD = await da.getDevice(device.deviceId);
-    
-            assert(res === true && resD !== undefined);
+
+            assert(res === false && resD !== undefined);
         });
-        it('update:  device with correct state', async () => {
+        it('update: device with correct state', async () => {
             da.dropDatabase();
             let device = createDevicePrototype();
             await da.createDevice(device);
             let res = await da.updateDevice(device.deviceId, "currentState", "On");
-    
+
             let resD = await da.getDevice(device.deviceId);
             assert(res === true && resD !== undefined && resD.currentState === "On");
         });
@@ -120,7 +120,7 @@ if (true) {
             let device = createDevicePrototype();
             await da.createDevice(device);
 
-            let props = JSON.parse(device.uniqueProperties);
+            let props = device.uniqueProperties;
             props.mintemp = 10;
             let res = await da.updateDevice(device.deviceId, "uniqueProperties", props);
             let resD = await da.getDevice(device.deviceId);

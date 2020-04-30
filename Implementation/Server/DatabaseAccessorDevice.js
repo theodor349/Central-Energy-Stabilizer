@@ -80,7 +80,6 @@ async function createDevice(device) {
                 currentPower: serilizedDevice.currentPower,
                 currentState: serilizedDevice.currentState,
                 deviceType: serilizedDevice.deviceType,
-                isConnected: serilizedDevice.isConnected,
                 programs: serilizedDevice.programs,
                 uniqueProperties: serilizedDevice.uniqueProperties
             });
@@ -123,10 +122,13 @@ async function deleteDevice(id) {
     return new Promise((resolve, reject) => {
         Device.deleteOne({
             deviceId: id
-        }, (err) => {
+        }, (err, val) => {
             if (err) {
                 reject(err);
             } else {
+                if (val.n === 0) {
+                    resolve(false);
+                }
                 resolve(true);
             }
         });
@@ -196,11 +198,6 @@ async function updateDevice(id, field, value) {
                             deviceType: value
                         };
                         break;
-                    case "isConnected":
-                        update = {
-                            isConnected: value
-                        };
-                        break;
                     case "programs":
                         update = {
                             programs: JSON.stringify(value)
@@ -234,9 +231,12 @@ async function updateDevice(id, field, value) {
 */
 
 function serializeDevice(device) {
-    device.programs = JSON.stringify(device.programs);
-    device.uniqueProperties = JSON.stringify(device.uniqueProperties);
-    return device;
+    let sDevice = JSON.parse(JSON.stringify(device));
+    sDevice.schedule = JSON.stringify(sDevice.schedule);
+    sDevice.scheduledInterval = JSON.stringify(sDevice.scheduledInterval);
+    sDevice.programs = JSON.stringify(sDevice.programs);
+    sDevice.uniqueProperties = JSON.stringify(sDevice.uniqueProperties);
+    return sDevice;
 }
 
 function deserializeDevice(device) {
@@ -244,6 +244,8 @@ function deserializeDevice(device) {
         getters: true,
         virtuals: true
     });
+    device.schedule = JSON.stringify(device.schedule);
+    device.scheduledInterval = JSON.stringify(device.scheduledInterval);
     device.programs = JSON.parse(device.programs);
     device.uniqueProperties = JSON.parse(device.uniqueProperties);
     return device;

@@ -2,7 +2,7 @@
 <html lang="da" dir="ltr">
 
 <head>
-  <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,600,700&display=swap&subset=latin-ext" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,600,700,900&display=swap&subset=latin-ext" rel="stylesheet">
   <link rel="stylesheet" href="Css/Main.css">
   <meta charset="utf-8">
   <title>Pebert – The energy saving bot</title>
@@ -13,19 +13,20 @@
   <header>
     <h1>Pebert</h1>
     <h2>The energy saving network bot</h2>
+    <hr>
   </header>
 
+
+
   <section id="serverDevices">
+    <img src="./images/graph.svg" class="headerGraph" alt="graph bro">
+    <img src="./images/pebert.svg" class="pebert" alt="Pebert bro">
   </section>
 
 
-  <section class="background">
-
-    <p>Made by DAT2 C1-13</p>
-
-  </section>
-
-
+<svg width="95vw" height="450px" id="mainGraph">
+    <rect width="100vw" height="450px" stroke="rgba(74, 102, 70, 0.05)" stroke-width="4" fill="rgba(205,225,205, 0.3)" />
+</svg>
 
 
   <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
@@ -33,6 +34,8 @@
   <script src="./js/ServerCommunication.js"></script>
   <script src="./js/GenerateDeviceInHtml.js"></script>
   <script src="./js/UserInteractions.js"></script>
+  <script src="./js/DrawGraph.js"></script>
+
 
 </body>
 

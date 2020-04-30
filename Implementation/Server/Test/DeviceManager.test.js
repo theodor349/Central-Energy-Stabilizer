@@ -167,7 +167,7 @@ if (true) {
         });
 
         // Manage device
-        /*
+
         it('manageDevice: change state from on to off', async () => {
             db.dropDatabase();
             dm.getCommandQueue();
@@ -177,6 +177,7 @@ if (true) {
                 start: getRelativeDate(120, '-'),
                 end: getRelativeDate(60, '-')
             }
+            await dm.testDeviceInit(testDevice, "socket");
             let changedState = dm.manageDevice(testDevice);
             let commands = dm.getCommandQueue();
             assert(commands.length === 1 &&
@@ -193,17 +194,14 @@ if (true) {
                 start: getRelativeDate(120, '-'),
                 end: getRelativeDate(60, '+')
             }
-            await dm.deviceInit(testDevice, "socket");
+            await dm.testDeviceInit(testDevice, "socket");
             let changedState = dm.manageDevice(testDevice);
             let commands = dm.getCommandQueue();
-            console.log(changedState);
-            console.log(commands);
             assert(commands.length === 1 &&
                 commands[0].command === "on" &&
                 commands[0].payload === "on" &&
                 changedState === true);
         });
-
         it('manageDevice: keep on state when scheduled', async () => {
             db.dropDatabase();
             dm.getCommandQueue();
@@ -234,7 +232,6 @@ if (true) {
             assert(commands.length === 0 &&
             changedState === false);
         });
-        */
     })
 }
 

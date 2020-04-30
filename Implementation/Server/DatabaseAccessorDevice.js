@@ -232,6 +232,8 @@ async function updateDevice(id, field, value) {
 
 function serializeDevice(device) {
     let sDevice = JSON.parse(JSON.stringify(device));
+    sDevice.schedule = JSON.stringify(sDevice.schedule);
+    sDevice.scheduledInterval = JSON.stringify(sDevice.scheduledInterval);
     sDevice.programs = JSON.stringify(sDevice.programs);
     sDevice.uniqueProperties = JSON.stringify(sDevice.uniqueProperties);
     return sDevice;
@@ -242,6 +244,8 @@ function deserializeDevice(device) {
         getters: true,
         virtuals: true
     });
+    device.schedule = JSON.stringify(device.schedule);
+    device.scheduledInterval = JSON.stringify(device.scheduledInterval);
     device.programs = JSON.parse(device.programs);
     device.uniqueProperties = JSON.parse(device.uniqueProperties);
     return device;

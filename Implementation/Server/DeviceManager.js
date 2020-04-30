@@ -18,6 +18,8 @@ const functions = {
     getCommandQueue: () => getCommandQueue(),
     getActiveConnections: () => getActiveConnections(),
     clearAllConnections: () => clearAllConnections(),
+    // FOR TESTING
+    testDeviceInit: (deviceInfo, socket) => testDeviceInit(deviceInfo, socket),
 }
 module.exports = functions;
 let commandQueue = [];
@@ -254,4 +256,29 @@ function createCommand(socket, command, payload) {
         payload: payload,
     }
     commandQueue.push(commandObj);
+}
+
+
+/*
+    SECTION:
+            DISCLAIMER THIS IS ONLY FOR TESTING PURPOSES
+*/
+function testDeviceInit(deviceInfo, socket) {
+    if (uuid.isUuid(deviceInfo.deviceId) === false) {
+        return false;
+    }
+    return new Promise(async (resolve, reject) => {
+        db.createDevice(deviceInfo)
+            .then((val) => {
+                if (val !== null) {
+                    addConnection(val.deviceId, socket);
+                    resolve(true);
+                } else {
+                    resolve(false)
+                }
+            })
+            .catch((err) => {
+                reject(err);
+            })
+    })
 }

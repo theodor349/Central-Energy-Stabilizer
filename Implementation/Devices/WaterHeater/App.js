@@ -35,7 +35,7 @@ let updater;
 let socket;
 
 let connectionString = "http://localhost:3000/device";
-setTimeout(function () {
+setTimeout(function() {
     socket = io.connect(connectionString, {
         reconnection: true,
     });
@@ -70,25 +70,23 @@ function getLocalDeviceInfo() {
     deviceInfo.serverMessage = null;
     deviceInfo.onDisconnect = false;
     deviceInfo.graphIndex = 0;
-    deviceInfo.programs = [
-        {
-            pointArray: [
-                0,
-                750,
-                1500,
-                2250,
-                3000,
-                Infinity
-            ]
-        }
-    ]
+    deviceInfo.programs = [{
+        pointArray: [
+            0,
+            750,
+            1500,
+            2250,
+            3000,
+            Infinity
+        ]
+    }]
     setDeviceId(idDataObject.deviceId);
 }
 
 function startEnergyUsageInterval(waterHeater) {
-    energyUsageInterval = setInterval(function () {
+    energyUsageInterval = setInterval(function() {
         setEnergyUsage(waterHeater);
-        }, graphInterval);
+    }, graphInterval);
 }
 
 function setEnergyUsage(waterHeater) {
@@ -201,7 +199,7 @@ function waterHeaterOn(waterHeater) {
     }, updateInterval);
 }
 
-function setWaterHeaterOn(waterHeater){
+function setWaterHeaterOn(waterHeater) {
     let uniqueProperties = waterHeater.uniqueProperties;
     uniqueProperties.currentTemp += tempGainPrSecond;
 }
@@ -228,6 +226,7 @@ function connectionSetup() {
         deviceInfo.isConnected = true;
 
         socket.on('askForId', function() {
+            console.log(deviceInfo.deviceId);
             socket.emit('receiveDeviceId', deviceInfo.deviceId);
         });
 
@@ -244,7 +243,7 @@ function connectionSetup() {
             deviceInfo.serverMessage = "off";
         });
 
-        deviceUpdateInterval = setInterval(function () {
+        deviceUpdateInterval = setInterval(function() {
             sendUpdate(deviceInfo);
         }, constDeviceUpdateInterval);
     });

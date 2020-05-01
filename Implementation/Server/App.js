@@ -13,7 +13,7 @@ const um = require('./UserManager.js');
 */
 
 const port = 3000;
-const updateInterval = 1000;
+const updateInterval = 5 * 1000;
 
 /*
     SECTION: Timers
@@ -40,23 +40,37 @@ const deviceSpace = io.of('/device');
 deviceSpace.on('connection', (socket) => {
     dm.onConnect(socket);
 
-    socket.on('receiveDeviceId', (Id) => {
+    socket.on('receiveDeviceId', (id) => {
+        console.log("receiveDeviceId");
+        console.log(id);
+        console.log();
         dm.receiveId(id, socket);
     });
 
     socket.on('newDeviceWithId', (deviceInfo) => {
+        console.log("newDeviceWithId");
+        console.log(deviceInfo);
+        console.log();
         dm.deviceInit(deviceInfo, socket);
     });
 
-    socket.on('stateChanged', (state, Id) => {
+    socket.on('stateChanged', (state, id) => {
+        console.log("stateChanged");
+        console.log(state + " " + id);
+        console.log();
         dm.stateChanged(id, state);
     });
 
     socket.on('deviceUpdate', (device) => {
+        console.log("deviceUpdate");
+        console.log(device);
+        console.log();
         dm.updateDevice(device);
     });
 
     socket.on('disconnect', () => {
+        console.log("disconnect");
+        console.log();
         dm.onDisconnect(socket);
     });
 });
@@ -68,8 +82,8 @@ deviceSpace.on('connection', (socket) => {
 async function update() {
     print("Update started")
     let devices = dm.getActiveConnections();
-    devices.forEach(async (deviceId) => {
-        let device = await dd.getDevice(deviceId);
+    devices.forEach(async (connection) => {
+        let device = await dd.getDevice(connection.deviceId);
         // TODO: Schedule device
         dm.manageDevice(device);
     });
@@ -114,6 +128,7 @@ function handleUserManagerCommands() {
 }
 
 function executeCommand(command) {
+    print(command.command);
     let socket = command.socket;
     let payload = command.payload;
     command = command.command;

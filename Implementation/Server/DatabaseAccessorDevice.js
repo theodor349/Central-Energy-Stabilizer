@@ -139,8 +139,9 @@ async function updateDevice(id, field, value) {
     return new Promise((resolve, reject) => {
         getDeviceHelper(id)
             .then((device) => {
-                if (device === null)
+                if (device === null) {
                     resolve(false);
+                }
 
                 let conditions = {
                     deviceId: id
@@ -165,12 +166,12 @@ async function updateDevice(id, field, value) {
                         break;
                     case "schedule":
                         update = {
-                            schedule: value
+                            schedule: JSON.stringify(value)
                         };
                         break;
                     case "scheduledInterval":
                         update = {
-                            scheduledInterval: value
+                            scheduledInterval: JSON.stringify(value)
                         };
                         break;
                     case "deviceId":
@@ -244,8 +245,14 @@ function deserializeDevice(device) {
         getters: true,
         virtuals: true
     });
-    device.schedule = JSON.stringify(device.schedule);
-    device.scheduledInterval = JSON.stringify(device.scheduledInterval);
+
+    if (device.schedule !== undefined) {
+        device.schedule = JSON.parse(device.schedule);
+    }
+    if (device.scheduledInterval !== undefined) {
+        device.scheduledInterval = JSON.parse(device.scheduledInterval);
+    }
+
     device.programs = JSON.parse(device.programs);
     device.uniqueProperties = JSON.parse(device.uniqueProperties);
     return device;

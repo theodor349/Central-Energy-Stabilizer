@@ -188,33 +188,6 @@ header {
 
 
 
-
-
-
-
-
-
-
-
-#mainGraph{
-    display: block;
-    margin: 0 auto 2.5vw;
-}
-
-
-.graphBgLine{
-    stroke: rgba(74, 102, 70, 0.15);
-    stroke-width: 1px;
-}
-
-.graphBgLineDevider{
-    stroke: rgba(74, 102, 70, 0.3);
-    stroke-width: 1px;
-}
-
-
-
-
 @media only screen and (max-width: 1000px) {
     #serverDevices section header{
         height: auto;

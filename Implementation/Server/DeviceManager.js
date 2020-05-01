@@ -13,7 +13,6 @@ const functions = {
     getScheduledState: (deviceInfo, time) => getScheduledState(deviceInfo, time),
     changeState: (id, nextState) => changeState(id, nextState),
     stateChanged: (id, newState) => stateChanged(id, newState),
-    removeSchedule: (id) => removeSchedule(id),
     getCommandQueue: () => getCommandQueue(),
     getActiveConnections: () => getActiveConnections(),
     clearAllConnections: () => clearAllConnections(),
@@ -124,14 +123,6 @@ async function stateChanged(id, newState) {
                 reject(err);
             })
     })
-}
-
-async function removeSchedule(id) {
-    return new Promise(async (resolve, reject) => {
-        let res = await db.updateDevice(id, "schedule", null);
-        res = res && await db.updateDevice(id, "scheduledInterval", null);
-        resolve(res);
-    });
 }
 
 /*

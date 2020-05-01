@@ -271,40 +271,6 @@ if (true) {
             let res = await dm.stateChanged(testDevice.deviceId, "on");
             assert(res === false);
         });
-
-        // Remove Schedule
-        it('removeSchedule: remove existing schedule', async () => {
-            db.dropDatabase();
-            dm.getCommandQueue();
-            let testDevice = createAutoServerTestDevice();
-            await dm.testDeviceInit(testDevice);
-            let res = await dm.removeSchedule(testDevice.deviceId);
-            let dbDevice = await db.getDevice(testDevice.deviceId);
-            assert(res === true &&
-                dbDevice.schedule === null &&
-                dbDevice.scheduledInterval === null);
-        });
-        it('removeSchedule: remove nonexisting schedule', async () => {
-            db.dropDatabase();
-            dm.getCommandQueue();
-            let testDevice = createAutoServerTestDevice();
-            testDevice.schedule = null;
-            testDevice.scheduledInterval = null;
-            await dm.testDeviceInit(testDevice);
-            let res = await dm.removeSchedule(testDevice.deviceId);
-            let dbDevice = await db.getDevice(testDevice.deviceId);
-            assert(res === true &&
-                dbDevice.schedule === null &&
-                dbDevice.scheduledInterval === null);
-        });
-        it('removeSchedule: no device in DB', async () => {
-            db.dropDatabase();
-            dm.getCommandQueue();
-            let testDevice = createAutoServerTestDevice();
-            let res = await dm.removeSchedule(testDevice.deviceId);
-            let dbDevice = await db.getDevice(testDevice.deviceId);
-            assert(res === false);
-        });
     })
 }
 

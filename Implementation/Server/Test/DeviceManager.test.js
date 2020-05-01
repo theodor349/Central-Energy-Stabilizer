@@ -64,9 +64,9 @@ if (true) {
                 commandQueue.length === 0 &&
                 dbDevice.scheduledByUser === false &&
                 dbDevice.isScheduled === false &&
-                dbDevice.nextState === undefined &&
-                dbDevice.schedule === undefined &&
-                dbDevice.scheduledInterval === undefined &&
+                dbDevice.nextState === null &&
+                dbDevice.schedule === null &&
+                dbDevice.scheduledInterval === null &&
                 dbDevice.uniqueProperties.currentTemp === testDevice.uniqueProperties.currentTemp &&
                 dbDevice.programs.length === testDevice.programs.length &&
                 dbDevice.deviceType === testDevice.deviceType
@@ -222,7 +222,7 @@ if (true) {
             let changedState = dm.manageDevice(testDevice);
             let commands = dm.getCommandQueue();
             assert(commands.length === 0 &&
-            changedState === false);
+                changedState === false);
         });
         it('manageDevice: keep off state when scheduled', async () => {
             db.dropDatabase();
@@ -237,7 +237,7 @@ if (true) {
             let changedState = dm.manageDevice(testDevice);
             let commands = dm.getCommandQueue();
             assert(commands.length === 0 &&
-            changedState === false);
+                changedState === false);
         });
 
         // State Changed
@@ -250,7 +250,7 @@ if (true) {
             let res = await dm.stateChanged(testDevice.deviceId, "off");
             let dbDevice = await db.getDevice(testDevice.deviceId);
             assert(dbDevice.currentState === "off" &&
-            res === true);
+                res === true);
         });
         it('stateChanged: changed from on to on', async () => {
             db.dropDatabase();
@@ -261,14 +261,48 @@ if (true) {
             let res = await dm.stateChanged(testDevice.deviceId, "on");
             let dbDevice = await db.getDevice(testDevice.deviceId);
             assert(dbDevice.currentState === "on" &&
-            res === true);
+                res === true);
         });
         it('stateChanged: no device in DB', async () => {
             db.dropDatabase();
             dm.getCommandQueue();
             let testDevice = createAutoServerTestDevice();
             testDevice.currentState = "on";
-            let res = await dm.stateChanged(testDevice.deviceId, "onDisconnect()");
+            let res = await dm.stateChanged(testDevice.deviceId, "on");
+            assert(res === false);
+        });
+
+        // Remove Schedule
+        it('removeSchedule: remove existing schedule', async () => {
+            db.dropDatabase();
+            dm.getCommandQueue();
+            let testDevice = createAutoServerTestDevice();
+            await dm.testDeviceInit(testDevice);
+            let res = await dm.removeSchedule(testDevice.deviceId);
+            let dbDevice = await db.getDevice(testDevice.deviceId);
+            assert(res === true &&
+                dbDevice.schedule === null &&
+                dbDevice.scheduledInterval === null);
+        });
+        it('removeSchedule: remove nonexisting schedule', async () => {
+            db.dropDatabase();
+            dm.getCommandQueue();
+            let testDevice = createAutoServerTestDevice();
+            testDevice.schedule = null;
+            testDevice.scheduledInterval = null;
+            await dm.testDeviceInit(testDevice);
+            let res = await dm.removeSchedule(testDevice.deviceId);
+            let dbDevice = await db.getDevice(testDevice.deviceId);
+            assert(res === true &&
+                dbDevice.schedule === null &&
+                dbDevice.scheduledInterval === null);
+        });
+        it('removeSchedule: no device in DB', async () => {
+            db.dropDatabase();
+            dm.getCommandQueue();
+            let testDevice = createAutoServerTestDevice();
+            let res = await dm.removeSchedule(testDevice.deviceId);
+            let dbDevice = await db.getDevice(testDevice.deviceId);
             assert(res === false);
         });
     })

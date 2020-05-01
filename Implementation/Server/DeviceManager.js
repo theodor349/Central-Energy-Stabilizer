@@ -47,9 +47,9 @@ function deviceInit(deviceInfo, socket) {
     }
     deviceInfo.scheduledByUser = false;
     deviceInfo.isScheduled = false;
-    deviceInfo.nextState = undefined;
-    deviceInfo.schedule = undefined;
-    deviceInfo.scheduledInterval = undefined;
+    deviceInfo.nextState = null;
+    deviceInfo.schedule = null;
+    deviceInfo.scheduledInterval = null;
     return new Promise(async (resolve, reject) => {
         db.createDevice(deviceInfo)
             .then((val) => {
@@ -124,6 +124,14 @@ async function stateChanged(id, newState) {
                 reject(err);
             })
     })
+}
+
+async function removeSchedule(id) {
+    return new Promise(async (resolve, reject) => {
+        let res = await db.updateDevice(id, "schedule", null);
+        res = res && await db.updateDevice(id, "scheduledInterval", null);
+        resolve(res);
+    });
 }
 
 /*

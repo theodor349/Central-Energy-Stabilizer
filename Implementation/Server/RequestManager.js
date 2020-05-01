@@ -1,39 +1,42 @@
 const forecaster = require('./Forecaster.js');
 
 const functions = {
-    requestTimeToRun: (graph, isScheduled, timeIntervalObject, currentSchedule) => requestTimeToRun(graph, isScheduled, timeIntervalObject, currentSchedule),
+    requestTimeToRun: (graph, timeIntervalObject) => requestTimeToRun(graph, timeIntervalObject),
+    removeCurrentDemand: (currentSchedule, graph) => removeCurrentDemand(currentSchedule, graph),
 }
 
 module.exports = functions;
 
-// 3 parameters: Graph (ex. 3 points), boolean (isScheduled), time interval
-
-function requestTimeToRun (graph, isScheduled, timeIntervalObject, currentSchedule) {
+function requestTimeToRun (graph, timeIntervalObject) {
     return new Promise(async (resolve, reject) => {
         let outputIntervalObject = {
             outputIntervalStart: undefined,
             outputIntervalFinish: undefined
         };
-        //Skal testes om isScheduled===false virker, efter removeDemand funktion er blevet testet.
-        if (isScheduled === true) {
-            forecaster.removeDemand(currentSchedule.timeIntervalStart, graph);
-        }
         
-        //Nedenstående linje virker ikke endnu (derfor kommenteret ud)
+        // TODO: Nedenstående linje virker ikke endnu (derfor kommenteret ud)
         //let gatheredSurplusGraph = gatherSurplusGraph();
         fitDemandToSurplus(outputIntervalObject, timeIntervalObject, graph);
 
-        forecaster.addDemand(outputIntervalObject.outputIntervalStart, graph);
+        await forecaster.addDemand(outputIntervalObject.outputIntervalStart, graph);
 
         resolve(outputIntervalObject);
     });
 }
 
+function removeCurrentDemand (currentSchedule, graph) {
+    return new Promise(async (resolve, reject) => {
+        await forecaster.removeDemand(currentSchedule.timeIntervalStart, graph);
+        
+        resolve(true);
+    });
+}
+
 /* 
-    Helper functions
+    SECTION: Helper functions
 */ 
 
-function gatherSurplusGraph(startTime) { //Parametre ændres nok
+function gatherSurplusGraph(startTime) { // TODO: Parametre ændres nok
     return new Promise(async (resolve, reject) => {
         resolve(forecaster.updateSurplus(startTime));
     });
@@ -52,4 +55,3 @@ function fitDemandToSurplus(outputIntervalObject, timeIntervalObject, graph) {
         resolve(true);
     });
 }
-

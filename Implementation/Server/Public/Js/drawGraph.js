@@ -1,7 +1,7 @@
 'use strict';
 
 const svgNS = "http://www.w3.org/2000/svg";
-
+const horizontalTextOffset = 4; // how far ahead should the text be taken to be aligned center with line
 
 
 /*
@@ -17,12 +17,14 @@ let mainGraph = {
     verticalTextWidth: 40, //px
     innerHeight: null,
     innerWidth: null,
-    horizontalLines: 75,
-    horizontalValue: "time interval 24 hours",
-    verticalLines: 25,
-    verticalValue: "watt",
+    horizontalLines: 20,
+    horizontalValue: "watt",
+    verticalLines: 48,
+    verticalValue: "time interval 24 hours",
+    lowerLimit: 1000,
+    verticalTextOffset: 18, // how far back should the text be taken to be aligned center with line
     indexDeviderIntervalHorizontal: 5,
-    indexDeviderIntervalVertical: 4
+    indexDeviderIntervalVertical: 3
 };
 
 
@@ -52,7 +54,8 @@ ________________________________________________________________________________
 */
 
 function getGraphSize(graph) {
-    graph.innerWidth = graph.htmlElement.clientWidth - graph.verticalTextWidth;
+    graph.width = graph.htmlElement.clientWidth;
+    graph.innerWidth = graph.width - graph.verticalTextWidth;
     graph.innerHeight = graph.htmlElement.clientHeight - graph.horizotalTextheight;
 }
 
@@ -68,26 +71,17 @@ function drawGraphBackground(graph) {
 }
 
 function drawGraphVerticalLines(graph) {
-    for (let lineOffset = 0; lineOffset < graph.horizontalLines; lineOffset++) {
-        let offsetValue = lineOffset * graph.width / graph.horizontalLines;
+    for (let lineOffset = 1; lineOffset <= graph.verticalLines; lineOffset++) {
+        let offsetValue = lineOffset * graph.innerWidth / graph.verticalLines;
+
         let line = document.createElementNS(svgNS, "line");
-        line.setAttributeNS(null, "x1", graph.innerWidth - offsetValue + "px");
-        line.setAttributeNS(null, "x2", graph.innerWidth - offsetValue + "px");
-        line.setAttributeNS(null, "y1", graph.height + "px");
+        line.setAttributeNS(null, "x1", graph.verticalTextWidth + offsetValue + "px");
+        line.setAttributeNS(null, "x2", graph.verticalTextWidth + offsetValue + "px");
+        line.setAttributeNS(null, "y1", graph.innerHeight + "px");
         line.setAttributeNS(null, "y2", 0);
 
-        if (lineOffset % graph.indexDeviderIntervalHorizontal === 0) {
-            line.setAttributeNS(null, "class", "graphBgLineDevider");
-
-            let value = document.createElementNS(svgNS, "text");
-            value.setAttributeNS(null, "class", "graphAxisValue");
-            value.setAttributeNS(null, "x", graph.width - offsetValue + "vw");
-            value.setAttributeNS(null, "y", graph.height + "px");
-
-            if (!(graph.verticalValue.includes("time interval"))) {
-                value.textContent = graph.verticalValue;
-            }
-            graph.htmlElement.appendChild(value);
+        if (lineOffset % (graph.indexDeviderIntervalVertical + 1) === 0) {
+            drawGraphVerticalTextPoint(line, graph, lineOffset, offsetValue);
 
         } else {
             line.setAttributeNS(null, "class", "graphBgLine");
@@ -98,35 +92,74 @@ function drawGraphVerticalLines(graph) {
 
 }
 
+function drawGraphVerticalTextPoint(line, graph, lineOffset, offsetValue) {
+    line.setAttributeNS(null, "class", "graphBgLineDevider");
+
+    let value = document.createElementNS(svgNS, "text");
+    value.setAttributeNS(null, "class", "graphAxisValue");
+
+    value.setAttributeNS(null, "y", graph.height + "px");
+
+    if (!(graph.verticalValue.includes("time interval"))) {
+        value.textContent = graph.verticalValue;
+    }
+
+    // is not currently dymanic
+    else {
+
+        if (lineOffset / 2 < 10) {
+            value.textContent = "0" + lineOffset / 2;
+
+        } else {
+            value.textContent = lineOffset / 2;
+        }
+
+        if (graph.innerWidth > graph.lowerLimit) {
+            value.textContent += ":00";
+            value.setAttributeNS(null, "x", graph.verticalTextWidth + offsetValue - graph.verticalTextOffset + "px");
+        } else {
+            value.setAttributeNS(null, "x", graph.verticalTextWidth + offsetValue - (graph.verticalTextOffset / 2) + "px");
+
+        }
+    }
+
+    graph.htmlElement.appendChild(value);
+}
+
 function drawGraphHorizontalLines(graph) {
-    for (let lineOffset = 0; lineOffset < graph.verticalLines; lineOffset++) {
+    for (let lineOffset = 1; lineOffset < graph.horizontalLines; lineOffset++) {
         let line = document.createElementNS(svgNS, "line");
-        let offsetValue = lineOffset * graph.height / graph.verticalLines;
-        line.setAttributeNS(null, "x1", 100 + "%");
+        let offsetValue = lineOffset * graph.height / graph.horizontalLines;
+        line.setAttributeNS(null, "x1", graph.innerWidth + graph.verticalTextWidth + "px");
+        line.setAttributeNS(null, "x2", graph.verticalTextWidth + "px");
+
 
         line.setAttributeNS(null, "y1", graph.innerHeight - offsetValue + "px");
         line.setAttributeNS(null, "y2", graph.innerHeight - offsetValue + "px");
         line.setAttributeNS(null, "class", "graphBgLine");
 
-        if (lineOffset % graph.indexDeviderIntervalVertical === 0) {
-            line.setAttributeNS(null, "class", "graphBgLineDevider");
-            line.setAttributeNS(null, "x2", 0);
-
-            let value = document.createElementNS(svgNS, "text");
-            value.setAttributeNS(null, "class", "graphAxisValue");
-            value.setAttributeNS(null, "x", 0);
-            value.setAttributeNS(null, "y", graph.innerHeight - offsetValue + "px");
-
-            if (!(graph.verticalValue.includes("time interval"))) {
-                value.textContent = graph.verticalValue;
-            }
-            graph.htmlElement.appendChild(value);
+        if (lineOffset % (graph.indexDeviderIntervalHorizontal + 1) === 0) {
+            drawGraphHorizontalTextPoint(line, graph, lineOffset, offsetValue);
 
         } else {
             line.setAttributeNS(null, "class", "graphBgLine");
-            line.setAttributeNS(null, "x2", graph.verticalTextWidth + "px");
         }
 
         graph.htmlElement.appendChild(line);
     }
+}
+
+function drawGraphHorizontalTextPoint(line, graph, lineOffset, offsetValue) {
+    line.setAttributeNS(null, "class", "graphBgLineDevider");
+
+    let value = document.createElementNS(svgNS, "text");
+    value.setAttributeNS(null, "class", "graphAxisValue");
+    value.setAttributeNS(null, "x", 0);
+    value.setAttributeNS(null, "y", graph.innerHeight - offsetValue + horizontalTextOffset + "px");
+
+    if (!(graph.horizontalValue.includes("time interval"))) {
+        value.textContent = graph.horizontalValue;
+    }
+    graph.htmlElement.appendChild(value);
+
 }

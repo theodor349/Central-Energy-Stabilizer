@@ -13,7 +13,6 @@ const functions = {
     getScheduledState: (deviceInfo, time) => getScheduledState(deviceInfo, time),
     changeState: (id, nextState) => changeState(id, nextState),
     stateChanged: (id, newState) => stateChanged(id, newState),
-    removeSchedule: (id) => removeSchedule(id),
     getCommandQueue: () => getCommandQueue(),
     getActiveConnections: () => getActiveConnections(),
     clearAllConnections: () => clearAllConnections(),
@@ -47,9 +46,9 @@ function deviceInit(deviceInfo, socket) {
     }
     deviceInfo.scheduledByUser = false;
     deviceInfo.isScheduled = false;
-    deviceInfo.nextState = undefined;
-    deviceInfo.schedule = undefined;
-    deviceInfo.scheduledInterval = undefined;
+    deviceInfo.nextState = null;
+    deviceInfo.schedule = null;
+    deviceInfo.scheduledInterval = null;
     return new Promise(async (resolve, reject) => {
         db.createDevice(deviceInfo)
             .then((val) => {

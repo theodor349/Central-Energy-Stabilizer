@@ -171,8 +171,8 @@ header {
     height: 300px;
     position: absolute;
     z-index: -1;
-    right: 2%;
-    top:-150px;
+    right: 10%;
+    top:0px;
     transition-duration: 0.4s;
 }
 
@@ -180,8 +180,8 @@ header {
     height: 300px;
     position: absolute;
     z-index: -1;
-    left: 2%;
-    top:-150px;
+    left: 10%;
+    top:0px;
     transition-duration: 0.4s;
 }
 
@@ -217,10 +217,10 @@ header {
     }
 
     .pebert{
-        top: 0px;
+        top: 200px;
     }
 
     .headerGraph{
-        top:0px;
+        top:200px;
     }
 }

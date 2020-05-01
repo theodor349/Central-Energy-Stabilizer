@@ -18,10 +18,11 @@
 .graphAxisValue{
 fill: #666;
 font-weight: bold;
+
 }
 
 .graphBackground{
     stroke: rgba(74, 102, 70, 0.05);
     stroke-width: 4;
-    fill: rgba(205,225,205, 0.4);
+    fill: rgba(175,210,175, 1);
 }

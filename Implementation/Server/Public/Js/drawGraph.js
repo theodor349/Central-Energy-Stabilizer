@@ -4,13 +4,17 @@ const svgNS = "http://www.w3.org/2000/svg";
 const horizontalTextOffset = 4; // how far ahead should the text be taken to be aligned center with line
 
 
+let activeGraphs = [];
+
 /*
     SECTION: graph definitions
 */
 
-let mainGraphElement = document.getElementById("mainGraph");
 let mainGraph = {
-    htmlElement: mainGraphElement,
+    htmlElement: null,
+    svgWidth: "95vw",
+    svgHeight: "450px",
+    svgId: "mainGraph",
     height: "450", //px
     width: null, //pw
     horizotalTextheight: 15, //px
@@ -35,11 +39,19 @@ let mainGraph = {
 drawGraph(mainGraph);
 
 function drawGraph(graph) {
+
+    drawSvgContainer(graph);
     getGraphSize(graph);
     drawGraphBackground(graph);
     drawGraphHorizontalLines(graph);
     drawGraphVerticalLines(graph);
+    activeGraphs.push(graph.htmlElement);
 }
+
+
+
+
+
 
 
 
@@ -49,9 +61,39 @@ END OF DEFINITIONS
 ________________________________________________________________________________
 */
 
+
+function deleteActiveGraphs() {
+
+    activeGraphs.forEach((graph) => {
+        graph.parentNode.removeChild(graph);
+    });
+    activeGraphs = [];
+}
+
+function drawSvgContainer(graph) {
+
+    let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttributeNS(null, "width", graph.svgWidth);
+    svg.setAttributeNS(null, "height", graph.svgHeight);
+    svg.setAttributeNS(null, "id", graph.svgId);
+    svg.setAttributeNS(null, "overflow", "visible");
+
+
+
+    if (graph.svgId == "mainGraph") {
+        document.getElementById("mainGraphContainer").appendChild(svg);
+    }
+
+    graph.htmlElement = svg;
+
+}
+
 /*
     SECTION: draw graphs in SVG
 */
+
+
+
 
 function getGraphSize(graph) {
     graph.width = graph.htmlElement.clientWidth;

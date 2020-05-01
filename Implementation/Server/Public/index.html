@@ -10,7 +10,7 @@
 </head>
 
 
-<body>
+<body onresize="reloadPageElements()">
   <header>
     <h1>Pebert</h1>
     <h2>The energy saving network bot</h2>
@@ -19,9 +19,10 @@
 
   <img src="./images/graph.svg" class="headerGraph" alt="graph bro">
   <img src="./images/pebert.svg" class="pebert" alt="Pebert bro">
-  
-  <svg width="95vw" height="450px" id="mainGraph" overflow="visible">
-  </svg>
+
+  <section id ="mainGraphContainer">
+
+  </section>
 
 
   <section id="serverDevices">

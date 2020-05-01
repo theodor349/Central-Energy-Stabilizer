@@ -1,3 +1,7 @@
+const refreshDelay = 50;
+let allowRefresh = true;
+
+
 function displayDeviceSetting(id) {
 
     deviceContainer = document.getElementById(id);
@@ -21,4 +25,19 @@ function displayDeviceSetting(id) {
 function setCorrectHeightValue() {
     let newHeight = deviceSettings.clientHeight;
     deviceSettings.style.height = newHeight + "px";
+}
+
+function reloadPageElements() {
+
+    if (allowRefresh) {
+        setTimeout(function() {
+
+            deleteActiveGraphs();
+            drawGraph(mainGraph);
+            allowRefresh = true;
+        }, refreshDelay);
+    }
+
+    allowRefresh = false;
+
 }

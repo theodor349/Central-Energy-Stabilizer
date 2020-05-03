@@ -62,7 +62,26 @@ async function addDemand(startTime, graph) {
         let upperGraph = { graphId: undefined, values: [] };
         let demandGraphs = {};
         let secondGraphStartTime = new Date(startTime.getTime() + 60 * 60 * 1000);
+        let testGraph = [];
 
+        for (i = 0; graph.length > 60 ; i++) {
+            for (t = 0 ; t < 60; t++) {
+                testGraph[t] = graph[0];
+                graph.shift();
+            }
+            demandGraphs = splitGraph(startTime, testGraph);
+            lowerGraph.graphId = await utility.dateToId("demandGraph", startTime);
+            upperGraph.graphId = await utility.dateToId("demandGraph", secondGraphStartTime);
+            lowerGraph.values = demandGraphs.demandGraphLower;
+            upperGraph.values = demandGraphs.demandGraphUpper;
+
+            await updateGraph(lowerGraph);
+            await updateGraph(upperGraph);
+
+            startTime.setTime(startTime.getTime() + 60 * 60 * 1000);
+            secondGraphStartTime.setTime(startTime.getTime() + 60 * 60 * 1000);
+        }
+        
         demandGraphs = splitGraph(startTime, graph);
 
         // Puts the graphId and values into the lower and upper bound graphs
@@ -84,6 +103,26 @@ async function removeDemand(startTime, graph){
         let upperGraph = { graphId: undefined, values: [] };
         let demandGraphs = {};
         let secondGraphStartTime = new Date(startTime.getTime() + 60 * 60 * 1000);
+
+        for (i = 0; graph.length > 60 ; i++) {
+            for (t = 0 ; t < 60; t++) {
+                testGraph[t] = graph[0];
+                graph.shift();
+            }
+            demandGraphs = splitGraph(startTime, testGraph);
+            lowerGraph.graphId = await utility.dateToId("demandGraph", startTime);
+            upperGraph.graphId = await utility.dateToId("demandGraph", secondGraphStartTime);
+            lowerGraph.values = demandGraphs.demandGraphLower;
+            upperGraph.values = demandGraphs.demandGraphUpper;
+            lowerGraph.values = invertValues(lowerGraph.values);
+            upperGraph.values = invertValues(upperGraph.values);
+
+            await updateGraph(lowerGraph);
+            await updateGraph(upperGraph);
+
+            startTime.setTime(startTime.getTime() + 60 * 60 * 1000);
+            secondGraphStartTime.setTime(startTime.getTime() + 60 * 60 * 1000);
+        }
 
         demandGraphs = splitGraph(startTime, graph);
 

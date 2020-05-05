@@ -7,7 +7,7 @@ if (true) {
     describe('Request Manager', () => {
         
         // Request Time To Run
-        it('requestTimeToRun: expected output and not undefined output', async() => {
+        it('requestTimeToRun: Expected output and not undefined output', async() => {
             da.dropDatabase();
             let graph = [21, 13, 22, 29];
             let timeIntervalObject = {
@@ -25,7 +25,7 @@ if (true) {
                     res.outputIntervalFinish.getTime() === expectedFinishTime.getTime()
             );
         });
-        it('requestTimeToRun: (forecaster.addDemand) checks if graph is written to database', async() => {
+        it('requestTimeToRun: Checks if graph is written to database', async() => {
             da.dropDatabase();
             let graph = [   
                 21, 13, 22, 29, 35, 10, 17, 20, 39, 37,
@@ -66,7 +66,7 @@ if (true) {
         });
         
         // Remove current demnad
-        it('removeCurrentDemand: checks that this function actually removes current demand', async() => {
+        it('removeCurrentDemand: Checks if current demand is actually removed', async() => {
             da.dropDatabase();
             let graph = [   
                 21, 13, 22, 29, 35, 10, 17, 20, 39, 37,

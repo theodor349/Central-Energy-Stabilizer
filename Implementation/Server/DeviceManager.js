@@ -88,6 +88,7 @@ function deleteDevice(id) {
     })
 }
 
+// TODO: If you have an error this might be it?
 async function updateDevice(deviceInfo) {
     let dbDevice = await db.getDevice(deviceInfo.deviceId);
     if (dbDevice === null) {
@@ -116,10 +117,23 @@ function manageDevice(deviceInfo) {
 }
 
 async function stateChanged(id, newState) {
-    return new Promise((resolve, reject) => {
-        db.updateDevice(id, "currentState", newState)
+    let device = await db.getDevice(id);
+    if (device === null) {
+        return false;
+    }
+    device.currentState = newState;
+
+    if (newState === "off") {
+        device.isScheduled = false;
+        device.nextState = null;
+        device.schedule = null;
+        device.scheduledInterval = null;
+    }
+
+    return new Promise(async (resolve, reject) => {
+        updateDevice(device)
             .then((val) => {
-                resolve(val);
+                resolve(true);
             })
             .catch((err) => {
                 reject(err);
@@ -132,6 +146,9 @@ async function stateChanged(id, newState) {
 */
 
 function getScheduledState(deviceInfo, time) {
+    if (deviceInfo.isScheduled === false) {
+        return null;
+    }
     if (deviceInfo.schedule.start < time &&
         deviceInfo.schedule.end > time) {
         if (deviceInfo.nextState === deviceInfo.currentState) {
@@ -163,6 +180,30 @@ function changeState(id, nextState) {
 
 function getFieldsToUpdate(device, other) {
     let fieldsToUpdate = [];
+    if (device.isScheduled !== other.isScheduled) {
+        fieldsToUpdate.push({
+            field: "isScheduled",
+            value: device.isScheduled
+        });
+    }
+    if (device.nextState !== other.nextState) {
+        fieldsToUpdate.push({
+            field: "nextState",
+            value: device.nextState
+        });
+    }
+    if (device.schedule !== other.schedule) {
+        fieldsToUpdate.push({
+            field: "schedule",
+            value: device.schedule
+        });
+    }
+    if (device.scheduledInterval !== other.scheduledInterval) {
+        fieldsToUpdate.push({
+            field: "scheduledInterval",
+            value: device.scheduledInterval
+        });
+    }
     if (device.isAutomatic !== other.isAutomatic) {
         fieldsToUpdate.push({
             field: "isAutomatic",

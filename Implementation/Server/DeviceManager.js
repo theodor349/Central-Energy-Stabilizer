@@ -8,7 +8,7 @@ const functions = {
     deviceInit: (deviceInfo, socket) => deviceInit(deviceInfo, socket),
     onDisconnect: (socket) => onDisconnect(socket),
     deleteDevice: (id) => deleteDevice(id),
-    updateDevice: (deviceInfo) => updateDevice(deviceInfo),
+    updateDevice: (deviceInfo, serverCheck) => updateDevice(deviceInfo, serverCheck),
     manageDevice: (deviceInfo) => manageDevice(deviceInfo),
     getScheduledState: (deviceInfo, time) => getScheduledState(deviceInfo, time),
     changeState: (id, nextState) => changeState(id, nextState),
@@ -19,6 +19,7 @@ const functions = {
     getUpdatedDevices: () => getUpdatedDevices(),
     // FOR TESTING
     testDeviceInit: (deviceInfo, socket) => testDeviceInit(deviceInfo, socket),
+    testReceiveId: (id, socket) => testReceiveId(id, socket),
 }
 module.exports = functions;
 let commandQueue = [];
@@ -29,9 +30,9 @@ function onConnect(socket) {
     createCommand(socket, "askForId");
 }
 
-function receiveId(id, socket) {
-    // TODO: Check for existing ID on DB
-    if (uuid.isUuid(id) === true) {
+async function receiveId(id, socket) {
+    let dbDevice = await db.getDevice(id);
+    if (dbDevice !== null && uuid.isUuid(id) === true) {
         addConnection(id, socket);
         return true;
     } else {
@@ -40,7 +41,7 @@ function receiveId(id, socket) {
     }
 }
 
-function deviceInit(deviceInfo, socket) {
+async function deviceInit(deviceInfo, socket) {
     if (uuid.isUuid(deviceInfo.deviceId) === false) {
         return false;
     }
@@ -86,12 +87,13 @@ function deleteDevice(id) {
     })
 }
 
-async function updateDevice(deviceInfo) {
+// TODO: If you have an error this might be it?
+async function updateDevice(deviceInfo, serverCheck) {
     let dbDevice = await db.getDevice(deviceInfo.deviceId);
     if (dbDevice === null) {
         return 0;
     }
-    let fieldsToUpdate = getFieldsToUpdate(deviceInfo, dbDevice);
+    let fieldsToUpdate = getFieldsToUpdate(deviceInfo, dbDevice, serverCheck);
     for (let i = 0; i < fieldsToUpdate.length; i++) {
         await db.updateDevice(deviceInfo.deviceId,
             fieldsToUpdate[i].field,
@@ -114,10 +116,23 @@ function manageDevice(deviceInfo) {
 }
 
 async function stateChanged(id, newState) {
-    return new Promise((resolve, reject) => {
-        db.updateDevice(id, "currentState", newState)
+    let device = await db.getDevice(id);
+    if (device === null) {
+        return false;
+    }
+    device.currentState = newState;
+
+    if (newState === "off") {
+        device.isScheduled = false;
+        device.nextState = null;
+        device.schedule = null;
+        device.scheduledInterval = null;
+    }
+
+    return new Promise(async (resolve, reject) => {
+        updateDevice(device, true)
             .then((val) => {
-                resolve(val);
+                resolve(true);
             })
             .catch((err) => {
                 reject(err);
@@ -130,8 +145,10 @@ async function stateChanged(id, newState) {
 */
 
 function getScheduledState(deviceInfo, time) {
-    if (deviceInfo.schedule.start < time &&
-        deviceInfo.schedule.end > time) {
+    if (deviceInfo.isScheduled === false) {
+        return null;
+    }
+    if (deviceInfo.schedule.start < time) {
         if (deviceInfo.nextState === deviceInfo.currentState) {
             return null;
         } else {
@@ -159,8 +176,35 @@ function changeState(id, nextState) {
     return true;
 }
 
-function getFieldsToUpdate(device, other) {
+function getFieldsToUpdate(device, other, serverCheck) {
     let fieldsToUpdate = [];
+    if (serverCheck) {
+        if (device.isScheduled !== other.isScheduled) {
+            fieldsToUpdate.push({
+                field: "isScheduled",
+                value: device.isScheduled
+            });
+        }
+        if (device.nextState !== other.nextState) {
+            fieldsToUpdate.push({
+                field: "nextState",
+                value: device.nextState
+            });
+        }
+        if (device.schedule !== other.schedule) {
+            fieldsToUpdate.push({
+                field: "schedule",
+                value: device.schedule
+            });
+        }
+        if (device.scheduledInterval !== other.scheduledInterval) {
+            fieldsToUpdate.push({
+                field: "scheduledInterval",
+                value: device.scheduledInterval
+            });
+        }
+    }
+
     if (device.isAutomatic !== other.isAutomatic) {
         fieldsToUpdate.push({
             field: "isAutomatic",
@@ -301,4 +345,15 @@ function testDeviceInit(deviceInfo, socket) {
                 reject(err);
             })
     })
+}
+
+function testReceiveId(id, socket) {
+    // TODO: Check for existing ID on DB
+    if (uuid.isUuid(id) === true) {
+        addConnection(id, socket);
+        return true;
+    } else {
+        sendNewId(socket);
+        return false;
+    }
 }

@@ -1,5 +1,7 @@
 const da = require('./DatabaseAccessorGraph.js');
 const util = require('./Utilities.js');
+const scale = 1000;
+const lift = 100;
 /*
     Graphs it works with
         apiDemand
@@ -38,7 +40,7 @@ async function updateApiDemand(date) {
         let d = date.getDate();
         let h = date.getHours();
         for (var m = 0; m < 60; m++) {
-            values[m] = getDemandAt(d * 24 + h + m * 60 / 100);
+            values[m] = getDemandAt(d * 24 + h + m / 60);
         }
 
         let id = util.dateToId("apiDemand", date);
@@ -53,7 +55,7 @@ async function updateApiProduction(date) {
         let d = date.getDate();
         let h = date.getHours();
         for (var m = 0; m < 60; m++) {
-            values[m] = getProdutionAt(d * 24 + h + m * 60 / 100);
+            values[m] = getProdutionAt(d * 24 + h + m / 60);
         }
 
         let id = util.dateToId("apiProduction", date);
@@ -70,14 +72,15 @@ function getSurplusAt(x) {
     Math Functions
 */
 
+
 function getDemandAt(x) {
-    return Math.sin(0.9 * x - 5) * 2.2 +
+    return (Math.sin(0.9 * x - 5) * 2.2 +
         Math.sin(1.4 * x - 0.2) * 1.3 +
-        Math.sin(2.1 * x - 2) * 2.8;
+        Math.sin(2.1 * x - 2) * 2.8 + lift) * scale;
 }
 
 function getProdutionAt(x) {
-    return Math.sin(2.7 * x + 3.3) * 0.8 +
+    return (Math.sin(2.7 * x + 3.3) * 0.8 +
         Math.sin((-0.5) * x + 1) * 2.7 +
-        Math.sin(Math.sin(2.1 * x - 2) * 2.8);
+        Math.sin(Math.sin(2.1 * x - 2) * 2.8) + lift) * scale;
 }

@@ -5,7 +5,9 @@ const forecaster = require('./../Forecaster.js');
 
 if (true) {
     describe('Request Manager', () => {
-        it('requestTimeToRun: expected output and not undefined output', async() => {
+        
+        // Request Time To Run
+        it('requestTimeToRun: Expected output and not undefined output', async() => {
             da.dropDatabase();
             let graph = [21, 13, 22, 29];
             let timeIntervalObject = {
@@ -23,8 +25,7 @@ if (true) {
                     res.outputIntervalFinish.getTime() === expectedFinishTime.getTime()
             );
         });
-        
-        it('requestTimeToRun: (forecaster.addDemand) checks if graph is written to database', async() => {
+        it('requestTimeToRun: Checks if graph is written to database', async() => {
             da.dropDatabase();
             let graph = [   
                 21, 13, 22, 29, 35, 10, 17, 20, 39, 37,
@@ -64,7 +65,8 @@ if (true) {
                    JSON.stringify(upperGraph.values) === JSON.stringify(expectedUpperGraph));
         });
         
-        it('removeCurrentDemand actually removes current demand', async() => {
+        // Remove current demnad
+        it('removeCurrentDemand: Checks if current demand is actually removed', async() => {
             da.dropDatabase();
             let graph = [   
                 21, 13, 22, 29, 35, 10, 17, 20, 39, 37,

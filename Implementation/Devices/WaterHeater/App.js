@@ -21,9 +21,9 @@ const fs = require('fs');
 const io = require('socket.io-client');
 const updateInterval = 1000;
 const graphInterval = 60000;
-const constDeviceUpdateInterval = 60000;
-const tempGainPrSecond = 0.0033;
-const tempLossPrSecond = 0.0017;
+const constDeviceUpdateInterval = 10000; //60000;
+const tempGainPrSecond = 0.1; //0.0033;
+const tempLossPrSecond = 0.1; //0.0017;
 const initTemp = 66;
 
 let deviceInfo = {};
@@ -217,6 +217,7 @@ function setWaterHeaterOff(waterHeater) {
 }
 
 function sendUpdate(deviceInfo) {
+    console.log("Sending Update to Server");
     socket.emit('deviceUpdate', deviceInfo);
 }
 // Connection

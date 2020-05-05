@@ -402,8 +402,53 @@ if (true) {
                 JSON.stringify(secondGraph.values) === JSON.stringify(expectedGraphsSecond.values) &&
                 JSON.stringify(thirdGraph.values) === JSON.stringify(expectedGraphsThird.values));
         });
+        /*
+        it('updateSurplus: checking for correct graph output', async () => {
+            da.dropDatabase();
+            let interval = {
+                intervalStart: new Date(2010, 1, 24, 18, 24),
+                intervalFinish: new Date(2010, 1, 24, 19, 24)
+            };
 
+            date = interval.intervalStart;
 
+            let demandGraph = [
+                1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+                11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+                21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+                31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+                41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
+                51, 52, 53, 54, 55, 56, 57, 58, 59, 60,
+                61, 62, 63, 64, 65, 66, 67, 68, 69, 70
+            ];
+            let res = await forecaster.addDemand(date, demandGraph);
+
+            let lowerGraph = await da.getGraph("demandGraph-Y2010-M1-D24-18");
+            let upperGraph = await da.getGraph("demandGraph-Y2010-M1-D24-19");
+
+            let expectedGraph = [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, -1, -2, -3, -4, -5, -6,
+                -7, -8, -9, -10, -11, -12, -13, -14, -15, -16,
+                -17, -18, -19, -20, -21, -22, -23, -24, -25, -26, 
+                -27, -28, -29, -30, -31, -32, -33, -34, -35, -36, 
+                -37, -38, -39, -40, -41, -42, -43, -44, -45, -46, 
+                -47, -48, -49, -50, -51, -52, -53, -54, -55, -56, 
+                -57, -58, -59, -60, -61, -62, -63, -64, -65, -66, 
+                -67, -68, -69, -70, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ];
+
+            let graph = await forecaster.updateSurplus(interval);
+
+            //console.log(graph);
+
+            assert(expectedGraph === graph);
+
+        });
+        */
    });
 }
 

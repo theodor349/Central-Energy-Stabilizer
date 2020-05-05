@@ -8,6 +8,7 @@ if (true) {
 
         // On Connect
         it('onConnect: Adds command to commandQueue', async () => {
+            db.dropDatabase();
             dm.onConnect("socket");
             let commandQueue = dm.getCommandQueue();
             assert(commandQueue !== undefined &&
@@ -17,16 +18,32 @@ if (true) {
         })
 
         // Receive ID
-        it('receiveId: Connection with good uuId', async () => {
+        it('receiveId: Connection with good uuId but not in database', async () => {
+            db.dropDatabase();
             let id = uuid.uuid();
-            let res = dm.receiveId(id, "socket");
+            let res = await dm.receiveId(id, "socket");
+            let commandQueue = dm.getCommandQueue();
+            assert(res === false &&
+                commandQueue !== undefined &&
+                commandQueue.length === 1 &&
+                commandQueue[0].socket === "socket" &&
+                commandQueue[0].command === 'setId' &&
+                uuid.isUuid(commandQueue[0].payload));
+        })
+        it('receiveId: Connection with good uuId Allready in database', async () => {
+            db.dropDatabase();
+            let testDevice = createAutoTestDevice();
+            let id = testDevice.deviceId;
+            await dm.testDeviceInit(testDevice, "socket");
+            let res = await dm.receiveId(id, "socket");
             let commandQueue = dm.getCommandQueue();
             assert(res === true &&
                 commandQueue !== undefined &&
                 commandQueue.length === 0);
         })
         it('receiveId: Connection with wrong uuId', async () => {
-            let res = dm.receiveId("PLZ return false", "socket");
+            db.dropDatabase();
+            let res = await dm.receiveId("PLZ return false", "socket");
             let commandQueue = dm.getCommandQueue();
             assert(res === false &&
                 commandQueue !== undefined &&
@@ -36,8 +53,9 @@ if (true) {
                 uuid.isUuid(commandQueue[0].payload));
         })
         it('receiveId: Connection without Id', async () => {
+            db.dropDatabase();
             let id;
-            let res = dm.receiveId(id, "socket");
+            let res = await dm.receiveId(id, "socket");
             let commandQueue = dm.getCommandQueue();
             assert(res === false &&
                 commandQueue !== undefined &&
@@ -88,8 +106,10 @@ if (true) {
 
         // On disconnect
         it('onDisconnect: Removes active connection', async () => {
+            db.dropDatabase();
             dm.clearAllConnections();
-            let didRecievedId = dm.receiveId(uuid.uuid(), "socket");
+            let id = uuid.uuid()
+            let didRecievedId = dm.testReceiveId(id, "socket");
             let didDisconnect = dm.onDisconnect("socket");
             let activeConnections = dm.getActiveConnections();
             assert(didRecievedId === true &&
@@ -101,8 +121,9 @@ if (true) {
         it('deleteDevice: delete existing device', async () => {
             db.dropDatabase();
             dm.clearAllConnections();
-            let testDevice = createAutoTestDevice();
-            await dm.deviceInit(testDevice);
+            let testDevice = createAutoServerTestDevice();
+            await dm.testDeviceInit(testDevice, "socket");
+
             let didRemove = await dm.deleteDevice(testDevice.deviceId);
             let activeConnections = dm.getActiveConnections();
             let dbDevice = await db.getDevice(testDevice.deviceId);
@@ -120,14 +141,33 @@ if (true) {
         });
 
         // Update device
+        it('updateDevice: changed schedule to null', async () => {
+            db.dropDatabase();
+            let testDevice = createAutoServerTestDevice();
+            let id = testDevice.deviceId;
+            testDevice.schedule = {
+                start: getRelativeDate(60, "-"),
+                end: getRelativeDate(60, "+")
+            };
+            await dm.testDeviceInit(testDevice);
+
+            testDevice.schedule = null;
+
+            let fieldsUpdated = await dm.updateDevice(testDevice);
+            let dbDevice = await db.getDevice(id);
+            let updatedDevices = dm.getUpdatedDevices();
+            assert(fieldsUpdated === 1 &&
+                updatedDevices[0] === id &&
+                dbDevice.schedule === null);
+        });
         it('updateDevice: changed currentState', async () => {
             db.dropDatabase();
-            let testDevice = createAutoTestDevice();
+            let testDevice = createAutoServerTestDevice();
             let id = testDevice.deviceId;
-            await dm.deviceInit(testDevice);
-            testDevice = createAutoTestDevice();
+            await dm.testDeviceInit(testDevice);
+
             testDevice.currentState = "off";
-            testDevice.deviceId = id;
+
             let fieldsUpdated = await dm.updateDevice(testDevice);
             let dbDevice = await db.getDevice(id);
             let updatedDevices = dm.getUpdatedDevices();
@@ -137,10 +177,10 @@ if (true) {
         });
         it('updateDevice: changed uniqueProperties', async () => {
             db.dropDatabase();
-            let testDevice = createAutoTestDevice();
+            let testDevice = createAutoServerTestDevice();
             let id = testDevice.deviceId;
             await dm.deviceInit(testDevice);
-            testDevice = createAutoTestDevice();
+            testDevice = createAutoServerTestDevice();
             testDevice.uniqueProperties = {
                 currentTemp: 80,
                 minTemp: 55,
@@ -156,7 +196,7 @@ if (true) {
         });
         it('updateDevice: with no changes to device', async () => {
             db.dropDatabase();
-            let testDevice = createAutoTestDevice();
+            let testDevice = createAutoServerTestDevice();
             let id = testDevice.deviceId;
             await dm.deviceInit(testDevice);
             let fieldsUpdated = await dm.updateDevice(testDevice);
@@ -166,7 +206,7 @@ if (true) {
         });
         it('updateDevice: no device on DB', async () => {
             db.dropDatabase();
-            let testDevice = createAutoTestDevice();
+            let testDevice = createAutoServerTestDevice();
             let id = testDevice.deviceId;
             let fieldsUpdated = await dm.updateDevice(testDevice);
             let updatedDevices = dm.getUpdatedDevices();
@@ -175,28 +215,28 @@ if (true) {
         });
 
         // Manage device
-        it('manageDevice: change state from on to off', async () => {
+        it('manageDevice: not Scheduled', async () => {
             db.dropDatabase();
             dm.getCommandQueue();
             let testDevice = createAutoServerTestDevice();
-            testDevice.currentState = "on";
-            testDevice.schedule = {
-                start: getRelativeDate(120, '-'),
-                end: getRelativeDate(60, '-')
-            }
+            testDevice.isScheduled = false;
+            testDevice.currentState = null;
+            testDevice.nextState = null;
+            testDevice.schedule = null;
+            testDevice.scheduledInterval = null;
             await dm.testDeviceInit(testDevice, "socket");
             let changedState = dm.manageDevice(testDevice);
             let commands = dm.getCommandQueue();
-            assert(commands.length === 1 &&
-                commands[0].command === "off" &&
-                changedState === true);
+            assert(commands.length === 0 &&
+                changedState === false);
         });
         it('manageDevice: change state from off to on', async () => {
             db.dropDatabase();
             dm.getCommandQueue();
             let testDevice = createAutoServerTestDevice();
+            testDevice.isScheduled = true;
             testDevice.currentState = "off";
-            testDevice.nextState = "on";
+            testDevice.nextState = "program1";
             testDevice.schedule = {
                 start: getRelativeDate(120, '-'),
                 end: getRelativeDate(60, '+')
@@ -206,13 +246,14 @@ if (true) {
             let commands = dm.getCommandQueue();
             assert(commands.length === 1 &&
                 commands[0].command === "on" &&
-                commands[0].payload === "on" &&
+                commands[0].payload === "program1" &&
                 changedState === true);
         });
         it('manageDevice: keep on state when scheduled', async () => {
             db.dropDatabase();
             dm.getCommandQueue();
             let testDevice = createAutoServerTestDevice();
+            testDevice.isScheduled = true;
             testDevice.currentState = "on";
             testDevice.nextState = "on";
             testDevice.schedule = {
@@ -228,6 +269,7 @@ if (true) {
             db.dropDatabase();
             dm.getCommandQueue();
             let testDevice = createAutoServerTestDevice();
+            testDevice.isScheduled = true;
             testDevice.currentState = "off";
             testDevice.nextState = "on";
             testDevice.schedule = {
@@ -245,14 +287,29 @@ if (true) {
             db.dropDatabase();
             dm.getCommandQueue();
             let testDevice = createAutoServerTestDevice();
+            testDevice.isScheduled = true;
             testDevice.currentState = "on";
+            testDevice.nextState = "on";
+            testDevice.schedule = {
+                start: getRelativeDate(60, '+'),
+                end: getRelativeDate(120, '+')
+            }
+            testDevice.scheduledInterval = {
+                start: getRelativeDate(120, '+'),
+                end: getRelativeDate(180, '+')
+            }
+
             await dm.testDeviceInit(testDevice, "socket");
             let res = await dm.stateChanged(testDevice.deviceId, "off");
             let dbDevice = await db.getDevice(testDevice.deviceId);
             assert(dbDevice.currentState === "off" &&
+                dbDevice.isScheduled === false &&
+                dbDevice.nextState === null &&
+                dbDevice.schedule === null &&
+                dbDevice.scheduledInterval === null &&
                 res === true);
         });
-        it('stateChanged: changed from on to on', async () => {
+        it('stateChanged: change state to the same', async () => {
             db.dropDatabase();
             dm.getCommandQueue();
             let testDevice = createAutoServerTestDevice();
@@ -332,15 +389,9 @@ function createAutoServerTestDevice() {
     let serverTestDevice = {
         scheduledByUser: false,
         isScheduled: false,
-        nextState: "",
-        schedule: {
-            start: new Date(),
-            end: new Date()
-        },
-        scheduledInterval: {
-            start: new Date(),
-            end: new Date()
-        },
+        nextState: null,
+        schedule: null,
+        scheduledInterval: null,
 
         deviceId: uuid.uuid(),
         isAutomatic: true,

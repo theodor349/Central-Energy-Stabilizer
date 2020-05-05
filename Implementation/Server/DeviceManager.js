@@ -31,7 +31,6 @@ function onConnect(socket) {
 }
 
 async function receiveId(id, socket) {
-    // TODO: Check for existing ID on DB
     let dbDevice = await db.getDevice(id);
     if (dbDevice !== null && uuid.isUuid(id) === true) {
         addConnection(id, socket);

@@ -153,7 +153,7 @@ if (true) {
 
             testDevice.schedule = null;
 
-            let fieldsUpdated = await dm.updateDevice(testDevice);
+            let fieldsUpdated = await dm.updateDevice(testDevice, true);
             let dbDevice = await db.getDevice(id);
             let updatedDevices = dm.getUpdatedDevices();
             assert(fieldsUpdated === 1 &&
@@ -179,7 +179,7 @@ if (true) {
             db.dropDatabase();
             let testDevice = createAutoServerTestDevice();
             let id = testDevice.deviceId;
-            await dm.deviceInit(testDevice);
+            await dm.testDeviceInit(testDevice);
             testDevice = createAutoServerTestDevice();
             testDevice.uniqueProperties = {
                 currentTemp: 80,
@@ -197,8 +197,7 @@ if (true) {
         it('updateDevice: with no changes to device', async () => {
             db.dropDatabase();
             let testDevice = createAutoServerTestDevice();
-            let id = testDevice.deviceId;
-            await dm.deviceInit(testDevice);
+            await dm.testDeviceInit(testDevice);
             let fieldsUpdated = await dm.updateDevice(testDevice);
             let updatedDevices = dm.getUpdatedDevices();
             assert(fieldsUpdated === 0 &&
@@ -207,11 +206,35 @@ if (true) {
         it('updateDevice: no device on DB', async () => {
             db.dropDatabase();
             let testDevice = createAutoServerTestDevice();
-            let id = testDevice.deviceId;
+            await dm.testDeviceInit(testDevice);
             let fieldsUpdated = await dm.updateDevice(testDevice);
             let updatedDevices = dm.getUpdatedDevices();
             assert(fieldsUpdated === 0 &&
                 updatedDevices.length === 0);
+        });
+        it('updateDevice: do not update Server Values', async () => {
+            db.dropDatabase();
+            let testDevice = createAutoServerTestDevice();
+            await dm.testDeviceInit(testDevice);
+            testDevice.isScheduled = true;
+            let fieldsUpdated = await dm.updateDevice(testDevice);
+            let updatedDevices = dm.getUpdatedDevices();
+            let dbDevice = await db.getDevice(testDevice.deviceId);
+            assert(fieldsUpdated === 0 &&
+                updatedDevices.length === 0 &&
+                dbDevice.isScheduled === false);
+        });
+        it('updateDevice: update Server Values', async () => {
+            db.dropDatabase();
+            let testDevice = createAutoTestDevice();
+            await dm.testDeviceInit(testDevice);
+            testDevice.isScheduled = true;
+            let fieldsUpdated = await dm.updateDevice(testDevice, true);
+            let updatedDevices = dm.getUpdatedDevices();
+            let dbDevice = await db.getDevice(testDevice.deviceId);
+            assert(fieldsUpdated === 1 &&
+                updatedDevices.length === 1 &&
+                dbDevice.isScheduled === true);
         });
 
         // Manage device
@@ -260,6 +283,7 @@ if (true) {
                 start: getRelativeDate(120, '-'),
                 end: getRelativeDate(60, '+')
             }
+            await dm.testDeviceInit(testDevice, "socket");
             let changedState = dm.manageDevice(testDevice);
             let commands = dm.getCommandQueue();
             assert(commands.length === 0 &&
@@ -276,10 +300,30 @@ if (true) {
                 start: getRelativeDate(60, '+'),
                 end: getRelativeDate(120, '+')
             }
+            await dm.testDeviceInit(testDevice, "socket");
             let changedState = dm.manageDevice(testDevice);
             let commands = dm.getCommandQueue();
             assert(commands.length === 0 &&
                 changedState === false);
+        });
+        it('manageDevice: not turned on even outside interval', async () => {
+            db.dropDatabase();
+            dm.getCommandQueue();
+            let testDevice = createAutoServerTestDevice();
+            testDevice.isScheduled = true;
+            testDevice.currentState = "off";
+            testDevice.nextState = "program1";
+            testDevice.schedule = {
+                start: getRelativeDate(60, '-'),
+                end: getRelativeDate(120, '-')
+            }
+            await dm.testDeviceInit(testDevice, "socket");
+            let changedState = dm.manageDevice(testDevice);
+            let commands = dm.getCommandQueue();
+            assert(commands.length === 1 &&
+                commands[0].command === "on" &&
+                commands[0].payload === "program1" &&
+                changedState === true);
         });
 
         // State Changed

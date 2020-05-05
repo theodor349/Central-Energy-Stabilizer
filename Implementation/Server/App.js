@@ -41,35 +41,35 @@ deviceSpace.on('connection', (socket) => {
     dm.onConnect(socket);
 
     socket.on('receiveDeviceId', (id) => {
-        console.log("receiveDeviceId");
+        console.log("---receiveDeviceId");
         console.log(id);
         console.log();
         dm.receiveId(id, socket);
     });
 
     socket.on('newDeviceWithId', (deviceInfo) => {
-        console.log("newDeviceWithId");
+        console.log("---newDeviceWithId");
         console.log(deviceInfo);
         console.log();
         dm.deviceInit(deviceInfo, socket);
     });
 
     socket.on('stateChanged', (state, id) => {
-        console.log("stateChanged");
+        console.log("---stateChanged");
         console.log(state + " " + id);
         console.log();
         dm.stateChanged(id, state);
     });
 
     socket.on('deviceUpdate', (device) => {
-        console.log("deviceUpdate");
+        console.log("---deviceUpdate");
         console.log(device);
         console.log();
         dm.updateDevice(device);
     });
 
     socket.on('disconnect', () => {
-        console.log("disconnect");
+        console.log("---disconnect");
         console.log();
         dm.onDisconnect(socket);
     });
@@ -128,7 +128,7 @@ function handleUserManagerCommands() {
 }
 
 function executeCommand(command) {
-    print(command.command);
+    print("Command: " + command.command + " Payload: " + command.payload);
     let socket = command.socket;
     let payload = command.payload;
     command = command.command;

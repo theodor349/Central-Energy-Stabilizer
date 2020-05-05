@@ -26,3 +26,12 @@ font-weight: bold;
     stroke-width: 4;
     fill: rgba(175,210,175, 1);
 }
+
+.graphPathRed{
+    stroke: rgba(240, 40, 40, 0.71);
+    stroke-width: 2;
+}
+
+    .graphPathRed.graphFill{
+        fill: rgba(240, 40, 40, 0.42);
+    }

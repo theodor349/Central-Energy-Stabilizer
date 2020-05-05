@@ -111,7 +111,7 @@ function handleSchedulerCommands() {
     // TODO: make work (Remove return)
     return;
 
-    let commands = dm.getCommandQueue();
+    let commands = sd.getCommandQueue();
     commands.forEach((command) => {
         executeCommand(command);
     });
@@ -121,7 +121,7 @@ function handleUserManagerCommands() {
     // TODO: make work (Remove return)
     return;
 
-    let commands = dm.getCommandQueue();
+    let commands = um.getCommandQueue();
     commands.forEach((command) => {
         executeCommand(command);
     });

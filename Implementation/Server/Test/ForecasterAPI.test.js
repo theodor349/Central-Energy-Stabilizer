@@ -11,11 +11,13 @@ if (true) {
             let res = await forecaster.updateApiDemand(date);
             let graph = await da.getGraph("apiDemand-Y2010-M1-D24-H15");
 
+            let d = date.getDate();
+            let h = date.getHours();
             assert(res === true && graph.values !== undefined &&
-                graph.values[0] === -0.06486414723678369 &&
-                graph.values[10] === 0.4907779752739456 &&
-                graph.values[25] === 2.819898153108528 &&
-                graph.values[54] === -0.2722312990325585
+                graph.values[0] === forecaster.getDemandAt(d * 24 + h + 0 / 60) &&
+                graph.values[10] === forecaster.getDemandAt(d * 24 + h + 10 / 60) &&
+                graph.values[25] === forecaster.getDemandAt(d * 24 + h + 25 / 60) &&
+                graph.values[54] === forecaster.getDemandAt(d * 24 + h + 54 / 60)
             );
         });
         it('demand: update existing date', async () => {
@@ -26,11 +28,13 @@ if (true) {
             let res = await forecaster.updateApiDemand(date);
             let graph = await da.getGraph("apiDemand-Y2010-M1-D24-H15");
 
+            let d = date.getDate();
+            let h = date.getHours();
             assert(res === true && graph.values !== undefined &&
-                graph.values[0] === -0.06486414723678369 &&
-                graph.values[10] === 0.4907779752739456 &&
-                graph.values[25] === 2.819898153108528 &&
-                graph.values[54] === -0.2722312990325585
+                graph.values[0] === forecaster.getDemandAt(d * 24 + h + 0 / 60) &&
+                graph.values[10] === forecaster.getDemandAt(d * 24 + h + 10 / 60) &&
+                graph.values[25] === forecaster.getDemandAt(d * 24 + h + 25 / 60) &&
+                graph.values[54] === forecaster.getDemandAt(d * 24 + h + 54 / 60)
             );
         });
 
@@ -41,11 +45,13 @@ if (true) {
             let res = await forecaster.updateApiProduction(date);
             let graph = await da.getGraph("apiProduction-Y2010-M1-D24-H15");
 
+            let d = date.getDate();
+            let h = date.getHours();
             assert(res === true && graph.values !== undefined &&
-                graph.values[0] === 2.432456679503506 &&
-                graph.values[10] === -1.4706413605848179 &&
-                graph.values[25] === -1.0143450461571553 &&
-                graph.values[54] === 0.19041228550402078
+                graph.values[0] === forecaster.getProdutionAt(d * 24 + h + 0 / 60) &&
+                graph.values[10] === forecaster.getProdutionAt(d * 24 + h + 10 / 60) &&
+                graph.values[25] === forecaster.getProdutionAt(d * 24 + h + 25 / 60) &&
+                graph.values[54] === forecaster.getProdutionAt(d * 24 + h + 54 / 60)
             );
         });
         it('production: update existing date', async () => {
@@ -56,11 +62,13 @@ if (true) {
             let res = await forecaster.updateApiProduction(date);
             let graph = await da.getGraph("apiProduction-Y2010-M1-D24-H15");
 
+            let d = date.getDate();
+            let h = date.getHours();
             assert(res === true && graph.values !== undefined &&
-                graph.values[0] === 2.432456679503506 &&
-                graph.values[10] === -1.4706413605848179 &&
-                graph.values[25] === -1.0143450461571553 &&
-                graph.values[54] === 0.19041228550402078
+                graph.values[0] === forecaster.getProdutionAt(d * 24 + h + 0 / 60) &&
+                graph.values[10] === forecaster.getProdutionAt(d * 24 + h + 10 / 60) &&
+                graph.values[25] === forecaster.getProdutionAt(d * 24 + h + 25 / 60) &&
+                graph.values[54] === forecaster.getProdutionAt(d * 24 + h + 54 / 60)
             );
         });
         it('all: 25 hours', async () => {

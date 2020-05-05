@@ -2,8 +2,10 @@
 
 const svgNS = "http://www.w3.org/2000/svg";
 const horizontalTextOffset = 4; // how far ahead should the text be taken to be aligned center with line
+const graphDrawValueSpeed = 20;
 
 
+let drawingGraphValues = [];
 let activeGraphs = [];
 
 /*
@@ -159,6 +161,13 @@ function deleteActiveGraphs() {
         graph.parentNode.removeChild(graph);
     });
     activeGraphs = [];
+
+    drawingGraphValues.forEach((graphValue) => {
+        clearInterval(graphValue);
+
+    });
+    activeGraphs = [];
+    drawingGraphValues = [];
 }
 
 function drawSvgContainer(graph) {
@@ -312,30 +321,50 @@ function drawGraphValues(graphValues, style, graph) {
 
     let valuesToSkip = graphValues.length / style.steps;
 
-    for (let i = 0; i < graphValues.length; i += valuesToSkip) {
-        let point = graphValues[i];
-        let pointValue = point / 1000 * (graph.innerHeight / graph.horizontalAmount);
-        let newVerticalValue = verticalOrigin - pointValue;
-        let newHorizontalValue = previousHorizontalValue += pathWidth;
 
-        previousPath += " L" + newHorizontalValue + " " + newVerticalValue;
-
-        path.setAttributeNS(null, "d", previousPath);
-
-        previousVerticalValue = newVerticalValue;
-        previousHorizontalValue = newHorizontalValue;
-
-        graph.htmlElement.appendChild(path);
-    }
+    displayNextValue(graphValues, 0, verticalOrigin, path, pathWidth, style, previousPath, previousVerticalValue, previousHorizontalValue, graph, valuesToSkip);
 
 
-    let newVerticalValue = verticalOrigin;
-    let newHorizontalValue = previousHorizontalValue;
 
-    previousPath += " L" + newHorizontalValue + " " + newVerticalValue + " Z";
+}
+
+function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWidth, style, previousPath, previousVerticalValue, previousHorizontalValue, graph, valuesToSkip) {
+
+
+    let point = graphValues[valueIndex];
+    let pointValue = point / 1000 * (graph.innerHeight / graph.horizontalAmount);
+    let newVerticalValue = verticalOrigin - pointValue;
+    let newHorizontalValue = previousHorizontalValue += pathWidth;
+
+    previousPath += " L" + newHorizontalValue + " " + newVerticalValue;
 
     path.setAttributeNS(null, "d", previousPath);
-    path.setAttributeNS(null, "class", style.style + " graphFill")
 
-    graph.htmlElement.appendChild(path)
+    previousVerticalValue = newVerticalValue;
+    previousHorizontalValue = newHorizontalValue;
+
+    graph.htmlElement.appendChild(path);
+
+    valueIndex += valuesToSkip
+
+
+    if (valueIndex < graphValues.length) {
+        let newDrawingGraph = setTimeout(function() {
+            drawingGraphValues.pop()
+            displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWidth, style, previousPath, previousVerticalValue, previousHorizontalValue, graph, valuesToSkip)
+        }, graphDrawValueSpeed);
+
+        drawingGraphValues.push(newDrawingGraph);
+
+    } else {
+        let newVerticalValue = verticalOrigin;
+        let newHorizontalValue = previousHorizontalValue;
+
+        previousPath += " L" + newHorizontalValue + " " + newVerticalValue + " Z";
+
+        path.setAttributeNS(null, "d", previousPath);
+        path.setAttributeNS(null, "class", style.style + " graphFill")
+        graph.htmlElement.appendChild(path)
+    }
+
 }

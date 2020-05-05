@@ -30,8 +30,18 @@ font-weight: bold;
 .graphPathRed{
     stroke: rgba(240, 40, 40, 0.71);
     stroke-width: 2;
+    fill:  rgba(240, 40, 40, 0);
+    transition-duration: 2s;
 }
 
-    .graphPathRed.graphFill{
-        fill: rgba(240, 40, 40, 0.42);
+    .graphFill{
+        animation-name: showFill;
+        animation-duration: 1s;
+        animation-fill-mode: forwards;
+    }
+
+
+    @keyframes showFill {
+        from {fill:  rgba(240, 40, 40, 0);}
+        to {fill: rgba(240, 40, 40, 0.42);}
     }

@@ -19,6 +19,7 @@ const functions = {
     getUpdatedDevices: () => getUpdatedDevices(),
     // FOR TESTING
     testDeviceInit: (deviceInfo, socket) => testDeviceInit(deviceInfo, socket),
+    testReceiveId: (id, socket) => testReceiveId(id, socket),
 }
 module.exports = functions;
 let commandQueue = [];
@@ -29,9 +30,10 @@ function onConnect(socket) {
     createCommand(socket, "askForId");
 }
 
-function receiveId(id, socket) {
+async function receiveId(id, socket) {
     // TODO: Check for existing ID on DB
-    if (uuid.isUuid(id) === true) {
+    let dbDevice = await db.getDevice(id);
+    if (dbDevice !== null && uuid.isUuid(id) === true) {
         addConnection(id, socket);
         return true;
     } else {
@@ -40,7 +42,7 @@ function receiveId(id, socket) {
     }
 }
 
-function deviceInit(deviceInfo, socket) {
+async function deviceInit(deviceInfo, socket) {
     if (uuid.isUuid(deviceInfo.deviceId) === false) {
         return false;
     }
@@ -301,4 +303,15 @@ function testDeviceInit(deviceInfo, socket) {
                 reject(err);
             })
     })
+}
+
+function testReceiveId(id, socket) {
+    // TODO: Check for existing ID on DB
+    if (uuid.isUuid(id) === true) {
+        addConnection(id, socket);
+        return true;
+    } else {
+        sendNewId(socket);
+        return false;
+    }
 }

@@ -8,6 +8,7 @@ if (true) {
 
         // On Connect
         it('onConnect: Adds command to commandQueue', async () => {
+            db.dropDatabase();
             dm.onConnect("socket");
             let commandQueue = dm.getCommandQueue();
             assert(commandQueue !== undefined &&
@@ -17,16 +18,32 @@ if (true) {
         })
 
         // Receive ID
-        it('receiveId: Connection with good uuId', async () => {
+        it('receiveId: Connection with good uuId but not in database', async () => {
+            db.dropDatabase();
             let id = uuid.uuid();
-            let res = dm.receiveId(id, "socket");
+            let res = await dm.receiveId(id, "socket");
+            let commandQueue = dm.getCommandQueue();
+            assert(res === false &&
+                commandQueue !== undefined &&
+                commandQueue.length === 1 &&
+                commandQueue[0].socket === "socket" &&
+                commandQueue[0].command === 'setId' &&
+                uuid.isUuid(commandQueue[0].payload));
+        })
+        it('receiveId: Connection with good uuId Allready in database', async () => {
+            db.dropDatabase();
+            let testDevice = createAutoTestDevice();
+            let id = testDevice.deviceId;
+            await dm.testDeviceInit(testDevice, "socket");
+            let res = await dm.receiveId(id, "socket");
             let commandQueue = dm.getCommandQueue();
             assert(res === true &&
                 commandQueue !== undefined &&
                 commandQueue.length === 0);
         })
         it('receiveId: Connection with wrong uuId', async () => {
-            let res = dm.receiveId("PLZ return false", "socket");
+            db.dropDatabase();
+            let res = await dm.receiveId("PLZ return false", "socket");
             let commandQueue = dm.getCommandQueue();
             assert(res === false &&
                 commandQueue !== undefined &&
@@ -36,8 +53,9 @@ if (true) {
                 uuid.isUuid(commandQueue[0].payload));
         })
         it('receiveId: Connection without Id', async () => {
+            db.dropDatabase();
             let id;
-            let res = dm.receiveId(id, "socket");
+            let res = await dm.receiveId(id, "socket");
             let commandQueue = dm.getCommandQueue();
             assert(res === false &&
                 commandQueue !== undefined &&
@@ -88,8 +106,10 @@ if (true) {
 
         // On disconnect
         it('onDisconnect: Removes active connection', async () => {
+            db.dropDatabase();
             dm.clearAllConnections();
-            let didRecievedId = dm.receiveId(uuid.uuid(), "socket");
+            let id = uuid.uuid()
+            let didRecievedId = dm.testReceiveId(id, "socket");
             let didDisconnect = dm.onDisconnect("socket");
             let activeConnections = dm.getActiveConnections();
             assert(didRecievedId === true &&
@@ -102,7 +122,8 @@ if (true) {
             db.dropDatabase();
             dm.clearAllConnections();
             let testDevice = createAutoTestDevice();
-            await dm.deviceInit(testDevice);
+            await dm.testDeviceInit(testDevice, "socket");
+
             let didRemove = await dm.deleteDevice(testDevice.deviceId);
             let activeConnections = dm.getActiveConnections();
             let dbDevice = await db.getDevice(testDevice.deviceId);

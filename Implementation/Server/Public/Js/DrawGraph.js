@@ -350,11 +350,21 @@ function drawGraphValues(graphValues, style, graph) {
 
 function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWidth, style, previousPath, previousVerticalValue, previousHorizontalValue, graph, valuesToSkip) {
 
-
-    let point = graphValues[valueIndex];
+    let point;
+    if(valueIndex === graphValues.length) {
+        point = graphValues[valueIndex-1];
+    } else {
+        point = graphValues[valueIndex];
+    }
     let pointValue = point / 1000 * (graph.innerHeight / graph.horizontalAmount);
     let newVerticalValue = verticalOrigin - pointValue;
-    let newHorizontalValue = previousHorizontalValue += pathWidth;
+    let newHorizontalValue;
+
+    if(valueIndex !== 0){
+        newHorizontalValue = previousHorizontalValue += pathWidth;
+    } else {
+        newHorizontalValue = previousHorizontalValue;
+    }
 
     previousPath += " L" + newHorizontalValue + " " + newVerticalValue;
 
@@ -365,10 +375,9 @@ function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWid
 
     graph.htmlElement.appendChild(path);
 
-    valueIndex += valuesToSkip
+    valueIndex += valuesToSkip;
 
-
-    if (valueIndex < graphValues.length) {
+    if (valueIndex <= graphValues.length) {
         let newDrawingGraph = setTimeout(function() {
             displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWidth, style, previousPath, previousVerticalValue, previousHorizontalValue, graph, valuesToSkip)
         }, graphDrawValueSpeed);

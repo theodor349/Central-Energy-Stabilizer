@@ -1,47 +1,71 @@
-
-#mainGraph{
+#mainGraph {
     display: block;
     margin: 0 auto 2.5vw;
 }
 
-
-.graphBgLine{
+.graphBgLine {
     stroke: rgba(74, 102, 70, 0.15);
     stroke-width: 1px;
 }
 
-.graphBgLineDevider{
+.graphBgLineDevider {
     stroke: rgba(74, 102, 70, 0.4);
     stroke-width: 1px;
 }
 
-.graphAxisValue{
-fill: #666;
-font-weight: bold;
-
+.graphAxisValue {
+    fill: #666;
+    font-weight: bold;
 }
 
-.graphBackground{
+.graphBackground {
     stroke: rgba(74, 102, 70, 0.05);
     stroke-width: 4;
-    fill: rgba(175,210,175, 1);
+    fill: rgba(175, 210, 175, 1);
 }
 
-.graphPathRed{
+.graphPathRed {
     stroke: rgba(240, 40, 40, 0.71);
     stroke-width: 2;
-    fill:  rgba(240, 40, 40, 0);
+    fill: rgba(240, 40, 40, 0);
     transition-duration: 2s;
 }
 
-    .graphFill{
-        animation-name: showFill;
-        animation-duration: 1s;
-        animation-fill-mode: forwards;
+.graphPathRed.graphFill {
+    animation-name: showFillRed;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes showFillRed {
+    from {
+        fill: rgba(240, 40, 40, 0);
     }
 
-
-    @keyframes showFill {
-        from {fill:  rgba(240, 40, 40, 0);}
-        to {fill: rgba(240, 40, 40, 0.42);}
+    to {
+        fill: rgba(240, 40, 40, 0.42);
     }
+}
+
+.graphPathGreen {
+    stroke: rgba(32, 25, 223, 0.71);
+    stroke-width: 2;
+    fill: rgba(32, 25, 223, 0);
+    transition-duration: 2s;
+}
+
+.graphPathGreen.graphFill {
+    animation-name: showFillGreen;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes showFillGreen {
+    from {
+        fill: rgba(32, 25, 223, 0);
+    }
+
+    to {
+        fill: rgba(32, 25, 223, 0.42);
+    }
+}

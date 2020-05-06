@@ -2,7 +2,7 @@
 
 const svgNS = "http://www.w3.org/2000/svg";
 const horizontalTextOffset = 4; // how far ahead should the text be taken to be aligned center with line
-const graphDrawValueSpeed = 20;
+const graphDrawValueSpeed = 10;
 
 
 let drawingGraphValues = [];
@@ -25,8 +25,8 @@ let mainGraph = {
     innerWidth: null,
     horizontalLines: 20,
     horizontalValue: "Kw",
-    horizontalOrigin: 7,
-    horizontalAmount: 14,
+    horizontalOrigin: 10,
+    horizontalAmount: 20,
     verticalLines: 48,
     verticalValue: "time interval",
     verticalAmount: 24,
@@ -39,6 +39,11 @@ let mainGraph = {
 let demandGraphStyle = {
     steps: 1440 / 4, // must be of the formula 1440 / yourValue
     style: "graphPathRed"
+}
+
+let otherDemandGraphStyle = {
+    steps: 1440 / 4, // must be of the formula 1440 / yourValue
+    style: "graphPathGreen"
 }
 
 
@@ -90,6 +95,7 @@ function getProdutionAt(x) {
 function create24HSurplusGraph() {
     let newGraphProduction = create24HProductionGraph(new Date);
     let newGraphDemand = create24HDemandGraph(new Date);
+    let surplusGraph = [];
 
     for (var h = 0; h < 24; h++) {
         let array = [];
@@ -98,10 +104,25 @@ function create24HSurplusGraph() {
         }
         surplusGraph[h] = array;
     }
+    return surplusGraph;
+}
+
+function createOther24HSurplusGraph() {
+    let newGraphProduction = create24HProductionGraph(new Date);
+    let newGraphDemand = create24HDemandGraph(new Date(1000));
+    let surplusGraph = [];
+
+    for (var h = 0; h < 24; h++) {
+        let array = [];
+        for (var m = 0; m < 60; m++) {
+            array[m] = newGraphProduction[h][m] - newGraphDemand[h][m];
+        }
+        surplusGraph[h] = array;
+    }
+    return surplusGraph;
 }
 
 let firstTestGraphValues = [];
-let surplusGraph = [];
 
 
 
@@ -111,7 +132,8 @@ let surplusGraph = [];
 
 
 create24HSurplusGraph();
-let newSurplusGraph = convertArray(surplusGraph);
+let newSurplusGraph = convertArray(create24HSurplusGraph());
+let otherSurplusGraphValues = convertArray(createOther24HSurplusGraph());
 
 drawGraph(mainGraph);
 
@@ -126,6 +148,7 @@ function drawGraph(graph) {
     drawGraphVerticalLines(graph);
     activeGraphs.push(graph.htmlElement);
     drawGraphValues(newSurplusGraph, demandGraphStyle, mainGraph);
+    drawGraphValues(otherSurplusGraphValues, otherDemandGraphStyle, mainGraph);
 
 }
 

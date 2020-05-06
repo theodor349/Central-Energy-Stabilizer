@@ -1,10 +1,10 @@
 const assert = require('assert');
 const daD = require('./../DatabaseAccessorDevice.js');
-const scheduler = require('./../Scheduler.js');
-const dm = require('./../DeviceManager.js');
-const uuid = require('uuidv4');
 const daG = require('./../DatabaseAccessorGraph.js');
+const dm = require('./../DeviceManager.js');
+const scheduler = require('./../Scheduler.js');
 const util = require('./../Utilities.js');
+const uuid = require('uuidv4');
 
 function createAutoServerTestDevice() {
     let serverTestDevice = {
@@ -51,110 +51,96 @@ function createAutoServerTestDevice() {
     return serverTestDevice;
 }
 
-if (false) {
+if (true) {
     describe('Scheduler', () => {
 
         // Schedule device
-        it('scheduleDevice: Schedule automatic device to "on" when surplus', async() => {
-            // createTestDevice
-            // scheduleDevice(testDevice)
-            // getDevice from database
-            // check if surplus > 0 && dbDevice.nextState === "on"
-            //       or surplus < 0 && dbDevice.nextState === "off"
-            await createSurplusGraph(1000);
+        it('scheduleDevice: Schedule automatic device from "off" to "on" when surplus', async() => {
+            daG.dropDatabase();
+            daD.dropDatabase();
+            scheduler.getCommandQueue();
+            scheduler.clearUpdatedDevices();
 
+            await createSurplusGraph(1000);
             let testDevice = createAutoServerTestDevice();
-            
+            testDevice.currentState = "off";
             await dm.testDeviceInit(testDevice);
 
             let res = await scheduler.scheduleDevice(testDevice);
-
             let dbDevice = await daD.getDevice(testDevice.deviceId);
+            let updatedDevices = scheduler.getUpdatedDevices();
 
             assert(res === true && 
                 dbDevice.nextState === "on" &&
-                dbDevice.isScheduled === true);
+                dbDevice.isScheduled === true &&
+                updatedDevices.length === 1);
                           
-            // Check UpdatedDevices.length = 1
         })
-        it('scheduleDevice: Schedule automatic device to "off" when no surplus', async() => {     
-            await createSurplusGraph(-1000);
-
-            let testDevice = createAutoServerTestDevice();
+        it('scheduleDevice: Schedule automatic device from "on" to "off" when no surplus', async() => {     
+            daG.dropDatabase();
+            daD.dropDatabase();
+            scheduler.getCommandQueue();
+            scheduler.clearUpdatedDevices();
             
+            await createSurplusGraph(-1000);
+            let testDevice = createAutoServerTestDevice();
+            testDevice.currentState = "on";
             await dm.testDeviceInit(testDevice);
 
             let res = await scheduler.scheduleDevice(testDevice);
 
             let dbDevice = await daD.getDevice(testDevice.deviceId);
+            let updatedDevices = scheduler.getUpdatedDevices();
 
             assert(res === true && 
                 dbDevice.nextState === "off" &&
-                dbDevice.isScheduled === true);
-                          
-            // Check UpdatedDevices.length = 1
+                dbDevice.isScheduled === true &&
+                updatedDevices.length === 1);
         })
         it('scheduleDevice: When already scheduled to "off" when surplus', async() => {     
+            daG.dropDatabase();
+            daD.dropDatabase();
+            scheduler.getCommandQueue();
+            scheduler.clearUpdatedDevices();
+            
             await createSurplusGraph(1000);
-
             let testDevice = createAutoServerTestDevice();
-
+            testDevice.currentState = "off";
             testDevice.isScheduled = true;
             testDevice.nextState = "off";
-            
             await dm.testDeviceInit(testDevice);
 
             let res = await scheduler.scheduleDevice(testDevice);
-
             let dbDevice = await daD.getDevice(testDevice.deviceId);
+            let updatedDevices = scheduler.getUpdatedDevices();
 
             assert(res === true && 
                 dbDevice.nextState === "on" &&
-                dbDevice.isScheduled === true);
-            
-            // Check UpdatedDevices.length = 1
+                dbDevice.isScheduled === true &&
+                updatedDevices.length === 1);
         })
         it('scheduleDevice: When already scheduled to "off" when no surplus', async() => {     
+            daG.dropDatabase();
+            daD.dropDatabase();
+            scheduler.getCommandQueue();
+            scheduler.clearUpdatedDevices();
+            
             await createSurplusGraph(-1000);
-
             let testDevice = createAutoServerTestDevice();
-
+            testDevice.currentState = "off";
             testDevice.isScheduled = true;
             testDevice.nextState = "off";
-            
             await dm.testDeviceInit(testDevice);
 
             let res = await scheduler.scheduleDevice(testDevice);
-
             let dbDevice = await daD.getDevice(testDevice.deviceId);
+            let updatedDevices = scheduler.getUpdatedDevices();
 
             assert(res === false && 
                 dbDevice.nextState === "off" &&
-                dbDevice.isScheduled === true);
-
-            // Check UpdatedDevices.length = 0
+                dbDevice.isScheduled === true &&
+                updatedDevices.length === 0);
         })
-        /*
-        it('scheduleDevice: Database is updated with the correct schedule', async() => {
-            let testDevice = createAutoServerTestDevice();
-
-            await dm.testDeviceInit(testDevice);
-            
-            await scheduler.scheduleDevice(testDevice.deviceId);
-
-            let dbDevice = await daD.getDevice(testDevice.deviceId);
-
-            let expectedSchedule = {
-                start: new Date(2010, 1, 24, 15, 30),
-                end: new Date(2010, 1, 24, 15, 35)
-            }
-
-            assert(JSON.stringify(expectedSchedule.start) === JSON.stringify(dbDevice.schedule.start) &&
-                   JSON.stringify(expectedSchedule.end) === JSON.stringify(dbDevice.schedule.end));
-        
-        });
-        */
-
     });
 }
 
@@ -170,6 +156,7 @@ function getRelativeDate(mins, operator) {
     return date;
 }
 
+// Creates a positive or negative surplus graph depending on input value
 async function createSurplusGraph (value) {
     let date = new Date();
     let id = util.dateToId("surplusGraph", date);

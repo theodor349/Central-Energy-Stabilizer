@@ -1,48 +1,71 @@
-const da = require('./DatabaseAccessorDevice.js');
-const rqstMngr = require('./RequestManager.js');
+const daD = require('./DatabaseAccessorDevice.js');
+const daG = require('./DatabaseAccessorGraph.js');
+const forecaster = require('./Forecaster.js');
+const util = require('./Utilities.js');
 
 const functions = {
     scheduleDevice: (device) => scheduleDevice(device),
+    getCommandQueue: () => getCommandQueue(),
+    clearUpdatedDevices: () => clearUpdatedDevices(),
+    getUpdatedDevices: () => getUpdatedDevices(),
 }
-
 module.exports = functions;
 
-function scheduleDevice (device) {
-    /*
+let updatedDevices = [];
+
+async function scheduleDevice (device) {
     return new Promise(async (resolve, reject) => {
-        // Retrieves interval and demand graph for device
-        deviceIntervalObject = {
-            start: new Date(),
-            end: new Date()
+        let date = new Date();
+        let graphId = util.dateToId("surplusGraph", date);
+        let surplusGraph = await daG.getGraph(graphId);
+
+        // If there is surplus and the device is not scheduled to "on"
+        if (surplusGraph.values[date.getMinutes()] > 0 && device.nextState !== "on") {
+            let demandGraph = [1000]; // TODO: Make dynamic 
+            await forecaster.addDemand(date, demandGraph);
+            
+            await daD.updateDevice(device.deviceId, "nextState", "on");
+            await daD.updateDevice(device.deviceId, "isScheduled", true);
+
+            addUpdatedDevice(device.deviceId);
+
+            resolve(true);            
+        }
+        // If there is no surplus and the device is not scheduled to "off"
+        else if (device.nextState !== "off"){
+            await daD.updateDevice(device.deviceId, "nextState", "off");
+            await daD.updateDevice(device.deviceId, "isScheduled", true);
+
+            addUpdatedDevice(device.deviceId);
+
+            resolve(true);
         }
 
-        deviceIntervalObject.start = device.scheduledInterval.start;
-        deviceIntervalObject.end = device.scheduledInterval.end;
-        demandGraph = device.programs[0].pointArray;
-
-        let newSchedule = await rqstMngr.requestTimeToRun(demandGraph, deviceIntervalObject);
-
-        // Updates schedule for the device in the database
-        da.updateDevice(device, "schedule", newSchedule);
-
-        // Add device to Updated devices list
-
-        resolve(true);
+        // If the device is already scheduled to "on" before calling this function
+        if (device.currentState === "on"){
+            let demandGraph = [1000]; // TODO: Make dynamic 
+            await forecaster.addDemand(date, demandGraph);
+        }
+        resolve(false);
     });
+}
+
+/* 
+    SECTION: Helper Functions
 */
+
+function addUpdatedDevice(deviceId) {
+    updatedDevices.push(deviceId);
 }
 
-
-
-function commandQueue() {
-
-}
-
-function updatedDevices() {
+function getCommandQueue() {
 
 }
 
-function removeSchedule (deviceId) {
-
+function getUpdatedDevices() {
+    return updatedDevices;
 }
 
+function clearUpdatedDevices() {
+    updatedDevices = [];
+}

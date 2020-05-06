@@ -9,18 +9,28 @@ if (false) {
 
         // On Connect
         it('onConnect: 0 devices', async () => {
-            um.onConnect("socket");
-            activeConnections = getActiveConnections();
-            assert(activeConnections.length === 0
-                );
+            let activeConnections = [];
+            let commandQueue = [];
+            um.onConnect("socket", activeConnections);
+
+            assert(commandQueue.length === 0 &&
+                activeConnections.length === 0);
         })
         it('onConnect: 1 device', async () => {
-            um.onConnect();
-            assert();
+            let activeConnections = [];
+            let commandQueue = [];
+            um.onConnect("socket", activeConnections);
+
+            assert(commandQueue.length === 1 &&
+                activeConnections.length === 1);
         })
         it('onConnect: 2 devices', async () => {
-            um.onConnect();
-            assert();
+            let activeConnections = [];
+            let commandQueue = [];
+            um.onConnect("socket", activeConnections);
+
+            assert(commandQueue.length === 2 &&
+                activeConnections.length === 2);
         })
     })
 }

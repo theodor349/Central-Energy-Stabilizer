@@ -179,16 +179,13 @@ ________________________________________________________________________________
 
 
 function deleteActiveGraphs() {
+    for (var i = drawingGraphValues.length - 1; i >= 0; i--) {
+        clearInterval(drawingGraphValues[i]);
+    }
 
-    activeGraphs.forEach((graph) => {
-        graph.parentNode.removeChild(graph);
-    });
-    activeGraphs = [];
-
-    drawingGraphValues.forEach((graphValue) => {
-        clearInterval(graphValue);
-
-    });
+    for (var i = activeGraphs.length - 1; i >= 0; i--) {
+        activeGraphs[i].parentNode.removeChild(activeGraphs[i]);
+    }
     activeGraphs = [];
     drawingGraphValues = [];
 }
@@ -373,7 +370,6 @@ function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWid
 
     if (valueIndex < graphValues.length) {
         let newDrawingGraph = setTimeout(function() {
-            drawingGraphValues.pop()
             displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWidth, style, previousPath, previousVerticalValue, previousHorizontalValue, graph, valuesToSkip)
         }, graphDrawValueSpeed);
 

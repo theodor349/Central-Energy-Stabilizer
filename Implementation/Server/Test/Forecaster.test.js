@@ -64,14 +64,7 @@ if (true) {
 
             let lowerGraph = await da.getGraph("demandGraph-Y2010-M1-D24-H15");
             let upperGraph = await da.getGraph("demandGraph-Y2010-M1-D24-H16");
-/*
-            console.log(res);
-            console.log(lowerGraph.values);
-            console.log(upperGraph.values);
 
-            console.log(expectedGraphsLower.values);
-            console.log(expectedGraphsUpper.values);
-*/
             assert(res === true && 
                 JSON.stringify(lowerGraph.values) === JSON.stringify(expectedGraphsLower.values) && 
                 JSON.stringify(upperGraph.values) === JSON.stringify(expectedGraphsUpper.values));
@@ -264,14 +257,7 @@ if (true) {
 
             let lowerGraph = await da.getGraph("demandGraph-Y2010-M1-D24-H15");
             let upperGraph = await da.getGraph("demandGraph-Y2010-M1-D24-H16");
-/*
-            console.log(res);
-            console.log(lowerGraph.values);
-            console.log(upperGraph.values);
 
-            console.log(expectedGraphsLower.values);
-            console.log(expectedGraphsUpper.values);
-*/
             assert(res === true && 
                 JSON.stringify(lowerGraph.values) === JSON.stringify(expectedGraphsLower.values) && 
                 JSON.stringify(upperGraph.values) === JSON.stringify(expectedGraphsUpper.values));
@@ -402,15 +388,16 @@ if (true) {
                 JSON.stringify(secondGraph.values) === JSON.stringify(expectedGraphsSecond.values) &&
                 JSON.stringify(thirdGraph.values) === JSON.stringify(expectedGraphsThird.values));
         });
-        /*
-        it('updateSurplus: checking for correct graph output', async () => {
+        it('updateSurplus: checking for correct graph output with a one hour interval', async () => {
             da.dropDatabase();
             let interval = {
                 intervalStart: new Date(2010, 1, 24, 18, 24),
                 intervalFinish: new Date(2010, 1, 24, 19, 24)
             };
 
-            date = interval.intervalStart;
+            let date = new Date();
+
+            date.setTime(interval.intervalStart.getTime());
 
             let demandGraph = [
                 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -443,12 +430,9 @@ if (true) {
 
             let graph = await forecaster.updateSurplus(interval);
 
-            //console.log(graph);
-
-            assert(expectedGraph === graph);
+            assert(JSON.stringify(expectedGraph) === JSON.stringify(graph));
 
         });
-        */
    });
 }
 

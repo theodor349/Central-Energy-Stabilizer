@@ -18,6 +18,7 @@ module.exports = functions;
 
 async function updateSurplus(interval) {
     return new Promise(async (resolve, reject) => {
+
         let surplusGraph = {graphId: undefined, values: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -34,7 +35,8 @@ async function updateSurplus(interval) {
         let graph = [];
 
         let hoursInInterval = (interval.intervalFinish.getTime() - 
-            interval.intervalStart.getTime()) / (60*60*1000)
+            interval.intervalStart.getTime()) / (60*60*1000);
+
 
         for (let i = 0; i < hoursInInterval+1; i++){
 
@@ -42,8 +44,15 @@ async function updateSurplus(interval) {
             let apiProductionGraph = await da.getGraph(
                                     utility.dateToId("apiProduction", surplusStartTime));
             let apiDemandGraph = await da.getGraph(utility.dateToId("apiDemand", surplusStartTime));
+            let surplusGraph = {graphId: undefined, values: [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ] }; 
 
-            //console.log(surplusStartTime);
             demandGraph.values = invertValues(demandGraph.values);
             apiDemandGraph.values = invertValues(apiDemandGraph.values);
 
@@ -55,23 +64,14 @@ async function updateSurplus(interval) {
             surplusGraph.values = await utility.updateValues(
                                 surplusGraph.values, demandGraph.values, true);
 
-/*
-            console.log("apiDemandGraph: " + apiDemandGraph.values);
-            console.log("apiProductionGraph: " + apiProductionGraph.values);
-            console.log("demandGraph: " + demandGraph.values);
-            console.log("surplusGraph: " + surplusGraph.values);
-*/
-
             await da.updateGraph(surplusGraph.graphId, surplusGraph.values, false);
             
             let updatedSurplus = await da.getGraph(utility.dateToId("surplusGraph", surplusStartTime));
-            //console.log(updatedSurplus);
             for (let t = 0; t < 60; t++) {
                 graph.push(updatedSurplus.values[t]);
             }
-            //surplusStartTime.setTime(surplusStartTime.getTime() + 60 * 60 * 1000);
+            surplusStartTime.setTime(surplusStartTime.getTime() + 60 * 60 * 1000);
         }
-        //console.log(graph);
         resolve(graph);
     });
 }

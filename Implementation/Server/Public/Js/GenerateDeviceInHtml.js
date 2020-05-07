@@ -20,14 +20,18 @@ function getPropertyInformation(device, propertyItem) {
     switch (propertyItem) {
         case "currentTemp":
             property.name = "Temp";
-            property.value = device.uniqueProperties.currentTemp.toFixed(2);
+            if (device.uniqueProperties.currentTemp !== undefined) {
+                property.value = device.uniqueProperties.currentTemp.toFixed(2);
+            }
             property.value2 = null;
             property.unit = "℃";
             break;
 
         case "currentPower":
             property.name = "Power";
-            property.value = device.currentPower.toFixed(0);
+            if (currentPower !== undefined) {
+                property.value = device.currentPower.toFixed(0);
+            }
             property.value2 = null;
             property.unit = "Watt";
             break;
@@ -52,7 +56,9 @@ function getPropertyInformation(device, propertyItem) {
 
         case "maxPower":
             property.name = "Power";
-            property.value = device.maxPower.toFixed(0);
+            if (device.maxPower !== undefined) {
+                property.value = device.maxPower.toFixed(0);
+            }
             property.value2 = null;
             property.unit = "Watt";
             break;

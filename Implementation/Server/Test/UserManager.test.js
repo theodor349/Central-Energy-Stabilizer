@@ -12,7 +12,7 @@ if (false) {
             let activeConnections = [];
             let commandQueue = [];
             um.onConnect("socket", activeConnections);
-
+            
             assert(commandQueue.length === 0 &&
                 activeConnections.length === 0);
         })

@@ -48,7 +48,7 @@ if (true) {
                 connectedDevices.length === 2);
         })
 
-        // On disconnect
+        // Send Updated Devices
         it('sendUpdatedDevices: 0 updated devices', async () => {
             await db.dropDatabase();
             let testDevice = createAutoServerTestDevice();

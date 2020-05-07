@@ -19,27 +19,13 @@ module.exports = functions;
 async function updateSurplus(interval) {
     return new Promise(async (resolve, reject) => {
 
-        let surplusGraph = {
-            graphId: undefined,
-            values: [
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-            ]
-        };
-
         let surplusStartTime = new Date(2010, 1, 24, 10);
-        surplusStartTime.setTime(interval.intervalStart.getTime());
-
+        surplusStartTime.setTime(interval.start.getTime());
 
         let graph = [];
 
-        let hoursInInterval = (interval.intervalFinish.getTime() -
-            interval.intervalStart.getTime()) / (60 * 60 * 1000);
-
+        let hoursInInterval = (interval.finish.getHours() -
+            interval.start.getHours());
 
         for (let i = 0; i < hoursInInterval + 1; i++) {
 
@@ -219,19 +205,15 @@ function splitGraph(startTime, graph) {
     for (i = graph.length; i < 60; i++) {
         graph.push(0);
     }
-
     for (i = 0; i < startTimeMinutes; i++) {
         demandGraphs.demandGraphLower[i] = 0;
     }
-
     for (i = startTimeMinutes, t = 0; i < 60; i++, t++) {
         demandGraphs.demandGraphLower[i] = graph[t];
     }
-
     for (i = 0, t; t < 60; i++, t++) {
         demandGraphs.demandGraphUpper[i] = graph[t];
     }
-
     for (i; i < 60; i++) {
         demandGraphs.demandGraphUpper[i] = 0;
     }
@@ -239,10 +221,9 @@ function splitGraph(startTime, graph) {
     return demandGraphs;
 }
 
-
 let testIntervalObject = {
-    intervalStart: new Date(2010, 1, 24, 18, 24),
-    intervalFinish: new Date(2010, 1, 24, 20, 24)
+    start: new Date(2010, 1, 24, 18, 24),
+    finish: new Date(2010, 1, 24, 20, 24)
 };
 
 let testGraph = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -253,7 +234,7 @@ let testGraph = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
     51, 52, 53, 54, 55, 56, 57, 58, 59, 60
 ];
 
-//addDemand(testIntervalObject.intervalStart, testGraph);
-//removeDemand(testIntervalObject.intervalFinish, testGraph);
+//addDemand(testIntervalObject.start, testGraph);
+//removeDemand(testIntervalObject.finish, testGraph);
 
 //updateSurplus(testIntervalObject);

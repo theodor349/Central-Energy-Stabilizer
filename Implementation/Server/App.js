@@ -7,6 +7,7 @@ const dm = require('./DeviceManager.js');
 const sd = require('./Scheduler.js');
 const dd = require('./DatabaseAccessorDevice.js');
 const um = require('./UserManager.js');
+const apiG = require('./ForecasterAPI.js');
 
 /*
     SECTION: Parameters
@@ -148,7 +149,7 @@ function updateUserManager() {
 }
 
 /*
-    SECTION: User Manager
+    SECTION: Helper Functions
 */
 
 function print(message) {

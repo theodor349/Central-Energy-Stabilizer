@@ -8,6 +8,11 @@ const lift = 100;
         apiProduction
 */
 
+updateApiGraphs(new Date());
+setTimeout(() => {
+    updateApiGraphs(new Date());
+}, (1000*60*60));
+
 const functions = {
     // For deployment
     updateApiGraphs: (date) => updateApiGraphs(date),
@@ -20,7 +25,6 @@ const functions = {
 }
 module.exports = functions;
 
-updateApiGraphs(new Date());
 async function updateApiGraphs(date) {
     return new Promise(async (resolve, reject) => {
         for (var i = 0; i < 24; i++) {

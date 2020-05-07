@@ -1,6 +1,7 @@
 const functions = {
     dateToId: (prefix, date) => dateToId(prefix, date),
     updateValues: (values, others, shouldSum) => updateValues(values, others, shouldSum),
+    getRelativeDate: (mins, operator) => getRelativeDate(mins, operator),
 }
 module.exports = functions;
 
@@ -29,4 +30,16 @@ function updateValues(values, others, shouldSum) {
         }
     }
     return values;
+}
+
+function getRelativeDate(mins, operator) {
+    let date = new Date();
+    if (operator === '+') {
+        date.setHours(date.getHours() + mins / 60);
+        date.setMinutes(date.getMinutes() + mins % 60);
+    } else {
+        date.setHours(date.getHours() - mins / 60);
+        date.setMinutes(date.getMinutes() - mins % 60);
+    }
+    return date;
 }

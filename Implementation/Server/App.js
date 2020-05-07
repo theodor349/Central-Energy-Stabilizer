@@ -145,7 +145,7 @@ function updateUserManager() {
     print("Update User Manager")
     let updatedDevices = dm.getUpdatedDevices();
     updatedDevices.push(sd.getUpdatedDevices());
-    um.sendUpdatedDevices(updatedDevices);
+    // um.sendUpdatedDevices(updatedDevices);
 }
 
 /*

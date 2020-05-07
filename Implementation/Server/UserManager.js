@@ -10,10 +10,10 @@ const functions = {
 module.exports = functions;
 let commandQueue = [];
 
-function onConnect(socket, connectedDevices) {
-    connectedDevices.forEach((deviceConnection) => {
-        let device = db.getDevice(deviceConnection.id);
-        createCommand("updateDevice", socket, device);
+async function onConnect(socket, connectedDevices) {
+    connectedDevices.forEach(async (deviceConnection) => {
+        let device = await db.getDevice(deviceConnection.deviceId);
+        createCommand(socket, "updateDevice", device);
     });
 }
 
@@ -22,15 +22,15 @@ function scheduleDevice(id, timeInterval) {
 
 }
 
-function sendUpdatedDevices(updatedDevices) {
-    updatedDevices.forEach((deviceConnection) => {
-        let device = db.getDevice(deviceConnection.id);
-        createCommand("updateDevice", device);
+async function sendUpdatedDevices(updatedDevices) {
+    updatedDevices.forEach(async (deviceConnection) => {
+        let device = await db.getDevice(deviceConnection.deviceId);
+        createCommand('userSpace', "updateDevice",  device);
     });
 }
 
 function graphUpdate() {
-    
+
 }
 
 /*

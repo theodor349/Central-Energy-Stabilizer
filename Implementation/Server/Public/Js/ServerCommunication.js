@@ -1,13 +1,13 @@
 let socket = io('/user');
 
-let knowDevices = [];
+let knownDevices = [];
 
 socket.on('updateDevice', function(device) {
-    if (knowDevices.includes(device.deviceId)) {
-        knowDevices.push(device.deviceId);
-        addDevice(device);
-    } else {
+    if (knownDevices.includes(device.deviceId)) {
+        knownDevices.push(device.deviceId);
         updateDevice(device);
+    } else {
+        addDevice(device);
     }
 });
 

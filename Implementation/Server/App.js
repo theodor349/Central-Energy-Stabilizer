@@ -9,6 +9,15 @@ const dd = require('./DatabaseAccessorDevice.js');
 const um = require('./UserManager.js');
 const apiG = require('./ForecasterAPI.js');
 
+app.use("/Public", express.static(__dirname + '/Public'));
+app.use("/images", express.static(__dirname + '/Public/Images'));
+app.use("/js", express.static(__dirname + '/Public/Js'));
+app.use("/Css", express.static(__dirname + '/Public/Css'));
+
+app.get('/', function(req, res) {
+  res.sendFile(__dirname + '/Public/index.html');
+});
+
 /*
     SECTION: Parameters
 */
@@ -36,6 +45,7 @@ function startServer() {
 http.listen(port, () => {
     print("Server started!")
 });
+
 const userSpace = io.of('/user');
 userSpace.on('connection', (socket) => {
     um.onConnect(socket, dm.getActiveConnections());
@@ -134,7 +144,11 @@ function executeCommand(command) {
     let socket = command.socket;
     let payload = command.payload;
     command = command.command;
-    socket.emit(command, payload);
+    if (socket === 'userSpace') {
+        io.to('userSpace').emit(command, payload);
+    } else {
+        socket.emit(command, payload);
+    }
 }
 
 /*

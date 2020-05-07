@@ -59,7 +59,7 @@ function getPropertyInformation(device, propertyItem) {
 
         case "deviceId":
             property.name = "Device ID";
-            property.value = device.Id;
+            property.value = device.deviceId;
             property.value2 = null;
             property.unit = "";
             break;
@@ -76,109 +76,6 @@ function getPropertyInformation(device, propertyItem) {
 
     return property;
 }
-
-/*
-    SECTION: testing definitions
-*/
-
-
-
-let testDevice = {
-    Id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
-    name: "Metro El-vandvarmer, model 15",
-    isAutomatic: true,
-    deviceType: "Water Heater",
-    currentState: "on",
-    currentPower: 1299,
-    maxPower: 3000,
-    uniqueProperties: {
-        minTemp: 55,
-        maxTemp: 90,
-        currentTemp: 66
-    }
-}
-
-let testDevice2 = {
-    Id: "9b1deb4d-3b7d-4bad-9bdd-2b0dcb6d",
-    name: "Metro El-vandvarmer, model 15",
-    isAutomatic: true,
-    deviceType: "Water Heater",
-    currentState: "on",
-    currentPower: 1299,
-    maxPower: 3000,
-    uniqueProperties: {
-        minTemp: 55,
-        maxTemp: 90,
-        currentTemp: 66
-    }
-}
-
-let testDevice3 = {
-    Id: "9b1d4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
-    name: "Metro El-vandvarmer, model 15",
-    isAutomatic: true,
-    deviceType: "Water Heater",
-    currentState: "on",
-    currentPower: 1299,
-    maxPower: 3000,
-    uniqueProperties: {
-        minTemp: 55,
-        maxTemp: 90,
-        currentTemp: 66
-    }
-}
-let testDevice4 = {
-    Id: "9b1deb4bad-9bdd-2b0d7b3dcb6d",
-    name: "Metro El-vandvarmer, model 15",
-    isAutomatic: true,
-    deviceType: "Water Heater",
-    currentState: "on",
-    currentPower: 1299,
-    maxPower: 3000,
-    uniqueProperties: {
-        minTemp: 55,
-        maxTemp: 90,
-        currentTemp: 66
-    }
-}
-let testDevice5 = {
-    Id: "9b1deb4d-3b7d-4bad-b0d7b3dcb6d",
-    name: "Metro El-vandvarmer, model 15",
-    isAutomatic: true,
-    deviceType: "Water Heater",
-    currentState: "on",
-    currentPower: 1299,
-    maxPower: 3000,
-    uniqueProperties: {
-        minTemp: 55,
-        maxTemp: 90,
-        currentTemp: 66
-    }
-}
-
-let testDeviceUpdate = {
-    Id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
-    name: "Metro El-vandvarmer, model 15",
-    isAutomatic: true,
-    deviceType: "Water Heater",
-    currentState: "off",
-    currentPower: 0,
-    maxPower: 3000,
-    uniqueProperties: {
-        minTemp: 55,
-        maxTemp: 90,
-        currentTemp: 90
-    }
-}
-
-addDevice(testDevice);
-addDevice(testDevice2);
-addDevice(testDevice3);
-addDevice(testDevice4);
-addDevice(testDevice5);
-updateDevice(testDeviceUpdate);
-
-
 
 /*
 --------------------------------------------------------------------------------
@@ -210,7 +107,7 @@ function updateDevice(serverDevice) {
             break;
 
         default:
-            console.warn("Warning: Can't find header properties for " + device.deviceType);
+            console.warn("Warning: Can't find header properties for " + serverDevice.deviceType);
             break;
     }
 }

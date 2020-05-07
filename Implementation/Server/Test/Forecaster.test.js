@@ -391,13 +391,13 @@ if (true) {
         it('updateSurplus: checking for correct graph output with a one hour interval', async () => {
             da.dropDatabase();
             let interval = {
-                intervalStart: new Date(2010, 1, 24, 18, 24),
-                intervalFinish: new Date(2010, 1, 24, 19, 24)
+                start: new Date(2010, 1, 24, 18, 24),
+                finish: new Date(2010, 1, 24, 19, 24)
             };
 
             let date = new Date();
 
-            date.setTime(interval.intervalStart.getTime());
+            date.setTime(interval.start.getTime());
 
             let demandGraph = [
                 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,

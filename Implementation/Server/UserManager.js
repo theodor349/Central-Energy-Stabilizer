@@ -1,7 +1,7 @@
 const db = require('./DatabaseAccessorDevice.js');
 
 const functions = {
-    onConnect: (socket) => onConnect(socket),
+    onConnect: (socket, connectedDevices) => onConnect(socket, connectedDevices),
     onDisconnect: (socket) => onDisconnect(socket),
     scheduleDevice: (id, timeInterval) => scheduleDevice(id, timeInterval),
     manageUpdatedDevices: (ids) => manageUpdatedDevices(ids),
@@ -12,8 +12,11 @@ module.exports = functions;
 let commandQueue = [];
 let activeConnections = [];
 
-function onConnect(socket) {
-    
+function onConnect(socket, connectedDevices) {
+    connectedDevices.forEach((connection) => {
+        let device = db.getDevice(connection.id);
+        createCommand("Update Device", socket, device)
+    });
 }
 
 /*

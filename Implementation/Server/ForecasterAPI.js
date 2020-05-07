@@ -1,5 +1,6 @@
 const da = require('./DatabaseAccessorGraph.js');
 const util = require('./Utilities.js');
+const forecaster = require('./Forecaster.js');
 const scale = 1000;
 const lift = 100;
 /*
@@ -7,11 +8,19 @@ const lift = 100;
         apiDemand
         apiProduction
 */
-
-updateApiGraphs(new Date());
+update();
 setTimeout(() => {
-    updateApiGraphs(new Date());
+    update();
 }, (1000*60*60));
+
+async function update () {
+    await updateApiGraphs(new Date());
+    let interval = {
+        start: new Date(),
+        finish: util.getRelativeDate((60*25), '+'),
+    }
+    forecaster.updateSurplus(interval);
+}
 
 const functions = {
     // For deployment

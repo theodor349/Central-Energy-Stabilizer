@@ -22,41 +22,15 @@ async function updateSurplus(interval) {
         let surplusStartTime = new Date(2010, 1, 24, 10);
         surplusStartTime.setTime(interval.start.getTime());
 
+
         let graph = [];
 
-        let hoursInInterval = (interval.finish.getHours() -
-            interval.start.getHours());
+        let hoursInInterval = interval.finish.getHours() -
+            interval.start.getHours();
+
 
         for (let i = 0; i < hoursInInterval + 1; i++) {
-
-            let demandGraph = await da.getGraph(utility.dateToId("demandGraph", surplusStartTime));
-            let apiProductionGraph = await da.getGraph(
-                utility.dateToId("apiProduction", surplusStartTime));
-            let apiDemandGraph = await da.getGraph(utility.dateToId("apiDemand", surplusStartTime));
-            let surplusGraph = {
-                graphId: undefined,
-                values: [
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-                ]
-            };
-
-            demandGraph.values = invertValues(demandGraph.values);
-            apiDemandGraph.values = invertValues(apiDemandGraph.values);
-
-            surplusGraph.graphId = utility.dateToId("surplusGraph", surplusStartTime);
-            surplusGraph.values = await utility.updateValues(
-                surplusGraph.values, apiProductionGraph.values, true);
-            surplusGraph.values = await utility.updateValues(
-                surplusGraph.values, apiDemandGraph.values, true);
-            surplusGraph.values = await utility.updateValues(
-                surplusGraph.values, demandGraph.values, true);
-
-            await da.updateGraph(surplusGraph.graphId, surplusGraph.values, false);
+            await updateSurplusGraph(surplusStartTime);
 
             let updatedSurplus = await da.getGraph(utility.dateToId("surplusGraph", surplusStartTime));
             for (let t = 0; t < 60; t++) {
@@ -93,8 +67,9 @@ async function addDemand(startTime, graph) {
             lowerGraph.values = demandGraphs.demandGraphLower;
             upperGraph.values = demandGraphs.demandGraphUpper;
 
-            await updateGraph(lowerGraph);
-            await updateGraph(upperGraph);
+            await updateDemandGraph(lowerGraph);
+            await updateDemandGraph(upperGraph);
+            await updateSurplusGraph(startTime);
 
             startTime.setTime(startTime.getTime() + 60 * 60 * 1000);
             secondGraphStartTime.setTime(startTime.getTime() + 60 * 60 * 1000);
@@ -108,8 +83,10 @@ async function addDemand(startTime, graph) {
         lowerGraph.values = demandGraphs.demandGraphLower;
         upperGraph.values = demandGraphs.demandGraphUpper;
 
-        await updateGraph(lowerGraph);
-        await updateGraph(upperGraph);
+        await updateDemandGraph(lowerGraph);
+        await updateDemandGraph(upperGraph);
+        await updateSurplusGraph(startTime);
+        await updateSurplusGraph(secondGraphStartTime);
 
         resolve(true);
     });
@@ -141,8 +118,9 @@ async function removeDemand(startTime, graph) {
             lowerGraph.values = invertValues(lowerGraph.values);
             upperGraph.values = invertValues(upperGraph.values);
 
-            await updateGraph(lowerGraph);
-            await updateGraph(upperGraph);
+            await updateDemandGraph(lowerGraph);
+            await updateDemandGraph(upperGraph);
+            await updateSurplusGraph(startTime);
 
             startTime.setTime(startTime.getTime() + 60 * 60 * 1000);
             secondGraphStartTime.setTime(startTime.getTime() + 60 * 60 * 1000);
@@ -162,8 +140,10 @@ async function removeDemand(startTime, graph) {
             reject(err);
         }
 
-        await updateGraph(lowerGraph);
-        await updateGraph(upperGraph);
+        await updateDemandGraph(lowerGraph);
+        await updateDemandGraph(upperGraph);
+        await updateSurplusGraph(startTime);
+        await updateSurplusGraph(secondGraphStartTime);
 
         resolve(true);
     });
@@ -173,7 +153,44 @@ async function removeDemand(startTime, graph) {
 Helper functions
 */
 
-function updateGraph(graph) {
+function updateSurplusGraph(surplusStartTime) {
+    return new Promise(async (resolve, reject) => {
+        let demandGraph = await da.getGraph(utility.dateToId("demandGraph", surplusStartTime));
+        let apiProductionGraph = await da.getGraph(
+            utility.dateToId("apiProduction", surplusStartTime));
+        let apiDemandGraph = await da.getGraph(utility.dateToId("apiDemand", surplusStartTime));
+        let surplusGraph = {
+            graphId: undefined,
+            values: [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ]
+        };
+
+        demandGraph.values = invertValues(demandGraph.values);
+        apiDemandGraph.values = invertValues(apiDemandGraph.values);
+
+        surplusGraph.graphId = utility.dateToId("surplusGraph", surplusStartTime);
+
+        surplusGraph.values = await utility.updateValues(
+            surplusGraph.values, apiProductionGraph.values, true);
+
+        surplusGraph.values = await utility.updateValues(
+            surplusGraph.values, apiDemandGraph.values, true);
+
+        surplusGraph.values = await utility.updateValues(
+            surplusGraph.values, demandGraph.values, true);
+
+        await da.updateGraph(surplusGraph.graphId, surplusGraph.values, false);
+        resolve(true);
+    });
+}
+
+function updateDemandGraph(graph) {
     return new Promise(async (resolve, reject) => {
 
         let res = await da.updateGraph(graph.graphId, graph.values, true);
@@ -205,21 +222,26 @@ function splitGraph(startTime, graph) {
     for (i = graph.length; i < 60; i++) {
         graph.push(0);
     }
+
     for (i = 0; i < startTimeMinutes; i++) {
         demandGraphs.demandGraphLower[i] = 0;
     }
+
     for (i = startTimeMinutes, t = 0; i < 60; i++, t++) {
         demandGraphs.demandGraphLower[i] = graph[t];
     }
+
     for (i = 0, t; t < 60; i++, t++) {
         demandGraphs.demandGraphUpper[i] = graph[t];
     }
+
     for (i; i < 60; i++) {
         demandGraphs.demandGraphUpper[i] = 0;
     }
 
     return demandGraphs;
 }
+
 
 let testIntervalObject = {
     start: new Date(2010, 1, 24, 18, 24),

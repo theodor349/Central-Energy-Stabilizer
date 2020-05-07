@@ -51,7 +51,7 @@ function createAutoServerTestDevice() {
     return serverTestDevice;
 }
 
-if (true) {
+if (false) {
     describe('Scheduler', () => {
 
         // Schedule device
@@ -113,6 +113,11 @@ if (true) {
             let res = await scheduler.scheduleDevice(testDevice);
             let dbDevice = await daD.getDevice(testDevice.deviceId);
             let updatedDevices = scheduler.getUpdatedDevices();
+
+            console.log(res);
+            console.log(dbDevice.nextState);
+            console.log(dbDevice.isScheduled);
+            console.log(updatedDevices.length);
 
             assert(res === true && 
                 dbDevice.nextState === "on" &&

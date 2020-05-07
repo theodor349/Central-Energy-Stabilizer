@@ -1,3 +1,4 @@
+'use strict'
 const db = require('./DatabaseAccessorDevice.js');
 
 const functions = {
@@ -11,9 +12,16 @@ module.exports = functions;
 let commandQueue = [];
 
 async function onConnect(socket, connectedDevices) {
-    connectedDevices.forEach(async (deviceConnection) => {
-        let device = await db.getDevice(deviceConnection.deviceId);
-        createCommand(socket, "updateDevice", device);
+    return new Promise(async (resolve, reject) => {
+        if (connectedDevices.length === 0) {
+            resolve(true);
+        } else {
+            for (let i = 0; i < connectedDevices.length; i++) {
+                    let device = await db.getDevice(connectedDevices[i].deviceId);
+                    createCommand(socket, "updateDevice", device);
+            }
+            resolve(true);
+        }
     });
 }
 
@@ -23,10 +31,19 @@ function scheduleDevice(id, timeInterval) {
 }
 
 async function sendUpdatedDevices(updatedDevices) {
-    updatedDevices.forEach(async (deviceConnection) => {
-        let device = await db.getDevice(deviceConnection.deviceId);
-        createCommand('userSpace', "updateDevice",  device);
+    return new Promise(async (resolve, reject) => {
+        if (updatedDevices.length === 0) {
+            resolve(true);
+        } else {
+            for (let i = 0; i < updatedDevices.length; i++) {
+                let device = await db.getDevice(updatedDevices[i].deviceId);
+                createCommand('userSpace', "updateDevice",  device);
+            }
+            resolve(true);
+        }
+
     });
+
 }
 
 function graphUpdate() {
@@ -35,6 +52,17 @@ function graphUpdate() {
 
 /*
     SECTION: Helper Functions
+*/
+/*
+async function testFunc(socket, connectedDevices) {
+    await connectedDevices.forEach(async (deviceConnection) => {
+        return new Promise(async (resolve, reject) => {
+            let device = await db.getDevice(deviceConnection.deviceId);
+            createCommand(socket, "updateDevice", device);
+        });
+        resolve(true);
+    });
+}
 */
 
 

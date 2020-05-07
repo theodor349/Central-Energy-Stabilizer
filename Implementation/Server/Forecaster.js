@@ -54,14 +54,12 @@ async function addDemand(startTime, graph) {
         };
         let demandGraphs = {};
         let secondGraphStartTime = new Date(startTime.getTime() + 60 * 60 * 1000);
-        let testGraph = [];
+        let graphToSplit = [];
 
         for (i = 0; graph.length > 60; i++) {
-            for (t = 0; t < 60; t++) {
-                testGraph[t] = graph[0];
-                graph.shift();
-            }
-            demandGraphs = splitGraph(startTime, testGraph);
+            graphToSplit = await createGraphToSplit(graph);
+
+            demandGraphs = splitGraph(startTime, graphToSplit);
             lowerGraph.graphId = await utility.dateToId("demandGraph", startTime);
             upperGraph.graphId = await utility.dateToId("demandGraph", secondGraphStartTime);
             lowerGraph.values = demandGraphs.demandGraphLower;
@@ -74,9 +72,7 @@ async function addDemand(startTime, graph) {
             startTime.setTime(startTime.getTime() + 60 * 60 * 1000);
             secondGraphStartTime.setTime(startTime.getTime() + 60 * 60 * 1000);
         }
-
         demandGraphs = splitGraph(startTime, graph);
-
         // Puts the graphId and values into the lower and upper bound graphs
         lowerGraph.graphId = await utility.dateToId("demandGraph", startTime);
         upperGraph.graphId = await utility.dateToId("demandGraph", secondGraphStartTime);
@@ -104,13 +100,10 @@ async function removeDemand(startTime, graph) {
         };
         let demandGraphs = {};
         let secondGraphStartTime = new Date(startTime.getTime() + 60 * 60 * 1000);
-
+        let graphToSplit = [];
         for (i = 0; graph.length > 60; i++) {
-            for (t = 0; t < 60; t++) {
-                testGraph[t] = graph[0];
-                graph.shift();
-            }
-            demandGraphs = splitGraph(startTime, testGraph);
+            graphToSplit = await createGraphToSplit(graph);
+            demandGraphs = splitGraph(startTime, graphToSplit);
             lowerGraph.graphId = await utility.dateToId("demandGraph", startTime);
             upperGraph.graphId = await utility.dateToId("demandGraph", secondGraphStartTime);
             lowerGraph.values = demandGraphs.demandGraphLower;
@@ -125,9 +118,7 @@ async function removeDemand(startTime, graph) {
             startTime.setTime(startTime.getTime() + 60 * 60 * 1000);
             secondGraphStartTime.setTime(startTime.getTime() + 60 * 60 * 1000);
         }
-
         demandGraphs = splitGraph(startTime, graph);
-
         // Puts the graphId and values into the lower and upper bound graphs
         lowerGraph.graphId = await utility.dateToId("demandGraph", startTime);
         upperGraph.graphId = await utility.dateToId("demandGraph", secondGraphStartTime);
@@ -153,7 +144,7 @@ async function removeDemand(startTime, graph) {
 Helper functions
 */
 
-function updateSurplusGraph(surplusStartTime) {
+async function updateSurplusGraph(surplusStartTime) {
     return new Promise(async (resolve, reject) => {
         let demandGraph = await da.getGraph(utility.dateToId("demandGraph", surplusStartTime));
         let apiProductionGraph = await da.getGraph(
@@ -242,6 +233,17 @@ function splitGraph(startTime, graph) {
     return demandGraphs;
 }
 
+async function createGraphToSplit(graph) {
+    return new Promise(async (resolve, reject) => {
+        let graphToSplit = [];
+            for (t = 0; t < 60; t++) {
+                graphToSplit[t] = graph[0];
+                graph.shift();
+         }
+
+        resolve(graphToSplit);
+    });
+}
 
 let testIntervalObject = {
     start: new Date(2010, 1, 24, 18, 24),

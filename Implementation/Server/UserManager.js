@@ -38,7 +38,6 @@ async function sendUpdatedDevices(updatedDevices) {
             for (let i = 0; i < updatedDevices.length; i++) {
                 let device = await db.getDevice(updatedDevices[i]);
                 createCommand("userSpace", "updateDevice", device);
-                console.log(updatedDevices[i]);
             }
             resolve(true);
         }

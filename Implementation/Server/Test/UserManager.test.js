@@ -4,7 +4,7 @@ const db = require('./../DatabaseAccessorDevice.js');
 const um = require('./../UserManager.js');
 const uuid = require('uuidv4');
 
-if (true) {
+if (false) {
     describe('User Manager', () => {
 
         // On Connect
@@ -22,9 +22,9 @@ if (true) {
             dm.clearAllConnections()
             let testDevice = createAutoServerTestDevice();
             await dm.testDeviceInit(testDevice);
-            let connectedDevices = [
-                {deviceId: testDevice.deviceId}
-            ];
+            let connectedDevices = [{
+                deviceId: testDevice.deviceId
+            }];
             um.onConnect("socket", connectedDevices);
             let commandQueue = um.getCommandQueue();
             assert(commandQueue.length === 1 &&
@@ -37,9 +37,12 @@ if (true) {
             let testDevice2 = createAutoServerTestDevice();
             await dm.testDeviceInit(testDevice);
             await dm.testDeviceInit(testDevice2);
-            let connectedDevices = [
-                {deviceId: testDevice.deviceId},
-                {deviceId: testDevice2.deviceId}
+            let connectedDevices = [{
+                    deviceId: testDevice.deviceId
+                },
+                {
+                    deviceId: testDevice2.deviceId
+                }
             ];
             um.onConnect("socket", connectedDevices);
             let commandQueue = um.getCommandQueue();

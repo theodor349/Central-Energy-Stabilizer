@@ -35,7 +35,10 @@ async function run(connectionString) {
 async function dropDatabase() {
     // Clear the database every time. This is for the sake of example only,
     // don't do this in prod :)
-    await mongoose.connection.dropDatabase();
+    return new Promise(async (resolve, reject) => {
+        await mongoose.connection.dropDatabase();
+        resolve(true);
+    })
 }
 
 // TODO: Remove tests
@@ -248,6 +251,14 @@ function deserializeDevice(device) {
 
     if (device.schedule !== undefined) {
         device.schedule = JSON.parse(device.schedule);
+        if (device.schedule !== null) {
+            if (device.schedule.start !== undefined) {
+                device.schedule.start = new Date(device.schedule.start);
+            }
+            if (device.schedule.end !== undefined) {
+                device.schedule.end = new Date(device.schedule.end);
+            }
+        }
     }
     if (device.scheduledInterval !== undefined) {
         device.scheduledInterval = JSON.parse(device.scheduledInterval);

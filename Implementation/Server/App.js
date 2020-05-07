@@ -15,7 +15,7 @@ app.use("/js", express.static(__dirname + '/Public/Js'));
 app.use("/Css", express.static(__dirname + '/Public/Css'));
 
 app.get('/', function(req, res) {
-  res.sendFile(__dirname + '/Public/index.html');
+    res.sendFile(__dirname + '/Public/index.html');
 });
 
 /*
@@ -33,6 +33,7 @@ startServer();
 
 function startServer() {
     setInterval(() => {
+        console.log();
         console.log();
         update();
     }, updateInterval);
@@ -58,28 +59,20 @@ deviceSpace.on('connection', (socket) => {
     socket.on('receiveDeviceId', (id) => {
         console.log("---receiveDeviceId");
         console.log(id);
-        console.log();
         dm.receiveId(id, socket);
     });
 
     socket.on('newDeviceWithId', (deviceInfo) => {
         console.log("---newDeviceWithId");
-        console.log(deviceInfo);
-        console.log();
         dm.deviceInit(deviceInfo, socket);
     });
 
     socket.on('stateChanged', (state, id) => {
-        console.log("---stateChanged");
-        console.log(state + " " + id);
-        console.log();
+        console.log("---stateChanged to " + state);
         dm.stateChanged(id, state);
     });
 
     socket.on('deviceUpdate', (device) => {
-        console.log("---deviceUpdate");
-        console.log(device);
-        console.log();
         dm.updateDevice(device);
     });
 
@@ -99,17 +92,22 @@ async function update() {
     let devices = dm.getActiveConnections();
     devices.forEach(async (connection) => {
         let device = await dd.getDevice(connection.deviceId);
-        await sd.scheduleDevice(device);
-        dm.manageDevice(device);
+        if (device !== null) {
+            await sd.scheduleDevice(device);
+        }
+        device = await dd.getDevice(connection.deviceId);
+        if (device !== null) {
+            dm.manageDevice(device);
+        }
     });
 
     handleCommands();
     updateUserManager();
-    print("Update finished")
+    //print("Update finished")
 }
 
 function handleCommands() {
-    print("Handle commands")
+    //print("Handle commands")
     handleDeviceManagerCommands();
     handleSchedulerCommands();
     handleUserManagerCommands();
@@ -140,7 +138,7 @@ function handleUserManagerCommands() {
 }
 
 function executeCommand(command) {
-    print("Command: " + command.command + " Payload: " + command.payload);
+    print("Send Command: " + command.command + " Payload: " + command.payload);
     let socket = command.socket;
     let payload = command.payload;
     command = command.command;
@@ -156,7 +154,7 @@ function executeCommand(command) {
 */
 
 function updateUserManager() {
-    print("Update User Manager")
+    //print("Update User Manager")
     let updatedDevices = dm.getUpdatedDevices();
     updatedDevices.push(sd.getUpdatedDevices());
     // um.sendUpdatedDevices(updatedDevices);

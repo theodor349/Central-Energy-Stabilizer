@@ -16,17 +16,23 @@ let updatedDevices = [];
 async function scheduleDevice(device) {
     return new Promise(async (resolve, reject) => {
         let date = new Date();
+
+        // If the device is on add demand
+        if (device.currentState === "on") {
+            let demandGraph = [1000 / 60]; // TODO: Make dynamic
+            await forecaster.addDemand(date, demandGraph);
+        }
+
         let graphId = util.dateToId("surplusGraph", date);
         let surplusGraph = await daG.getGraph(graphId);
+        console.log("Surplus: " + surplusGraph.values[date.getMinutes()]);
         let schedule = {
             start: date
         }
 
         // If there is surplus and the device is not scheduled to "on"
         if (surplusGraph.values[date.getMinutes()] > 0 && device.nextState !== "on") {
-            let demandGraph = [1000]; // TODO: Make dynamic
-            await forecaster.addDemand(date, demandGraph);
-
+            console.log("Off -> On");
             await daD.updateDevice(device.deviceId, "nextState", "on");
             await daD.updateDevice(device.deviceId, "isScheduled", true);
             await daD.updateDevice(device.deviceId, "schedule", schedule);
@@ -37,6 +43,7 @@ async function scheduleDevice(device) {
         }
         // If there is no surplus and the device is not scheduled to "off"
         else if (device.nextState !== "off") {
+            console.log("On -> Off");
             await daD.updateDevice(device.deviceId, "nextState", "off");
             await daD.updateDevice(device.deviceId, "isScheduled", true);
             await daD.updateDevice(device.deviceId, "schedule", schedule);
@@ -44,14 +51,10 @@ async function scheduleDevice(device) {
             addUpdatedDevice(device.deviceId);
 
             resolve(true);
+        } else {
+            console.log("Keep: " + device.currentState);
+            resolve(false);
         }
-
-        // If the device is already scheduled to "on" before calling this function
-        if (device.currentState === "on") {
-            let demandGraph = [1000]; // TODO: Make dynamic
-            await forecaster.addDemand(date, demandGraph);
-        }
-        resolve(false);
     });
 }
 

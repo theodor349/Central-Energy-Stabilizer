@@ -108,7 +108,7 @@ async function updateDevice(deviceInfo, serverCheck) {
 function manageDevice(deviceInfo) {
     let time = new Date();
     let nextState = getScheduledState(deviceInfo, time);
-
+    console.log("DM: Should change state to: " + nextState);
     if (nextState === null) {
         return false;
     }
@@ -149,7 +149,7 @@ function getScheduledState(deviceInfo, time) {
     if (deviceInfo.isScheduled === false) {
         return null;
     }
-    if (deviceInfo.schedule.start <= time) {
+    if (deviceInfo.schedule.start.getTime() <= time.getTime()) {
         if (deviceInfo.nextState === deviceInfo.currentState) {
             return null;
         } else {

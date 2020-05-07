@@ -21,7 +21,7 @@ const fs = require('fs');
 const io = require('socket.io-client');
 const updateInterval = 1000;
 const graphInterval = 60000;
-const constDeviceUpdateInterval = 10000; //60000;
+const constDeviceUpdateInterval = 5000; //60000;
 const tempGainPrSecond = 0.1; //0.0033;
 const tempLossPrSecond = 0.1; //0.0017;
 const initTemp = 66;
@@ -217,7 +217,10 @@ function setWaterHeaterOff(waterHeater) {
 }
 
 function sendUpdate(deviceInfo) {
+    console.log();
     console.log("Sending Update to Server");
+    console.log("Temp: " + deviceInfo.uniqueProperties.currentTemp);
+    console.log("State: " + deviceInfo.currentState);
     socket.emit('deviceUpdate', deviceInfo);
 }
 // Connection
@@ -227,23 +230,27 @@ function connectionSetup() {
         deviceInfo.isConnected = true;
 
         socket.on('askForId', function() {
-            console.log("askForID");
+            console.log("Recieved Command: askForID");
             socket.emit('receiveDeviceId', deviceInfo.deviceId);
         });
 
         socket.on('setId', function(deviceId) {
-            console.log("setId");
+            console.log("Recieved Command: setId");
             setDeviceId(deviceId);
             socket.emit('newDeviceWithId', deviceInfo);
         });
 
         socket.on('on', function() {
-            console.log("on");
+            console.log("---");
+            console.log("Recieved Command: on");
+            console.log("---");
             deviceInfo.serverMessage = "on";
         });
 
         socket.on('off', function() {
-            console.log("off");
+            console.log("---");
+            console.log("Recieved Command: off");
+            console.log("---");
             deviceInfo.serverMessage = "off";
         });
 

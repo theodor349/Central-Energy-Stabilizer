@@ -22,7 +22,10 @@ async function run(connectionString) {
 async function dropDatabase() {
     // Clear the database every time. This is for the sake of example only,
     // don't do this in prod :)
-    await mongoose.connection.dropDatabase();
+    return new Promise(async (resolve, reject) => {
+        await mongoose.connection.dropDatabase();
+        resolve(true);
+    })
 }
 
 /*

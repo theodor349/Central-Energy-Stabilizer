@@ -15,8 +15,12 @@ let activeConnections = [];
 function onConnect(socket, connectedDevices) {
     connectedDevices.forEach((connection) => {
         let device = db.getDevice(connection.id);
-        createCommand("Update Device", socket, device)
+        createCommand("Update Device", socket, device);
     });
+}
+
+function onDisconnect (socket) {
+    
 }
 
 /*

@@ -29,7 +29,7 @@ function getPropertyInformation(device, propertyItem) {
 
         case "currentPower":
             property.name = "Power";
-            if (currentPower !== undefined) {
+            if (device.currentPower !== undefined) {
                 property.value = device.currentPower.toFixed(0);
             }
             property.value2 = null;

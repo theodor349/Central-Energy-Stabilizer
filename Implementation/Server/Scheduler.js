@@ -25,14 +25,12 @@ async function scheduleDevice(device) {
 
         let graphId = util.dateToId("surplusGraph", date);
         let surplusGraph = await daG.getGraph(graphId);
-        console.log("Surplus: " + surplusGraph.values[date.getMinutes()]);
         let schedule = {
             start: date
         }
 
         // If there is surplus and the device is not scheduled to "on"
         if (surplusGraph.values[date.getMinutes()] > 0 && device.nextState !== "on") {
-            console.log("Off -> On");
             await daD.updateDevice(device.deviceId, "nextState", "on");
             await daD.updateDevice(device.deviceId, "isScheduled", true);
             await daD.updateDevice(device.deviceId, "schedule", schedule);
@@ -43,7 +41,6 @@ async function scheduleDevice(device) {
         }
         // If there is no surplus and the device is not scheduled to "off"
         else if (device.nextState !== "off") {
-            console.log("On -> Off");
             await daD.updateDevice(device.deviceId, "nextState", "off");
             await daD.updateDevice(device.deviceId, "isScheduled", true);
             await daD.updateDevice(device.deviceId, "schedule", schedule);
@@ -52,7 +49,6 @@ async function scheduleDevice(device) {
 
             resolve(true);
         } else {
-            console.log("Keep: " + device.currentState);
             resolve(false);
         }
     });

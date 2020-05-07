@@ -122,9 +122,6 @@ function handleSchedulerCommands() {
 }
 
 function handleUserManagerCommands() {
-    // TODO: make work (Remove return)
-    return;
-
     let commands = um.getCommandQueue();
     commands.forEach((command) => {
         executeCommand(command);
@@ -147,7 +144,7 @@ function updateUserManager() {
     print("Update User Manager")
     let updatedDevices = dm.getUpdatedDevices();
     updatedDevices.push(sd.getUpdatedDevices());
-    // TODO: um.sendUpdates(updatedDevices);
+    um.sendUpdatedDevices(updatedDevices);
 }
 
 /*

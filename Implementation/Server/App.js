@@ -88,7 +88,7 @@ async function update() {
     let devices = dm.getActiveConnections();
     devices.forEach(async (connection) => {
         let device = await dd.getDevice(connection.deviceId);
-        // TODO: Schedule device
+        await sd.scheduleDevice(device);
         dm.manageDevice(device);
     });
 
@@ -146,7 +146,7 @@ function executeCommand(command) {
 function updateUserManager() {
     print("Update User Manager")
     let updatedDevices = dm.getUpdatedDevices();
-    // TODO: updatedDevices.push(sd.getUpdatedDevices());
+    updatedDevices.push(sd.getUpdatedDevices());
     // TODO: um.sendUpdates(updatedDevices);
 }
 

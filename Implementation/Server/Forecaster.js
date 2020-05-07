@@ -19,53 +19,59 @@ module.exports = functions;
 async function updateSurplus(interval) {
     return new Promise(async (resolve, reject) => {
 
-        let surplusGraph = {graphId: undefined, values: [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-        ] };
-        
-        let surplusStartTime = new Date(2010, 1, 24, 10);
-        surplusStartTime.setTime(interval.intervalStart.getTime());
-
-
-        let graph = [];
-
-        let hoursInInterval = (interval.intervalFinish.getTime() - 
-            interval.intervalStart.getTime()) / (60*60*1000);
-
-
-        for (let i = 0; i < hoursInInterval+1; i++){
-
-            let demandGraph = await da.getGraph(utility.dateToId("demandGraph", surplusStartTime));
-            let apiProductionGraph = await da.getGraph(
-                                    utility.dateToId("apiProduction", surplusStartTime));
-            let apiDemandGraph = await da.getGraph(utility.dateToId("apiDemand", surplusStartTime));
-            let surplusGraph = {graphId: undefined, values: [
+        let surplusGraph = {
+            graphId: undefined,
+            values: [
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-            ] }; 
+            ]
+        };
+
+        let surplusStartTime = new Date(2010, 1, 24, 10);
+        surplusStartTime.setTime(interval.intervalStart.getTime());
+
+
+        let graph = [];
+
+        let hoursInInterval = (interval.intervalFinish.getTime() -
+            interval.intervalStart.getTime()) / (60 * 60 * 1000);
+
+
+        for (let i = 0; i < hoursInInterval + 1; i++) {
+
+            let demandGraph = await da.getGraph(utility.dateToId("demandGraph", surplusStartTime));
+            let apiProductionGraph = await da.getGraph(
+                utility.dateToId("apiProduction", surplusStartTime));
+            let apiDemandGraph = await da.getGraph(utility.dateToId("apiDemand", surplusStartTime));
+            let surplusGraph = {
+                graphId: undefined,
+                values: [
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                ]
+            };
 
             demandGraph.values = invertValues(demandGraph.values);
             apiDemandGraph.values = invertValues(apiDemandGraph.values);
 
             surplusGraph.graphId = utility.dateToId("surplusGraph", surplusStartTime);
             surplusGraph.values = await utility.updateValues(
-                                surplusGraph.values, apiProductionGraph.values, true);
+                surplusGraph.values, apiProductionGraph.values, true);
             surplusGraph.values = await utility.updateValues(
-                                surplusGraph.values, apiDemandGraph.values, true);
+                surplusGraph.values, apiDemandGraph.values, true);
             surplusGraph.values = await utility.updateValues(
-                                surplusGraph.values, demandGraph.values, true);
+                surplusGraph.values, demandGraph.values, true);
 
             await da.updateGraph(surplusGraph.graphId, surplusGraph.values, false);
-            
+
             let updatedSurplus = await da.getGraph(utility.dateToId("surplusGraph", surplusStartTime));
             for (let t = 0; t < 60; t++) {
                 graph.push(updatedSurplus.values[t]);
@@ -78,14 +84,20 @@ async function updateSurplus(interval) {
 
 async function addDemand(startTime, graph) {
     return new Promise(async (resolve, reject) => {
-        let lowerGraph = { graphId: undefined, values: [] };
-        let upperGraph = { graphId: undefined, values: [] };
+        let lowerGraph = {
+            graphId: undefined,
+            values: []
+        };
+        let upperGraph = {
+            graphId: undefined,
+            values: []
+        };
         let demandGraphs = {};
         let secondGraphStartTime = new Date(startTime.getTime() + 60 * 60 * 1000);
         let testGraph = [];
 
-        for (i = 0; graph.length > 60 ; i++) {
-            for (t = 0 ; t < 60; t++) {
+        for (i = 0; graph.length > 60; i++) {
+            for (t = 0; t < 60; t++) {
                 testGraph[t] = graph[0];
                 graph.shift();
             }
@@ -101,7 +113,7 @@ async function addDemand(startTime, graph) {
             startTime.setTime(startTime.getTime() + 60 * 60 * 1000);
             secondGraphStartTime.setTime(startTime.getTime() + 60 * 60 * 1000);
         }
-        
+
         demandGraphs = splitGraph(startTime, graph);
 
         // Puts the graphId and values into the lower and upper bound graphs
@@ -112,20 +124,26 @@ async function addDemand(startTime, graph) {
 
         await updateGraph(lowerGraph);
         await updateGraph(upperGraph);
-        
+
         resolve(true);
     });
 }
 
-async function removeDemand(startTime, graph){
+async function removeDemand(startTime, graph) {
     return new Promise(async (resolve, reject) => {
-        let lowerGraph = { graphId: undefined, values: [] };
-        let upperGraph = { graphId: undefined, values: [] };
+        let lowerGraph = {
+            graphId: undefined,
+            values: []
+        };
+        let upperGraph = {
+            graphId: undefined,
+            values: []
+        };
         let demandGraphs = {};
         let secondGraphStartTime = new Date(startTime.getTime() + 60 * 60 * 1000);
 
-        for (i = 0; graph.length > 60 ; i++) {
-            for (t = 0 ; t < 60; t++) {
+        for (i = 0; graph.length > 60; i++) {
+            for (t = 0; t < 60; t++) {
                 testGraph[t] = graph[0];
                 graph.shift();
             }
@@ -174,7 +192,7 @@ function updateGraph(graph) {
 
         let res = await da.updateGraph(graph.graphId, graph.values, true);
         resolve(res);
-    }); 
+    });
 }
 
 function invertValues(values) {
@@ -190,16 +208,19 @@ function isGraphValid(graph) {
 }
 
 function splitGraph(startTime, graph) {
-    let t = 0; 
+    let t = 0;
     let startTimeMinutes = startTime.getMinutes();
-    let demandGraphs = {demandGraphLower: [], demandGraphUpper: [] };
+    let demandGraphs = {
+        demandGraphLower: [],
+        demandGraphUpper: []
+    };
 
     // Splits the graph into two, according to startTime. Puts zeroes on either side.
     for (i = graph.length; i < 60; i++) {
         graph.push(0);
     }
 
-    for (i = 0; i < startTimeMinutes; i++){
+    for (i = 0; i < startTimeMinutes; i++) {
         demandGraphs.demandGraphLower[i] = 0;
     }
 
@@ -219,20 +240,20 @@ function splitGraph(startTime, graph) {
 }
 
 
-let testIntervalObject = { 
-    intervalStart: new Date (2010, 1, 24, 18, 24),
+let testIntervalObject = {
+    intervalStart: new Date(2010, 1, 24, 18, 24),
     intervalFinish: new Date(2010, 1, 24, 20, 24)
 };
 
-let testGraph = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-                11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-                21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-                31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-                41, 42, 43, 44, 45, 46, 47, 38, 39, 50,
-                51, 52, 53, 54, 55, 56, 57, 58, 59, 60 ];
+let testGraph = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+    11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+    21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+    31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+    41, 42, 43, 44, 45, 46, 47, 38, 39, 50,
+    51, 52, 53, 54, 55, 56, 57, 58, 59, 60
+];
 
 //addDemand(testIntervalObject.intervalStart, testGraph);
 //removeDemand(testIntervalObject.intervalFinish, testGraph);
 
 //updateSurplus(testIntervalObject);
-

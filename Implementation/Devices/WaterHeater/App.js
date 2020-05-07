@@ -227,20 +227,23 @@ function connectionSetup() {
         deviceInfo.isConnected = true;
 
         socket.on('askForId', function() {
-            console.log(deviceInfo.deviceId);
+            console.log("askForID");
             socket.emit('receiveDeviceId', deviceInfo.deviceId);
         });
 
         socket.on('setId', function(deviceId) {
+            console.log("setId");
             setDeviceId(deviceId);
             socket.emit('newDeviceWithId', deviceInfo);
         });
 
         socket.on('on', function() {
+            console.log("on");
             deviceInfo.serverMessage = "on";
         });
 
         socket.on('off', function() {
+            console.log("off");
             deviceInfo.serverMessage = "off";
         });
 

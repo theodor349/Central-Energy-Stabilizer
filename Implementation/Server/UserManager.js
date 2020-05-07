@@ -20,12 +20,21 @@ function onConnect(socket, connectedDevices) {
 }
 
 function onDisconnect (socket) {
-    
+
 }
 
 /*
     SECTION: Helper Functions
 */
+
+function createCommand(socket, command, payload) {
+    let commandObj = {
+        socket: socket,
+        command: command,
+        payload: payload,
+    }
+    commandQueue.push(commandObj);
+}
 
 function getCommandQueue() {
     let cq = commandQueue;

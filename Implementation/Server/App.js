@@ -156,8 +156,8 @@ function executeCommand(command) {
 function updateUserManager() {
     //print("Update User Manager")
     let updatedDevices = dm.getUpdatedDevices();
-    updatedDevices.push(sd.getUpdatedDevices());
-    // um.sendUpdatedDevices(updatedDevices);
+    updatedDevices.concat(sd.getUpdatedDevices());
+    um.sendUpdatedDevices(updatedDevices);
 }
 
 /*

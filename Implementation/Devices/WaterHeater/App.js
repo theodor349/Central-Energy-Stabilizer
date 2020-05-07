@@ -225,7 +225,7 @@ function sendUpdate(deviceInfo) {
 }
 // Connection
 function connectionSetup() {
-    socket.on('connect', function() {
+    socket.once('connect', function() {
         console.log('Connected to localhost:3000');
         deviceInfo.isConnected = true;
 

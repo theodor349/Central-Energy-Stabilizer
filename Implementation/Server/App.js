@@ -143,7 +143,7 @@ function executeCommand(command) {
     let payload = command.payload;
     command = command.command;
     if (socket === 'userSpace') {
-        io.to('userSpace').emit(command, payload);
+        userSpace.emit(command, payload);
     } else {
         socket.emit(command, payload);
     }

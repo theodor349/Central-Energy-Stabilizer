@@ -94,7 +94,7 @@ ________________________________________________________________________________
 */
 
 function removeDevice(serverDevice) {
-    let deviceElem = document.getElementById((device.Id));
+    let deviceElem = document.getElementById((device.deviceId));
     deviceElem.parentNode.removeChild(deviceElem);
 }
 
@@ -123,7 +123,7 @@ function updateDevice(serverDevice) {
 */
 
 function getDevicePropertyContainer(device) {
-    return document.getElementById((device.Id)).children[0].children[2];
+    return document.getElementById((device.deviceId)).children[0].children[2];
 }
 
 /*
@@ -157,8 +157,8 @@ function updateHeaderProperty(propertyItem, propertyIndex, device) {
 
 function buildDeviceInHTML(device) {
     let deviceContainer = document.createElement("section");
-    deviceContainer.id = device.Id;
-    deviceContainer.setAttribute("onClick", "displayDeviceSetting('" + device.Id + "')");
+    deviceContainer.id = device.deviceId;
+    deviceContainer.setAttribute("onClick", "displayDeviceSetting('" + device.deviceId + "')");
 
     let header = buildDeviceHeader(device);
     deviceContainer.appendChild(header);

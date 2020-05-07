@@ -4,9 +4,9 @@ let knownDevices = [];
 
 socket.on('updateDevice', function(device) {
     if (knownDevices.includes(device.deviceId)) {
-        knownDevices.push(device.deviceId);
         updateDevice(device);
     } else {
+        knownDevices.push(device.deviceId);
         addDevice(device);
     }
 });

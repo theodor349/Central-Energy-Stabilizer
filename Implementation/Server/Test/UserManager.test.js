@@ -5,31 +5,31 @@ const um = require('./../UserManager.js');
 const uuid = require('uuidv4');
 
 if (true) {
-    describe('User Manager', () => {
+    describe('User Manager: Devices', () => {
 
         // On Connect
-        it('onConnect: 0 devices', async () => {
+        it('onConnectDevice: 0 devices', async () => {
             await db.dropDatabase();
             let connectedDevices = [];
-            await um.onConnect("socket", connectedDevices);
+            await um.onConnectDevice("socket", connectedDevices);
             let commandQueue = um.getCommandQueue();
             assert(commandQueue.length === 0 &&
                 connectedDevices.length === 0);
         })
-        it('onConnect: 1 device', async () => {
+        it('onConnectDevice: 1 device', async () => {
             await db.dropDatabase();
             let testDevice = createAutoServerTestDevice();
             await dm.testDeviceInit(testDevice);
             let connectedDevices = [{
                 deviceId: testDevice.deviceId
             }];
-            await um.onConnect("socket", connectedDevices);
+            await um.onConnectDevice("socket", connectedDevices);
             let commandQueue = um.getCommandQueue();
             assert(commandQueue.length === 1 &&
                 connectedDevices.length === 1);
         })
 
-        it('onConnect: 2 devices', async () => {
+        it('onConnectDevice: 2 devices', async () => {
             await db.dropDatabase();
             let testDevice = createAutoServerTestDevice();
             let testDevice2 = createAutoServerTestDevice();
@@ -42,7 +42,7 @@ if (true) {
                     deviceId: testDevice2.deviceId
                 }
             ];
-            await um.onConnect("socket", connectedDevices);
+            await um.onConnectDevice("socket", connectedDevices);
             let commandQueue = um.getCommandQueue();
             assert(commandQueue.length === 2 &&
                 connectedDevices.length === 2);
@@ -78,13 +78,19 @@ if (true) {
             let commandQueue = um.getCommandQueue();
             assert(commandQueue.length === updatedDevices.length);
         })
-        /*
-        it('graphUpdate: ', async () => {
 
-            um.graphUpdate();
-            assert();
+    })
+    describe('User Manager: Graphs', () => {
+        // onConnectDevice
+        it('onConnectDevice: send all 24 Graphs', async () => {
+
+            await um.onConnectGraph("Socket");
+
+            let commandQueue = um.getCommandQueue();
+            assert(commandQueue.length === 24 &&
+                commandQueue[0].payload.values.length === 60 &&
+                commandQueue[23].payload.values.length === 60);
         })
-        */
     })
 
     function createAutoServerTestDevice() {
@@ -130,4 +136,48 @@ if (true) {
         };
         return serverTestDevice;
     }
+}
+
+/*
+    Helper Functions
+*/
+
+// Creates a positive or negative surplus graph depending on input value
+async function createSurplusGraph(value) {
+    let date = new Date();
+    let id = util.dateToId("surplusGraph", date);
+    let values = [];
+
+    for (i = 0; i < 60; i++) {
+        values[i] = value;
+    }
+
+    return new Promise(async (resolve, reject) => {
+        daG.updateGraph(id, values)
+            .then((val) => {
+                resolve(true);
+            })
+            .catch((err) => {
+                reject(err);
+            })
+    });
+}
+async function createDemandGraph(value) {
+    let date = new Date();
+    let id = util.dateToId("surplusGraph", date);
+    let values = [];
+
+    for (i = 0; i < 60; i++) {
+        values[i] = value;
+    }
+
+    return new Promise(async (resolve, reject) => {
+        daG.updateGraph(id, values)
+            .then((val) => {
+                resolve(true);
+            })
+            .catch((err) => {
+                reject(err);
+            })
+    });
 }

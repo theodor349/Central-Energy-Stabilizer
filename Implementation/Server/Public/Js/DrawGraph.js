@@ -51,89 +51,11 @@ let otherDemandGraphStyle = {
     SECTION: testing
 */
 
-function create24HProductionGraph(date) {
-    let day = new Array(24);
-    let d = date.getDate();
-    for (var h = 0; h < 24; h++) {
-        let values = new Array(60);
-        for (var m = 0; m < 60; m++) {
-            values[m] = getProdutionAt(d * 24 + h + m / 60);
-        }
-        day[h] = values;
-    }
-    return day;
-}
-
-function create24HDemandGraph(date) {
-    let day = new Array(24);
-    let d = date.getDate();
-    for (var h = 0; h < 24; h++) {
-        let values = new Array(60);
-        for (var m = 0; m < 60; m++) {
-            values[m] = getDemandAt(d * 24 + h + m / 60);
-        }
-        day[h] = values;
-    }
-    return day;
-}
-
-const scale = 1000;
-const lift = 100;
-
-function getDemandAt(x) {
-    return (Math.sin(0.9 * x - 5) * 2.2 +
-        Math.sin(1.4 * x - 0.2) * 1.3 +
-        Math.sin(2.1 * x - 2) * 2.8 + lift) * scale;
-}
-
-function getProdutionAt(x) {
-    return (Math.sin(2.7 * x + 3.3) * 0.8 +
-        Math.sin((-0.5) * x + 1) * 2.7 +
-        Math.sin(Math.sin(2.1 * x - 2) * 2.8) + lift) * scale;
-}
-
-function create24HSurplusGraph() {
-    let newGraphProduction = create24HProductionGraph(new Date);
-    let newGraphDemand = create24HDemandGraph(new Date);
-    let surplusGraph = [];
-
-    for (var h = 0; h < 24; h++) {
-        let array = [];
-        for (var m = 0; m < 60; m++) {
-            array[m] = newGraphProduction[h][m] - newGraphDemand[h][m];
-        }
-        surplusGraph[h] = array;
-    }
-    return surplusGraph;
-}
-
-function createOther24HSurplusGraph() {
-    let newGraphProduction = create24HProductionGraph(new Date);
-    let newGraphDemand = create24HDemandGraph(new Date(1000));
-    let surplusGraph = [];
-
-    for (var h = 0; h < 24; h++) {
-        let array = [];
-        for (var m = 0; m < 60; m++) {
-            array[m] = newGraphProduction[h][m] - newGraphDemand[h][m];
-        }
-        surplusGraph[h] = array;
-    }
-    return surplusGraph;
-}
-
-let firstTestGraphValues = [];
 
 
 
 
 
-
-
-
-create24HSurplusGraph();
-let newSurplusGraph = convertArray(create24HSurplusGraph());
-let otherSurplusGraphValues = convertArray(createOther24HSurplusGraph());
 
 drawGraph(mainGraph);
 
@@ -147,9 +69,6 @@ function drawGraph(graph) {
     drawGraphHorizontalLines(graph);
     drawGraphVerticalLines(graph);
     activeGraphs.push(graph.htmlElement);
-    drawGraphValues(newSurplusGraph, demandGraphStyle, mainGraph);
-    drawGraphValues(otherSurplusGraphValues, otherDemandGraphStyle, mainGraph);
-
 }
 
 function convertArray(graphValues) {
@@ -351,8 +270,8 @@ function drawGraphValues(graphValues, style, graph) {
 function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWidth, style, previousPath, previousVerticalValue, previousHorizontalValue, graph, valuesToSkip) {
 
     let point;
-    if(valueIndex === graphValues.length) {
-        point = graphValues[valueIndex-1];
+    if (valueIndex === graphValues.length) {
+        point = graphValues[valueIndex - 1];
     } else {
         point = graphValues[valueIndex];
     }
@@ -360,7 +279,7 @@ function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWid
     let newVerticalValue = verticalOrigin - pointValue;
     let newHorizontalValue;
 
-    if(valueIndex !== 0){
+    if (valueIndex !== 0) {
         newHorizontalValue = previousHorizontalValue += pathWidth;
     } else {
         newHorizontalValue = previousHorizontalValue;

@@ -37,7 +37,7 @@ socket.on('createGraphValues', function(graphObject) {
     } else {
         newGraphName = graphObject.name;
         newGraph = [];
-        newGraph.push(grapObject.values);
+        newGraph.push(graphObject.values);
     }
 })
 

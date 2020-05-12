@@ -39,12 +39,12 @@ let mainGraph = {
 };
 
 let demandGraphStyle = {
-    steps: 1440 / 4, // must be of the formula 1440 / x (1440 % x must equal 0)
+    steps: 1440 / 1, // must be of the formula 1440 / x (1440 % x must equal 0)
     style: "graphPathRed"
 }
 
 let otherDemandGraphStyle = {
-    steps: 1440 / 4, // must be of the formula 1440 / x (1440 % x must equal 0)
+    steps: 1440 / 1, // must be of the formula 1440 / x (1440 % x must equal 0)
     style: "graphPathGreen"
 }
 
@@ -290,6 +290,9 @@ function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWid
     } else {
         point = graphValues[valueIndex];
     }
+    if (name === "surplusGraph") {
+        console.log("Plotting: " + point);
+    }
     let pointValue = point / 1000 * (graph.innerHeight / graph.horizontalAmount);
     let newVerticalValue = verticalOrigin - pointValue;
     let newHorizontalValue;
@@ -310,23 +313,19 @@ function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWid
 
     graph.htmlElement.appendChild(path);
 
-    valueIndex += valuesToSkip;
-
-
     let graphValueObject = getGraphValueObject(name);
     graphValueObject.previousPath = previousPath;
     graphValueObject.previousVerticalValue = previousVerticalValue;
     graphValueObject.previousHorizontalValue = previousHorizontalValue;
     graphValueObject.graphPointer += 1;
+    valueIndex += valuesToSkip;
 
-
-    if (valueIndex <= graphValues.length) {
+    if (valueIndex < graphValues.length || graphValues.length === graph.maxPoints && valueIndex <= graphValues.length) {
         let newDrawingGraph = setTimeout(function() {
             displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWidth, style, previousPath, previousVerticalValue, previousHorizontalValue, graph, valuesToSkip, name)
         }, graphDrawValueSpeed);
 
         drawingGraphValues.push(newDrawingGraph);
-
     } else {
         let newVerticalValue = verticalOrigin;
         let newHorizontalValue = previousHorizontalValue;

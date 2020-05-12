@@ -24,7 +24,7 @@ app.get('/', function(req, res) {
 */
 
 const port = 3000;
-const updateInterval = 30 * 1000;
+const updateInterval = 0.01 * 1000;
 
 /*
     SECTION: Timers

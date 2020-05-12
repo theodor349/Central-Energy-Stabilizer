@@ -42,16 +42,31 @@ socket.on('createGraphValues', function(graphObject) {
     }
 });
 
-socket.on('GraphValuesUpdate', function(graphPoint) {
+let cachedUpdateCommands = [];
+socket.on('graphValueUpdate', function(graphPoint) {
     let graphValueObject = getGraphValueObject(graphPoint.name);
 
-    ;
+    if (graphValueObject === undefined) {
+        //cachedUpdateCommands.push(graphPoint);
+    } else {
+        // Cached Commands
+        while (cachedUpdateCommands.length > 0) {
+            executeUpdatePoint(graphValueObject, cachedUpdateCommands.pop());
+        }
+        // New Command
+        executeUpdatePoint(graphValueObject, graphPoint);
+    }
+});
 
+function executeUpdatePoint(graphValueObject, graphPoint) {
+    console.log(graphPoint);
+    console.log(graphValueObject);
     if ((graphValueObject.graphPointer + 1) % graphValueObject.valuesToSkip == 0) {
         updateGraphValues(graphPoint, graphValueObject);
+    } else {
+        graphValueObject.graphPointer += 1;
     }
-
-});
+}
 
 
 socket.on('removeDevice', function(device) {

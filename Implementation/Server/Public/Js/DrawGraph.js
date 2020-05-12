@@ -26,8 +26,8 @@ let mainGraph = {
     innerWidth: null,
     horizontalLines: 20,
     horizontalValue: "Kw",
-    horizontalOrigin: 10,
-    horizontalAmount: 20,
+    horizontalOrigin: 5,
+    horizontalAmount: 10,
     verticalLines: 48,
     verticalValue: "time interval",
     verticalAmount: 24,
@@ -295,7 +295,7 @@ function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWid
     let newHorizontalValue;
 
     // testing we are not doing an update of the graph
-    if (valueIndex !== 0 || graphValues.length < 1) {
+    if (valueIndex !== 0 || graphValues.length === 1) {
         newHorizontalValue = previousHorizontalValue += pathWidth;
     } else {
         newHorizontalValue = previousHorizontalValue;

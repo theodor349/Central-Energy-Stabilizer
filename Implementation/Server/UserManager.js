@@ -75,6 +75,7 @@ async function sendAPISurplusGraph(socket, date) {
 
 async function sendSurplusGraph(socket, date) {
     return new Promise(async (resolve, reject) => {
+        lastGraphUpdate = new Date(date.getTime());
         let hours = date.getHours();
         date.setHours(0);
         for (var i = 0; i < hours; i++) {
@@ -135,7 +136,8 @@ async function sendUpdatedDevices(updatedDevices) {
 
 async function graphUpdate() {
     let date = new Date()
-    if (lastGraphUpdate !== undefined && lastGraphUpdate.getMinutes() === date.getMinutes()) {
+    if (lastGraphUpdate !== undefined &&
+        lastGraphUpdate.getMinutes() === date.getMinutes()) {
         console.log("Do not send update");
         return false;
     }
@@ -145,12 +147,12 @@ async function graphUpdate() {
         date = new Date();
         let graph = await dbG.getGraph(util.dateToId("surplusGraph", date));
         let minute = date.getMinutes();
-        let point = graph.values[minute];
+        let point = [graph.values[minute]];
         let payload = {
             name: "surplusGraph",
             hour: date.getHours(),
             minute: minute,
-            value: point
+            values: point
         }
         createCommand("userSpace", "graphValueUpdate", payload);
     });

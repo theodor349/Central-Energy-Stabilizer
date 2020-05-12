@@ -11,18 +11,18 @@ if (true) {
             da.dropDatabase();
             let graph = [21, 13, 22, 29];
             let timeIntervalObject = {
-                timeIntervalStart: new Date(2010, 0, 24, 15, 30),
-                timeIntervalFinish: new Date(2010, 0, 24, 18, 30)
+                start: new Date(2010, 0, 24, 15, 30),
+                end: new Date(2010, 0, 24, 18, 30)
             };
-            // Change this once blackbox of Fit Demand Graph is done
+            // TODO: Change this once blackbox of Fit Demand Graph is done
             let expectedFinishTime = new Date(2010, 0, 24, 15, 34);
 
             let res = await rqstMngr.requestTimeToRun(graph, timeIntervalObject);
 
-            assert( res.outputIntervalStart !== undefined &&
-                    res.outputIntervalStart.getTime() === timeIntervalObject.timeIntervalStart.getTime() &&
-                    res.outputIntervalFinish !== undefined &&
-                    res.outputIntervalFinish.getTime() === expectedFinishTime.getTime()
+            assert( res.start !== undefined &&
+                    res.start.getTime() === timeIntervalObject.start.getTime() &&
+                    res.end !== undefined &&
+                    res.end.getTime() === expectedFinishTime.getTime()
             );
         });
         it('requestTimeToRun: Checks if graph is written to database', async() => {
@@ -36,8 +36,8 @@ if (true) {
                 21, 13, 22, 29, 35, 10, 17, 20, 39, 37
             ];
             let timeIntervalObject = {
-                timeIntervalStart: new Date(2010, 0, 24, 15, 30),
-                timeIntervalFinish: new Date(2010, 0, 24, 18, 30)
+                start: new Date(2010, 0, 24, 15, 30),
+                end: new Date(2010, 0, 24, 18, 30)
             };
             let expectedLowerGraph = [  
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -77,8 +77,8 @@ if (true) {
                 21, 13, 22, 29, 35, 10, 17, 20, 39, 37
             ];
             let currentSchedule = {
-                timeIntervalStart: new Date(2010, 0, 24, 15, 45),
-                timeIntervalFinish: new Date(2010, 0, 24, 16, 45)
+                start: new Date(2010, 0, 24, 15, 45),
+                end: new Date(2010, 0, 24, 16, 45)
             };
             let expectedGraph = [  
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -89,7 +89,7 @@ if (true) {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             ];
 
-            let res = await forecaster.addDemand(currentSchedule.timeIntervalStart, graph);
+            let res = await forecaster.addDemand(currentSchedule.start, graph);
 
             await rqstMngr.removeCurrentDemand(currentSchedule, graph);
 
@@ -101,13 +101,14 @@ if (true) {
                    JSON.stringify(upperGraph.values) === JSON.stringify(expectedGraph));
         });
 
-        /* Test not done
+        // TODO: gatherSurplusGraph: Test not done, commented out
+        /* 
         it('gatherSurplusGraph: Testing if surplus graph is gathered', async() => {
             let graph = [21, 13, 22, 29];
             let isScheduled = true;
             let timeIntervalObject = {
-                timeIntervalStart: new Date(2010, 0, 24, 15, 30),
-                timeIntervalFinish: new Date(2010, 0, 24, 18, 30)
+                start: new Date(2010, 0, 24, 15, 30),
+                end: new Date(2010, 0, 24, 18, 30)
                 };
         });
         */

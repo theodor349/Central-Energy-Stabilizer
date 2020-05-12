@@ -10,15 +10,15 @@ module.exports = functions;
 function requestTimeToRun (graph, timeIntervalObject) {
     return new Promise(async (resolve, reject) => {
         let outputIntervalObject = {
-            outputIntervalStart: undefined,
-            outputIntervalFinish: undefined
+            start: undefined,
+            end: undefined
         };
         
         // TODO: Nedenstående linje virker ikke endnu (derfor kommenteret ud)
         //let gatheredSurplusGraph = gatherSurplusGraph();
         fitDemandToSurplus(outputIntervalObject, timeIntervalObject, graph);
 
-        await forecaster.addDemand(outputIntervalObject.outputIntervalStart, graph);
+        await forecaster.addDemand(outputIntervalObject.start, graph);
 
         resolve(outputIntervalObject);
     });
@@ -26,7 +26,7 @@ function requestTimeToRun (graph, timeIntervalObject) {
 
 function removeCurrentDemand (currentSchedule, graph) {
     return new Promise(async (resolve, reject) => {
-        await forecaster.removeDemand(currentSchedule.timeIntervalStart, graph);
+        await forecaster.removeDemand(currentSchedule.start, graph);
         
         resolve(true);
     });
@@ -44,13 +44,13 @@ function gatherSurplusGraph(startTime) { // TODO: Parametre ændres nok
 
 function fitDemandToSurplus(outputIntervalObject, timeIntervalObject, graph) {
     return new Promise(async (resolve, reject) => {
-        outputIntervalObject.outputIntervalStart = timeIntervalObject.timeIntervalStart;
+        outputIntervalObject.start = timeIntervalObject.start;
         
         // Adds graph length in minutes to interval start
         let finishTime = new Date();
-        finishTime.setTime(timeIntervalObject.timeIntervalStart.getTime() + (1000 * 60) * graph.length);
+        finishTime.setTime(timeIntervalObject.start.getTime() + (1000 * 60) * graph.length);
 
-        outputIntervalObject.outputIntervalFinish = finishTime;
+        outputIntervalObject.end = finishTime;
 
         resolve(true);
     });

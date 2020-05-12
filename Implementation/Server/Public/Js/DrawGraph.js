@@ -34,7 +34,8 @@ let mainGraph = {
     lowerLimit: 1000,
     verticalTextOffset: 20, // how far back should the text be taken to be aligned center with line
     indexDeviderIntervalHorizontal: 4,
-    indexDeviderIntervalVertical: 3
+    indexDeviderIntervalVertical: 3,
+    maxPoints: 1440
 };
 
 let demandGraphStyle = {
@@ -259,7 +260,7 @@ function drawGraphValues(name, graphValues, style, graph) {
     let path = document.createElementNS(svgNS, "path");
     path.setAttributeNS(null, "class", style.style)
 
-    let valuesToSkip = graphValues.length / style.steps;
+    let valuesToSkip = graph.maxPoints / style.steps;
 
     let graphValueObject = {
         name: name,

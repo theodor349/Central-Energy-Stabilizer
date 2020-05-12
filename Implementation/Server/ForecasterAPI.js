@@ -69,7 +69,7 @@ async function updateApiSurplus(date) {
             values[m] = getProdutionAt(d * 24 + h + m / 60) - getDemandAt(d * 24 + h + m / 60);
         }
 
-        let id = util.dateToId("apiSurplus", date);
+        let id = util.dateToId("apiSurplusGraph", date);
         let res = await da.updateGraph(id, values, false);
         resolve(res);
     })

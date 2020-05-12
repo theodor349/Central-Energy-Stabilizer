@@ -85,8 +85,8 @@ if (false) {
     describe('User Manager: Graphs', () => {
         // onConnectDevice
         it('onConnectDevice: send all 24 API Surplus Graphs', async () => {
+            await daG.dropDatabase();
             await createAPISurplusGraph(1000);
-            let date = new Date(2020, 6, 6, )
             await um.sendAPISurplusGraph("Socket", new Date());
 
             let commandQueue = um.getCommandQueue();
@@ -98,25 +98,28 @@ if (false) {
                 commandQueue[0].payload.values[0] === 1000 &&
                 commandQueue[23].payload.values[0] === 0);
         })
-        it('onConnectDevice: send all 24 Surplus Graphs', async () => {
-            await createSurplusGraph(1000);
-            let date = new Date(2020, 6, 6, )
-            await um.sendSurplusGraph("Socket", new Date());
+        it('onConnectDevice: send untill 10:10 Surplus Graphs', async () => {
+            await daG.dropDatabase();
+            let date = new Date(2020, 6, 6, 10, 10);
+            await createSurplusGraph(1000, date);
+            await um.sendSurplusGraph("Socket", date);
 
             let commandQueue = um.getCommandQueue();
-            // TODO: Test for multiple days
-            assert(commandQueue.length === 25 &&
+            assert(commandQueue.length === 12 &&
                 // Surplus
-                commandQueue[24].payload.values === "done" &&
-                commandQueue[24].payload.name === "surplusGraph" &&
+                commandQueue[11].payload.values === "done" &&
+                commandQueue[11].payload.name === "surplusGraph" &&
                 commandQueue[0].payload.values.length === 60 &&
-                commandQueue[23].payload.values.length === 60 &&
-                commandQueue[0].payload.values[0] === 1000 &&
-                commandQueue[23].payload.values[0] === 0);
+                commandQueue[9].payload.values.length === 60 &&
+                commandQueue[10].payload.values.length === 10 &&
+                commandQueue[6].payload.values[0] === 0 &&
+                commandQueue[9].payload.values[0] === 0 &&
+                commandQueue[10].payload.values[0] === 1000);
         })
 
         // graphUpdate
         it('graphUpdate: send all 1 point', async () => {
+            await daG.dropDatabase();
 
             let commandQueue = um.getCommandQueue();
             assert(false);
@@ -173,8 +176,7 @@ if (false) {
 */
 
 // Creates a positive or negative surplus graph depending on input value
-async function createSurplusGraph(value) {
-    let date = new Date();
+async function createSurplusGraph(value, date) {
     let id = util.dateToId("surplusGraph", date);
     let values = [];
 

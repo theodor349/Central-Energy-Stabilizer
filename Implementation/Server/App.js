@@ -33,9 +33,6 @@ const updateInterval = 5 * 1000;
 startServer();
 
 async function startServer() {
-    await dd.dropDatabase();
-    await dg.dropDatabase();
-
     setInterval(() => {
         console.log();
         console.log();
@@ -143,6 +140,7 @@ function handleUserManagerCommands() {
 
 function executeCommand(command) {
     print("Send Command: " + command.command + " Payload: " + command.payload);
+    console.log(command.payload);
     let socket = command.socket;
     let payload = command.payload;
     command = command.command;

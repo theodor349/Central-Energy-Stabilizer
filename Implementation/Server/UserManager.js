@@ -42,7 +42,9 @@ async function onConnectGraph(socket) {
         let date = new Date();
         date.setHours(0);
         await sendAPISurplusGraph(socket, date);
-        //await sendSurplusGraph(socket, date);
+        date = new Date();
+        date.setHours(0);
+        await sendSurplusGraph(socket, date);
         resolve(true);
     });
 }
@@ -50,13 +52,15 @@ async function onConnectGraph(socket) {
 async function sendAPISurplusGraph(socket, date) {
     return new Promise(async (resolve, reject) => {
         for (var i = 0; i < 24; i++) {
-            let id = util.dateToId("apiSurplus", date);
+            let id = util.dateToId("apiSurplusGraph", date);
             let graph = await dbG.getGraph(id);
             let payload = {
                 name: "apiSurplusGraph",
                 hour: i,
                 values: graph.values
             }
+            console.log(graph.graphId);
+            console.log(graph.values);
             createCommand(socket, "createGraphValues", payload);
             date = incrementHour(date, 1);
         }
@@ -73,9 +77,10 @@ async function sendAPISurplusGraph(socket, date) {
 }
 
 async function sendSurplusGraph(socket, date) {
-    lastGraphUpdate = new Date();
     return new Promise(async (resolve, reject) => {
-        for (var i = 0; i < 24; i++) {
+        let hours = date.getHours();
+        date.setHours(0);
+        for (var i = 0; i < hours; i++) {
             let id = util.dateToId("surplusGraph", date);
             let graph = await dbG.getGraph(id);
             let payload = {
@@ -86,6 +91,20 @@ async function sendSurplusGraph(socket, date) {
             createCommand(socket, "createGraphValues", payload);
             date = incrementHour(date, 1);
         }
+
+        let minutes = date.getMinutes();
+        let id = util.dateToId("surplusGraph", date);
+        let graph = await dbG.getGraph(id);
+        let values = [];
+        for (var i = 0; i < minutes; i++) {
+            values.push(graph.values[i]);
+        }
+        let payload = {
+            name: "surplusGraph",
+            hour: hours,
+            values: values
+        }
+        createCommand(socket, "createGraphValues", payload)
 
         let endOfGraphPayload = {
             name: "surplusGraph",
@@ -118,8 +137,22 @@ async function sendUpdatedDevices(updatedDevices) {
 }
 
 async function graphUpdate() {
+    if (lastGraphUpdate.getMinutes() === new Date().getMinutes()) {
+        return false;
+    }
+    lastGraphUpdate = new Date();
     return new Promise(async (resolve, reject) => {
-
+        let date = new Date();
+        let graph = await dbG.getGraph(util.dateToId("surplusGraph", date));
+        let minute = date.getMinutes();
+        let point = graph.pointArray[minute];
+        let payload = {
+            name: "surplusGraph",
+            hour: date.getHours(),
+            minutes: minute,
+            value: point
+        }
+        createCommand(socket, "updateGraph", payload);
     });
 }
 

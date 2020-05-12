@@ -111,7 +111,7 @@ if (false) {
                 commandQueue[11].payload.name === "surplusGraph" &&
                 commandQueue[0].payload.values.length === 60 &&
                 commandQueue[9].payload.values.length === 60 &&
-                commandQueue[10].payload.values.length === 10 &&
+                commandQueue[10].payload.values.length === 9 &&
                 commandQueue[6].payload.values[0] === 0 &&
                 commandQueue[9].payload.values[0] === 0 &&
                 commandQueue[10].payload.values[0] === 1000);

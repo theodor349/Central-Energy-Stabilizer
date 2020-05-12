@@ -41,7 +41,7 @@ async function onConnectGraph(socket) {
     return new Promise(async (resolve, reject) => {
         let date = new Date();
         date.setHours(0);
-        //await sendAPISurplusGraph(socket, date);
+        await sendAPISurplusGraph(socket, date);
         date = new Date();
         await sendSurplusGraph(socket, date);
         resolve(true);
@@ -134,22 +134,25 @@ async function sendUpdatedDevices(updatedDevices) {
 }
 
 async function graphUpdate() {
-    if (lastGraphUpdate.getMinutes() === new Date().getMinutes()) {
+    let date = new Date()
+    if (lastGraphUpdate !== undefined && lastGraphUpdate.getMinutes() === date.getMinutes()) {
+        console.log("Do not send update");
         return false;
     }
+    console.log("Send update");
     lastGraphUpdate = new Date();
     return new Promise(async (resolve, reject) => {
-        let date = new Date();
+        date = new Date();
         let graph = await dbG.getGraph(util.dateToId("surplusGraph", date));
         let minute = date.getMinutes();
-        let point = graph.pointArray[minute];
+        let point = graph.values[minute];
         let payload = {
             name: "surplusGraph",
             hour: date.getHours(),
-            minutes: minute,
+            minute: minute,
             value: point
         }
-        createCommand(socket, "updateGraph", payload);
+        createCommand("userSpace", "graphValueUpdate", payload);
     });
 }
 

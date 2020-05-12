@@ -160,6 +160,7 @@ function updateUserManager() {
     let updatedDevices = dm.getUpdatedDevices();
     updatedDevices.concat(sd.getUpdatedDevices());
     um.sendUpdatedDevices(updatedDevices);
+    um.graphUpdate();
 }
 
 /*

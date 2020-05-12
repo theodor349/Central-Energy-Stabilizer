@@ -90,6 +90,10 @@ async function addDemand(startTime, graph) {
 
 async function removeDemand(startTime, graph) {
     return new Promise(async (resolve, reject) => {
+        graph = invertValues(graph);
+
+        await addDemand(startTime, graph);
+        /*
         let lowerGraph = {
             graphId: undefined,
             values: []
@@ -135,7 +139,7 @@ async function removeDemand(startTime, graph) {
         await updateDemandGraph(upperGraph);
         await updateSurplusGraph(startTime);
         await updateSurplusGraph(secondGraphStartTime);
-
+        */
         resolve(true);
     });
 }
@@ -190,7 +194,7 @@ function updateDemandGraph(graph) {
 }
 
 function invertValues(values) {
-    for (i = 0; i < 60; i++) {
+    for (i = 0; i < values.length; i++) {
         values[i] *= -1;
     }
     return values;

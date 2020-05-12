@@ -265,7 +265,7 @@ function drawGraphValues(name, graphValues, style, graph) {
         name: name,
         previousPath: previousPath,
         valuesToSkip: valuesToSkip,
-        verticalOrigin: graph.innerHeight / (graph.horizontalAmount / (graph.horizontalAmount - graph.horizontalOrigin)),
+        verticalOrigin: verticalOrigin,
         path: path,
         pathWidth: pathWidth,
         style: style,
@@ -290,10 +290,9 @@ function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWid
         point = graphValues[valueIndex];
     }
     let pointValue = point / 1000 * (graph.innerHeight / graph.horizontalAmount);
-    console.log(point);
-    console.log(pointValue);
     let newVerticalValue = verticalOrigin - pointValue;
     let newHorizontalValue;
+    console.log(newVerticalValue);
 
     // testing we are not doing an update of the graph
     if (valueIndex !== 0 && graphValues.length < 1) {

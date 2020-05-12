@@ -11,9 +11,12 @@ const functions = {
     sendUpdatedDevices: (updatedDevices) => sendUpdatedDevices(updatedDevices),
     graphUpdate: () => graphUpdate(),
     getCommandQueue: () => getCommandQueue(),
+    sendAPISurplusGraph: (socket, date) => sendAPISurplusGraph(socket, date),
+    sendSurplusGraph: (socket, date) => sendSurplusGraph(socket, date)
 }
 module.exports = functions;
 let commandQueue = [];
+let lastGraphUpdate;
 
 async function onConnect(socket, connectedDevices) {
     await onConnectDevice(socket, connectedDevices);
@@ -37,12 +40,40 @@ async function onConnectDevice(socket, connectedDevices) {
 async function onConnectGraph(socket) {
     return new Promise(async (resolve, reject) => {
         let date = new Date();
-        await sendSurplus(socket, date);
+        date.setHours(0);
+        await sendAPISurplusGraph(socket, date);
+        //await sendSurplusGraph(socket, date);
         resolve(true);
     });
 }
 
-async function sendSurplus(socket, date) {
+async function sendAPISurplusGraph(socket, date) {
+    return new Promise(async (resolve, reject) => {
+        for (var i = 0; i < 24; i++) {
+            let id = util.dateToId("apiSurplus", date);
+            let graph = await dbG.getGraph(id);
+            let payload = {
+                name: "apiSurplusGraph",
+                hour: i,
+                values: graph.values
+            }
+            createCommand(socket, "createGraphValues", payload);
+            date = incrementHour(date, 1);
+        }
+
+        let endOfGraphPayload = {
+            name: "apiSurplusGraph",
+            hour: -1,
+            values: "done"
+        }
+        createCommand(socket, "createGraphValues", endOfGraphPayload);
+
+        resolve(true);
+    });
+}
+
+async function sendSurplusGraph(socket, date) {
+    lastGraphUpdate = new Date();
     return new Promise(async (resolve, reject) => {
         for (var i = 0; i < 24; i++) {
             let id = util.dateToId("surplusGraph", date);
@@ -53,7 +84,15 @@ async function sendSurplus(socket, date) {
                 values: graph.values
             }
             createCommand(socket, "createGraphValues", payload);
+            date = incrementHour(date, 1);
         }
+
+        let endOfGraphPayload = {
+            name: "surplusGraph",
+            hour: -1,
+            values: "done"
+        }
+        createCommand(socket, "createGraphValues", endOfGraphPayload);
         resolve(true);
     });
 }
@@ -79,7 +118,9 @@ async function sendUpdatedDevices(updatedDevices) {
 }
 
 async function graphUpdate() {
+    return new Promise(async (resolve, reject) => {
 
+    });
 }
 
 /*
@@ -97,6 +138,10 @@ async function testFunc(socket, connectedDevices) {
 }
 */
 
+function incrementHour(date, increment) {
+    date.setHours(date.getHours() + increment);
+    return date;
+}
 
 function createCommand(socket, command, payload) {
     let commandObj = {

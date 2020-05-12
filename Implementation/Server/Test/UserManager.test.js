@@ -1,10 +1,12 @@
 const assert = require('assert');
 const dm = require('./../DeviceManager.js');
 const db = require('./../DatabaseAccessorDevice.js');
+const daG = require('./../DatabaseAccessorGraph.js');
 const um = require('./../UserManager.js');
 const uuid = require('uuidv4');
+const util = require('./../Utilities.js');
 
-if (true) {
+if (false) {
     describe('User Manager: Devices', () => {
 
         // On Connect
@@ -82,14 +84,42 @@ if (true) {
     })
     describe('User Manager: Graphs', () => {
         // onConnectDevice
-        it('onConnectDevice: send all 24 Graphs', async () => {
-
-            await um.onConnectGraph("Socket");
+        it('onConnectDevice: send all 24 API Surplus Graphs', async () => {
+            await createAPISurplusGraph(1000);
+            let date = new Date(2020, 6, 6, )
+            await um.sendAPISurplusGraph("Socket", new Date());
 
             let commandQueue = um.getCommandQueue();
-            assert(commandQueue.length === 24 &&
+            assert(commandQueue.length === 25 &&
+                commandQueue[24].payload.values === "done" &&
+                commandQueue[24].payload.name === "apiSurplusGraph" &&
                 commandQueue[0].payload.values.length === 60 &&
-                commandQueue[23].payload.values.length === 60);
+                commandQueue[23].payload.values.length === 60 &&
+                commandQueue[0].payload.values[0] === 1000 &&
+                commandQueue[23].payload.values[0] === 0);
+        })
+        it('onConnectDevice: send all 24 Surplus Graphs', async () => {
+            await createSurplusGraph(1000);
+            let date = new Date(2020, 6, 6, )
+            await um.sendSurplusGraph("Socket", new Date());
+
+            let commandQueue = um.getCommandQueue();
+            // TODO: Test for multiple days
+            assert(commandQueue.length === 25 &&
+                // Surplus
+                commandQueue[24].payload.values === "done" &&
+                commandQueue[24].payload.name === "surplusGraph" &&
+                commandQueue[0].payload.values.length === 60 &&
+                commandQueue[23].payload.values.length === 60 &&
+                commandQueue[0].payload.values[0] === 1000 &&
+                commandQueue[23].payload.values[0] === 0);
+        })
+
+        // graphUpdate
+        it('graphUpdate: send all 1 point', async () => {
+
+            let commandQueue = um.getCommandQueue();
+            assert(false);
         })
     })
 
@@ -146,6 +176,25 @@ if (true) {
 async function createSurplusGraph(value) {
     let date = new Date();
     let id = util.dateToId("surplusGraph", date);
+    let values = [];
+
+    for (i = 0; i < 60; i++) {
+        values[i] = value;
+    }
+
+    return new Promise(async (resolve, reject) => {
+        daG.updateGraph(id, values)
+            .then((val) => {
+                resolve(true);
+            })
+            .catch((err) => {
+                reject(err);
+            })
+    });
+}
+async function createAPISurplusGraph(value) {
+    let date = new Date();
+    let id = util.dateToId("apiSurplusGraph", date);
     let values = [];
 
     for (i = 0; i < 60; i++) {

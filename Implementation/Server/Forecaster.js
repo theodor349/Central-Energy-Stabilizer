@@ -18,16 +18,13 @@ module.exports = functions;
 
 async function updateSurplus(interval) {
     return new Promise(async (resolve, reject) => {
-
-        let surplusStartTime = new Date(2010, 1, 24, 10);
+        let surplusStartTime = new Date();
         surplusStartTime.setTime(interval.start.getTime());
-
 
         let graph = [];
 
         let hoursInInterval = (interval.finish.getTime() -
             interval.start.getTime()) / (60 * 60 * 1000);
-
 
         for (let i = 0; i < hoursInInterval + 1; i++) {
             await updateSurplusGraph(surplusStartTime);
@@ -240,10 +237,10 @@ function splitGraph(startTime, graph) {
 async function createGraphToSplit(graph) {
     return new Promise(async (resolve, reject) => {
         let graphToSplit = [];
-            for (t = 0; t < 60; t++) {
-                graphToSplit[t] = graph[0];
-                graph.shift();
-         }
+        for (t = 0; t < 60; t++) {
+            graphToSplit[t] = graph[0];
+            graph.shift();
+        }
 
         resolve(graphToSplit);
     });

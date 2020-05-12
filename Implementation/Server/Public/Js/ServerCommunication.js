@@ -16,13 +16,13 @@ let newGraph = [];
 let newGraphName = "";
 
 socket.on('createGraphValues', function(graphObject) {
+    console.log(graphObject);
     if (newGraphName === graphObject.name) {
-
         if (graphObject.values !== "done") {
             newGraph.push(graphObject.values);
         } else {
             let graphReadyToPlot = convertArray(newGraph);
-
+            console.log(graphReadyToPlot);
             switch (graphObject.name) {
                 case "apiSurplusGraph":
                     drawGraphValues(graphObject.name, graphReadyToPlot, demandGraphStyle, mainGraph);

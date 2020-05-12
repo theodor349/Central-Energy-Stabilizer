@@ -5,8 +5,9 @@ const io = require('socket.io')(http);
 // Server
 const dm = require('./DeviceManager.js');
 const sd = require('./Scheduler.js');
-const dd = require('./DatabaseAccessorDevice.js');
 const um = require('./UserManager.js');
+const dd = require('./DatabaseAccessorDevice.js');
+const dg = require('./DatabaseAccessorGraph.js');
 const apiG = require('./ForecasterAPI.js');
 
 app.use("/Public", express.static(__dirname + '/Public'));
@@ -31,7 +32,10 @@ const updateInterval = 5 * 1000;
 
 startServer();
 
-function startServer() {
+async function startServer() {
+    await dd.dropDatabase();
+    await dg.dropDatabase();
+
     setInterval(() => {
         console.log();
         console.log();

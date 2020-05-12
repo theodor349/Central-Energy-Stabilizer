@@ -11,13 +11,25 @@ const lift = 100;
 update();
 setTimeout(() => {
     update();
-}, (1000*60*60));
+}, (1000 * 60 * 60));
 
-async function update () {
-    await updateApiGraphs(new Date());
+async function update() {
+    let startDate = new Date();
+    startDate.setHours(0);
+    startDate.setMinutes(0);
+    await updateApiGraphs(startDate);
+
+    startDate = new Date();
+    startDate.setHours(0);
+    startDate.setMinutes(0);
+    let finishDate = new Date();
+    finishDate.setHours(0);
+    finishDate.setMinutes(0);
+    finishDate.setDate(finishDate.getDate() + 2);
+
     let interval = {
-        start: new Date(),
-        finish: util.getRelativeDate((60*25), '+'),
+        start: startDate,
+        finish: finishDate,
     }
     forecaster.updateSurplus(interval);
 }
@@ -36,14 +48,30 @@ module.exports = functions;
 
 async function updateApiGraphs(date) {
     return new Promise(async (resolve, reject) => {
-        for (var i = 0; i < 24; i++) {
+        for (var i = 0; i < 48; i++) {
             updateApiProduction(date);
             updateApiDemand(date);
+            updateApiSurplus(date);
             date.setTime(date.getTime() + 60 * 60 * 1000);
         }
         await updateApiProduction(date);
         await updateApiDemand(date);
         resolve(true);
+    })
+}
+
+async function updateApiSurplus(date) {
+    return new Promise(async (resolve, reject) => {
+        let values = new Array(60);
+        let d = date.getDate();
+        let h = date.getHours();
+        for (var m = 0; m < 60; m++) {
+            values[m] = getProdutionAt(d * 24 + h + m / 60) - getDemandAt(d * 24 + h + m / 60);
+        }
+
+        let id = util.dateToId("apiSurplus", date);
+        let res = await da.updateGraph(id, values, false);
+        resolve(res);
     })
 }
 

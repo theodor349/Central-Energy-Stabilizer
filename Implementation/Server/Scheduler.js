@@ -19,11 +19,11 @@ async function scheduleDevice(device) {
 
         // If the device is on add demand
         if (device.currentState === "on") {
-            let demandGraph = [1000 / 60]; // TODO: Make dynamic
+            let demandGraph = [1000 / 6]; // TODO: Make dynamic
             await forecaster.addDemand(date, demandGraph);
         }
 
-        let graphId = util.dateToId("surplusGraph", date);
+        let graphId = util.dateToId("apiDemand", date);
         let surplusGraph = await daG.getGraph(graphId);
         let schedule = {
             start: date

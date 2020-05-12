@@ -72,7 +72,7 @@ if (true) {
             );
         });
         it('all: 25 hours', async () => {
-            da.dropDatabase();
+            await da.dropDatabase();
             let date = new Date(2010, 1, 24, 15);
             await forecaster.updateApiGraphs(date);
 

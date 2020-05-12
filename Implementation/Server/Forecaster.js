@@ -25,8 +25,8 @@ async function updateSurplus(interval) {
 
         let graph = [];
 
-        let hoursInInterval = interval.finish.getHours() -
-            interval.start.getHours();
+        let hoursInInterval = (interval.finish.getTime() -
+            interval.start.getTime()) / (60 * 60 * 1000);
 
 
         for (let i = 0; i < hoursInInterval + 1; i++) {

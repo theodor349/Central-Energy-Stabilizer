@@ -25,13 +25,16 @@ socket.on('createGraphValues', function(graphObject) {
 
             switch (graphObject.name) {
                 case "apiSurplusGraph":
-                    drawGraphValues(graphReadyToPlot, demandGraphStyle, mainGraph);
+                    drawGraphValues(graphObject.name, graphReadyToPlot, demandGraphStyle, mainGraph);
+                    break;
+
+                case "surplusGraph":
+                    drawGraphValues(graphObject.name, graphReadyToPlot, otherDemandGraphStyle, mainGraph);
                     break;
 
                 default:
 
             }
-
         }
 
     } else {
@@ -39,7 +42,18 @@ socket.on('createGraphValues', function(graphObject) {
         newGraph = [];
         newGraph.push(graphObject.values);
     }
-})
+});
+
+socket.on('GraphValuesUpdate', function(graphPoint) {
+    let graphValueObject = getGraphValueObject(graphPoint.name);
+
+    ;
+
+    if ((graphValueObject.graphPointer + 1) % graphValueObject.valuesToSkip == 0) {
+        updateGraphValues(graphPoint, graphValueObject);
+    }
+
+});
 
 
 socket.on('removeDevice', function(device) {

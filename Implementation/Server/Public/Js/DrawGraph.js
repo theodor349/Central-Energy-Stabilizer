@@ -6,6 +6,7 @@ const graphDrawValueSpeed = 10;
 
 
 let drawingGraphValues = [];
+let activeGraphValues = [];
 let activeGraphs = [];
 
 /*
@@ -106,6 +107,7 @@ function deleteActiveGraphs() {
         activeGraphs[i].parentNode.removeChild(activeGraphs[i]);
     }
     activeGraphs = [];
+    activeGraphValues = [];
     drawingGraphValues = [];
 }
 
@@ -246,11 +248,10 @@ function drawGraphHorizontalTextPoint(line, graph, lineOffset, offsetValue) {
     graph.htmlElement.appendChild(value);
 }
 
-function drawGraphValues(graphValues, style, graph) {
+function drawGraphValues(name, graphValues, style, graph) {
+
     let previousHorizontalValue = graph.verticalTextWidth;
-
     let verticalOrigin = graph.innerHeight / (graph.horizontalAmount / (graph.horizontalAmount - graph.horizontalOrigin));
-
     let previousVerticalValue = verticalOrigin;
     let pathWidth = graph.innerWidth / style.steps;
     let previousPath = "M" + previousHorizontalValue + " " + previousVerticalValue;
@@ -260,17 +261,30 @@ function drawGraphValues(graphValues, style, graph) {
 
     let valuesToSkip = graphValues.length / style.steps;
 
+    let graphValueObject = {
+        name: name,
+        previousPath: previousPath,
+        valuesToSkip: valuesToSkip,
+        verticalOrigin: graph.innerHeight / (graph.horizontalAmount / (graph.horizontalAmount - graph.horizontalOrigin)),
+        path: path,
+        pathWidth: pathWidth,
+        style: style,
+        previousVerticalValue: previousVerticalValue,
+        previousHorizontalValue: previousHorizontalValue,
+        graph: graph,
+        graphPointer: 0
 
-    displayNextValue(graphValues, 0, verticalOrigin, path, pathWidth, style, previousPath, previousVerticalValue, previousHorizontalValue, graph, valuesToSkip);
+    }
 
+    activeGraphValues.push(graphValueObject)
 
-
+    displayNextValue(graphValues, 0, verticalOrigin, path, pathWidth, style, previousPath, previousVerticalValue, previousHorizontalValue, graph, valuesToSkip, name);
 }
 
-function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWidth, style, previousPath, previousVerticalValue, previousHorizontalValue, graph, valuesToSkip) {
+function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWidth, style, previousPath, previousVerticalValue, previousHorizontalValue, graph, valuesToSkip, name) {
 
     let point;
-    if (valueIndex === graphValues.length) {
+    if (valueIndex > graphValues.length) {
         point = graphValues[valueIndex - 1];
     } else {
         point = graphValues[valueIndex];
@@ -279,7 +293,8 @@ function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWid
     let newVerticalValue = verticalOrigin - pointValue;
     let newHorizontalValue;
 
-    if (valueIndex !== 0) {
+    // testing we are not doing an update of the graph
+    if (valueIndex !== 0 && graphValues.length < 1) {
         newHorizontalValue = previousHorizontalValue += pathWidth;
     } else {
         newHorizontalValue = previousHorizontalValue;
@@ -296,9 +311,17 @@ function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWid
 
     valueIndex += valuesToSkip;
 
+
+    let graphValueObject = getGraphValueObject(name);
+    graphValueObject.previousPath = previousPath;
+    graphValueObject.previousVerticalValue = previousVerticalValue;
+    graphValueObject.previousHorizontalValue = previousHorizontalValue;
+    graphValueObject.graphPointer += 1;
+
+
     if (valueIndex <= graphValues.length) {
         let newDrawingGraph = setTimeout(function() {
-            displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWidth, style, previousPath, previousVerticalValue, previousHorizontalValue, graph, valuesToSkip)
+            displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWidth, style, previousPath, previousVerticalValue, previousHorizontalValue, graph, valuesToSkip, name)
         }, graphDrawValueSpeed);
 
         drawingGraphValues.push(newDrawingGraph);
@@ -306,12 +329,28 @@ function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWid
     } else {
         let newVerticalValue = verticalOrigin;
         let newHorizontalValue = previousHorizontalValue;
+        let finalPath = previousPath;
+        finalPath += " L" + newHorizontalValue + " " + newVerticalValue + " Z";
 
-        previousPath += " L" + newHorizontalValue + " " + newVerticalValue + " Z";
-
-        path.setAttributeNS(null, "d", previousPath);
+        path.setAttributeNS(null, "d", finalPath);
         path.setAttributeNS(null, "class", style.style + " graphFill")
         graph.htmlElement.appendChild(path)
     }
+}
 
+function updateGraphValues(graphPoint, graphValueObject) {
+
+    displayNextValue(graphPoint.values, 0, graphValueObject.verticalOrigin, graphValueObject.path, graphValueObject.pathWidth, graphValueObject.style, graphValueObject.previousPath,
+        graphValueObject.previousVerticalValue, graphValueObject.previousHorizontalValue, graphValueObject.graph, graphValueObject.valuesToSkip, graphPoint.name);
+}
+
+function getGraphValueObject(name) {
+    let i = 0;
+
+    while (i < activeGraphValues.length) {
+        if (activeGraphValues[i].name === name) {
+            return activeGraphValues[i]
+        }
+        i++;
+    }
 }

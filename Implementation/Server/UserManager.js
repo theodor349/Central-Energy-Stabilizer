@@ -41,9 +41,8 @@ async function onConnectGraph(socket) {
     return new Promise(async (resolve, reject) => {
         let date = new Date();
         date.setHours(0);
-        await sendAPISurplusGraph(socket, date);
+        //await sendAPISurplusGraph(socket, date);
         date = new Date();
-        date.setHours(0);
         await sendSurplusGraph(socket, date);
         resolve(true);
     });
@@ -59,8 +58,6 @@ async function sendAPISurplusGraph(socket, date) {
                 hour: i,
                 values: graph.values
             }
-            console.log(graph.graphId);
-            console.log(graph.values);
             createCommand(socket, "createGraphValues", payload);
             date = incrementHour(date, 1);
         }

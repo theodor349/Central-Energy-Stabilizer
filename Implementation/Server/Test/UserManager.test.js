@@ -118,12 +118,12 @@ if (false) {
         })
 
         // graphUpdate
-        it('graphUpdate: send all 1 point', async () => {
-            await daG.dropDatabase();
-
-            let commandQueue = um.getCommandQueue();
-            assert(false);
-        })
+        //it('graphUpdate: send all 1 point', async () => {
+        //    await daG.dropDatabase();
+        //
+        //    let commandQueue = um.getCommandQueue();
+        //    assert(false);
+        //})
     })
 
     function createAutoServerTestDevice() {

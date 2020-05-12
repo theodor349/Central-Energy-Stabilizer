@@ -284,7 +284,7 @@ function drawGraphValues(name, graphValues, style, graph) {
 function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWidth, style, previousPath, previousVerticalValue, previousHorizontalValue, graph, valuesToSkip, name) {
 
     let point;
-    if (valueIndex > graphValues.length) {
+    if (valueIndex < graphValues.length) {
         point = graphValues[valueIndex - 1];
     } else {
         point = graphValues[valueIndex];

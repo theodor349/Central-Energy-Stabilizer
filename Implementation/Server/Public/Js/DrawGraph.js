@@ -288,11 +288,20 @@ function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWid
     let pointValue = point / 1000 * (graph.innerHeight / graph.horizontalAmount);
     let newVerticalValue = verticalOrigin - pointValue;
     let newHorizontalValue;
+    if (name === "surplusGraph") {
+        console.log("Plotting: " + point + " at: " + newVerticalValue + " ratio: " + (point / (pointValue)));
+    }
 
     // testing we are not doing an update of the graph
     if (valueIndex !== 0 || graphValues.length === 1) {
         newHorizontalValue = previousHorizontalValue += pathWidth;
+        if (name === "surplusGraph") {
+            console.log("Horizontal Spaceing: " + newHorizontalValue + " diff: " + (pathWidth));
+        }
     } else {
+        if (name === "surplusGraph") {
+            console.log("Horizontal Spaceing: " + newHorizontalValue + " diff: " + (newHorizontalValue - previousHorizontalValue));
+        }
         newHorizontalValue = previousHorizontalValue;
     }
 
@@ -319,6 +328,7 @@ function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWid
 
         drawingGraphValues.push(newDrawingGraph);
     } else {
+        graphValueObject.isDone = true;
         let newVerticalValue = verticalOrigin;
         let newHorizontalValue = previousHorizontalValue;
         let finalPath = previousPath;

@@ -16,6 +16,10 @@ let newGraph = [];
 let newGraphName = "";
 
 socket.on('createGraphValues', function(graphObject) {
+    if (graphObject.name === "surplusGraph") {
+        console.log("h: " + graphObject.hour + " num m: " + graphObject.values.length);
+    }
+
     if (newGraphName === graphObject.name) {
         if (graphObject.values !== "done") {
             newGraph.push(graphObject.values);
@@ -44,11 +48,14 @@ socket.on('createGraphValues', function(graphObject) {
 
 let cachedUpdateCommands = [];
 socket.on('graphValueUpdate', function(graphPoint) {
-    console.log(graphPoint);
+    console.log("---");
+    if (graphPoint.name === "surplusGraph") {
+        console.log("h: " + graphPoint.hour + " m: " + graphPoint.minute);
+    }
     let graphValueObject = getGraphValueObject(graphPoint.name);
 
-    if (graphValueObject === undefined) {
-        //cachedUpdateCommands.push(graphPoint);
+    if (graphValueObject === undefined || !graphValueObject.isDone) {
+        cachedUpdateCommands.push(graphPoint);
     } else {
         // Cached Commands
         while (cachedUpdateCommands.length > 0) {

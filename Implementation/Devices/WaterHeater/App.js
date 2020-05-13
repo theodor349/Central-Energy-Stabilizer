@@ -21,9 +21,9 @@ const fs = require('fs');
 const io = require('socket.io-client');
 const updateInterval = 1000;
 const graphInterval = 60000;
-const constDeviceUpdateInterval = 5000; //60000;
-const tempGainPrSecond = 0.1; //0.0033;
-const tempLossPrSecond = 0.1; //0.0017;
+const constDeviceUpdateInterval = 1000; //60000;
+const tempGainPrSecond = 0.0033;
+const tempLossPrSecond = 0.0017;
 const initTemp = 66;
 
 let deviceInfo = {};

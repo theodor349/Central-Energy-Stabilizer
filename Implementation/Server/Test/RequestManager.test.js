@@ -5,29 +5,29 @@ const forecaster = require('./../Forecaster.js');
 
 if (true) {
     describe('Request Manager', () => {
-        
+
         // Request Time To Run
-        it('requestTimeToRun: Expected output and not undefined output', async() => {
+        it('requestTimeToRun: Expected output and not undefined output', async () => {
             da.dropDatabase();
             let graph = [21, 13, 22, 29];
             let timeIntervalObject = {
                 start: new Date(2010, 0, 24, 15, 30),
                 end: new Date(2010, 0, 24, 18, 30)
             };
-            // TODO: Change this once blackbox of Fit Demand Graph is done
+            // Change this once blackbox of Fit Demand Graph is done (Not Needed for MVP)
             let expectedFinishTime = new Date(2010, 0, 24, 15, 34);
 
             let res = await rqstMngr.requestTimeToRun(graph, timeIntervalObject);
 
-            assert( res.start !== undefined &&
-                    res.start.getTime() === timeIntervalObject.start.getTime() &&
-                    res.end !== undefined &&
-                    res.end.getTime() === expectedFinishTime.getTime()
+            assert(res.start !== undefined &&
+                res.start.getTime() === timeIntervalObject.start.getTime() &&
+                res.end !== undefined &&
+                res.end.getTime() === expectedFinishTime.getTime()
             );
         });
-        it('requestTimeToRun: Checks if graph is written to database', async() => {
+        it('requestTimeToRun: Checks if graph is written to database', async () => {
             da.dropDatabase();
-            let graph = [   
+            let graph = [
                 21, 13, 22, 29, 35, 10, 17, 20, 39, 37,
                 21, 13, 22, 29, 35, 10, 17, 20, 39, 37,
                 21, 13, 22, 29, 35, 10, 17, 20, 39, 37,
@@ -39,7 +39,7 @@ if (true) {
                 start: new Date(2010, 0, 24, 15, 30),
                 end: new Date(2010, 0, 24, 18, 30)
             };
-            let expectedLowerGraph = [  
+            let expectedLowerGraph = [
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -47,7 +47,7 @@ if (true) {
                 21, 13, 22, 29, 35, 10, 17, 20, 39, 37,
                 21, 13, 22, 29, 35, 10, 17, 20, 39, 37
             ];
-            let expectedUpperGraph = [  
+            let expectedUpperGraph = [
                 21, 13, 22, 29, 35, 10, 17, 20, 39, 37,
                 21, 13, 22, 29, 35, 10, 17, 20, 39, 37,
                 21, 13, 22, 29, 35, 10, 17, 20, 39, 37,
@@ -55,20 +55,20 @@ if (true) {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             ];
-            
-            await rqstMngr.requestTimeToRun(graph, timeIntervalObject); 
+
+            await rqstMngr.requestTimeToRun(graph, timeIntervalObject);
 
             let lowerGraph = await da.getGraph("demandGraph-Y2010-M0-D24-H15");
             let upperGraph = await da.getGraph("demandGraph-Y2010-M0-D24-H16");
 
             assert(JSON.stringify(lowerGraph.values) === JSON.stringify(expectedLowerGraph) &&
-                   JSON.stringify(upperGraph.values) === JSON.stringify(expectedUpperGraph));
+                JSON.stringify(upperGraph.values) === JSON.stringify(expectedUpperGraph));
         });
-        
+
         // Remove current demnad
-        it('removeCurrentDemand: Checks if current demand is actually removed', async() => {
+        it('removeCurrentDemand: Checks if current demand is actually removed', async () => {
             da.dropDatabase();
-            let graph = [   
+            let graph = [
                 21, 13, 22, 29, 35, 10, 17, 20, 39, 37,
                 21, 13, 22, 29, 35, 10, 17, 20, 39, 37,
                 21, 13, 22, 29, 35, 10, 17, 20, 39, 37,
@@ -80,7 +80,7 @@ if (true) {
                 start: new Date(2010, 0, 24, 15, 45),
                 end: new Date(2010, 0, 24, 16, 45)
             };
-            let expectedGraph = [  
+            let expectedGraph = [
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -97,12 +97,12 @@ if (true) {
             let upperGraph = await da.getGraph("demandGraph-Y2010-M0-D24-H16");
 
             assert(res === true &&
-                   JSON.stringify(lowerGraph.values) === JSON.stringify(expectedGraph) &&
-                   JSON.stringify(upperGraph.values) === JSON.stringify(expectedGraph));
+                JSON.stringify(lowerGraph.values) === JSON.stringify(expectedGraph) &&
+                JSON.stringify(upperGraph.values) === JSON.stringify(expectedGraph));
         });
 
-        // TODO: gatherSurplusGraph: Test not done, commented out
-        /* 
+        // gatherSurplusGraph: Test not done, commented out (Not needed for MVP)
+        /*
         it('gatherSurplusGraph: Testing if surplus graph is gathered', async() => {
             let graph = [21, 13, 22, 29];
             let isScheduled = true;
@@ -112,5 +112,5 @@ if (true) {
                 };
         });
         */
-    }); 
+    });
 }

@@ -127,7 +127,7 @@ function handleDeviceManagerCommands() {
 }
 
 function handleSchedulerCommands() {
-    // TODO: make work (Remove return)
+    // TODO: make work (Remove return) (In case scheduler actually need to send commands)
     return;
 
     let commands = sd.getCommandQueue();

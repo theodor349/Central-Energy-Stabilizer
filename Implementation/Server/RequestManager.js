@@ -7,14 +7,14 @@ const functions = {
 
 module.exports = functions;
 
-function requestTimeToRun (graph, timeIntervalObject) {
+function requestTimeToRun(graph, timeIntervalObject) {
     return new Promise(async (resolve, reject) => {
         let outputIntervalObject = {
             start: undefined,
             end: undefined
         };
-        
-        // TODO: Nedenstående linje virker ikke endnu (derfor kommenteret ud)
+
+        // Does not work and is not needed for MVP
         //let gatheredSurplusGraph = gatherSurplusGraph();
         fitDemandToSurplus(outputIntervalObject, timeIntervalObject, graph);
 
@@ -24,19 +24,19 @@ function requestTimeToRun (graph, timeIntervalObject) {
     });
 }
 
-function removeCurrentDemand (currentSchedule, graph) {
+function removeCurrentDemand(currentSchedule, graph) {
     return new Promise(async (resolve, reject) => {
         await forecaster.removeDemand(currentSchedule.start, graph);
-        
+
         resolve(true);
     });
 }
 
-/* 
+/*
     SECTION: Helper functions
-*/ 
+*/
 
-function gatherSurplusGraph(startTime) { // TODO: Parametre ændres nok
+function gatherSurplusGraph(startTime) { // Parameter will most likly be changed (Not needed for MVP)
     return new Promise(async (resolve, reject) => {
         resolve(forecaster.updateSurplus(startTime));
     });
@@ -45,7 +45,7 @@ function gatherSurplusGraph(startTime) { // TODO: Parametre ændres nok
 function fitDemandToSurplus(outputIntervalObject, timeIntervalObject, graph) {
     return new Promise(async (resolve, reject) => {
         outputIntervalObject.start = timeIntervalObject.start;
-        
+
         // Adds graph length in minutes to interval start
         let finishTime = new Date();
         finishTime.setTime(timeIntervalObject.start.getTime() + (1000 * 60) * graph.length);

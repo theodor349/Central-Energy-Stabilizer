@@ -348,7 +348,6 @@ function testDeviceInit(deviceInfo, socket) {
 }
 
 function testReceiveId(id, socket) {
-    // TODO: Check for existing ID on DB
     if (uuid.isUuid(id) === true) {
         addConnection(id, socket);
         return true;

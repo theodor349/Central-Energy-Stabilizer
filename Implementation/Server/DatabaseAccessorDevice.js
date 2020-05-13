@@ -31,7 +31,6 @@ async function run(connectionString) {
         useNewUrlParser: true,
         useUnifiedTopology: true
     });
-    //test();
 }
 
 async function dropDatabase() {
@@ -41,14 +40,6 @@ async function dropDatabase() {
         await mongoose.connection.dropDatabase();
         resolve(true);
     })
-}
-
-// TODO: Remove tests
-function test() {
-    dropDatabase();
-    for (var i = 0; i < 100; i++) {
-        createDevice(createDevicePrototype("id" + i));
-    }
 }
 
 /*
@@ -306,8 +297,7 @@ function getDeviceHelper(id) {
 }
 
 /*
-    TODO: Remove
-          For testing only
+    For testing only
 */
 
 function createDevicePrototype(id) {

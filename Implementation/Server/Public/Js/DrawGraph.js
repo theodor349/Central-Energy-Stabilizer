@@ -86,12 +86,6 @@ function convertArray(graphValues) {
     return newGraph;
 }
 
-
-
-
-
-
-
 /*
 --------------------------------------------------------------------------------
 END OF DEFINITIONS
@@ -290,9 +284,7 @@ function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWid
     } else {
         point = graphValues[valueIndex];
     }
-    if (name === "surplusGraph") {
-        console.log("Plotting: " + point);
-    }
+
     let pointValue = point / 1000 * (graph.innerHeight / graph.horizontalAmount);
     let newVerticalValue = verticalOrigin - pointValue;
     let newHorizontalValue;

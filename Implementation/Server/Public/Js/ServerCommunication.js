@@ -44,6 +44,7 @@ socket.on('createGraphValues', function(graphObject) {
 
 let cachedUpdateCommands = [];
 socket.on('graphValueUpdate', function(graphPoint) {
+    console.log(graphPoint);
     let graphValueObject = getGraphValueObject(graphPoint.name);
 
     if (graphValueObject === undefined) {
@@ -59,8 +60,6 @@ socket.on('graphValueUpdate', function(graphPoint) {
 });
 
 function executeUpdatePoint(graphValueObject, graphPoint) {
-    console.log(graphPoint);
-    console.log(graphValueObject);
     if ((graphValueObject.graphPointer + 1) % graphValueObject.valuesToSkip == 0) {
         updateGraphValues(graphPoint, graphValueObject);
     } else {

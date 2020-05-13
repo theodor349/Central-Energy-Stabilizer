@@ -145,6 +145,7 @@ async function graphUpdate() {
     lastGraphUpdate = new Date();
     return new Promise(async (resolve, reject) => {
         date = new Date();
+        date.setMinutes(date.getMinutes() - 2);
         let graph = await dbG.getGraph(util.dateToId("surplusGraph", date));
         let minute = date.getMinutes();
         let point = [graph.values[minute]];

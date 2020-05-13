@@ -99,3 +99,27 @@ socket.on('disconnect', function() {
 socket.on('removeDevice', function(device) {
     removeDevice(device);
 });
+
+socket.on('savedKwhData', function(amount) {
+    updateSavedKwhData(amount);
+});
+
+
+let frontEndSavedKWh = 0;
+let frontEndSavedKWhContainer = document.getElementById('savedKwhContainer');
+
+function updateSavedKwhData(amount) {
+
+    if (frontEndSavedKWh === 0) {
+        frontEndSavedKWhContainer.innerHTML = amount;
+    } else if (frontEndSavedKWh < amount) {
+
+        setTimeout(function() {
+            frontEndSavedKWh++;
+            frontEndSavedKWhContainer.innerHTML = frontEndSavedKWh;
+            updateSavedKwhData(amount);
+        }, 10);
+    }
+
+
+}

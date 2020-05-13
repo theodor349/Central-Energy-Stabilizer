@@ -2,55 +2,55 @@
 <html lang="da" dir="ltr">
 
 <head>
-  <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,600,700,900&display=swap&subset=latin-ext" rel="stylesheet">
-  <link rel="stylesheet" href="Css/Main.css">
-  <link rel="stylesheet" href="Css/Graphs.css">
-  <meta charset="utf-8">
-  <title>Pebert – The energy saving bot</title>
+    <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,600,700,900&display=swap&subset=latin-ext" rel="stylesheet">
+    <link rel="stylesheet" href="Css/Main.css">
+    <link rel="stylesheet" href="Css/Graphs.css">
+    <meta charset="utf-8">
+    <title>Pebert – The energy saving bot</title>
 </head>
 
 
 <body onresize="reloadPageElements()">
-  <header>
-    <h1>WattsApp</h1>
-    <h2>The energy saving network bot</h2>
-    <hr>
-  </header>
+    <header>
+        <h1>WattsApp</h1>
+        <h2>The energy saving network bot</h2>
+        <hr>
+    </header>
 
-  <img src="./Images/graph.svg" class="headerGraph" alt="graph bro">
-  <img src="./Images/pebert.svg" class="pebert" alt="Pebert bro">
-  <section id="connectionLost">
-      <h1>Lost connection to server</h1>
-  </section>
-  <section id ="mainGraphContainer">
+    <img src="./Images/graph.svg" class="headerGraph" alt="graph bro">
+    <img src="./Images/pebert.svg" class="pebert" alt="Pebert bro">
+    <section id="connectionLost">
+        <h1>Lost connection to server</h1>
+    </section>
+    <section id="mainGraphContainer">
 
-  </section>
+    </section>
 
-  <section id="mainGraphInfo">
-      <div>
-          <h2>Renewable energy saved: </h2>
-          <h2 id="savedKwhContainer">0</h2>
-      </div>
+    <section id="mainGraphInfo">
+        <div>
+            <h2>Peaker energy saved (watt): </h2>
+            <h2 id="savedKwhContainer">0</h2>
+        </div>
 
-      <div>
-          <h2>saved energy used: </h2>
-          <h2 id="usedKwhContainer">0</h2>
-      </div>
+        <div>
+            <h2>Renewable energy used (watt): </h2>
+            <h2 id="usedKwhContainer">0</h2>
+        </div>
 
-  </section>
+    </section>
 
-  <section id="serverDevices">
+    <section id="serverDevices">
 
-  </section>
+    </section>
 
 
 
-  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="./Js/ServerCommunication.js"></script>
-  <script src="./Js/GenerateDeviceInHtml.js"></script>
-  <script src="./Js/UserInteractions.js"></script>
-  <script src="./Js/DrawGraph.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./Js/ServerCommunication.js"></script>
+    <script src="./Js/GenerateDeviceInHtml.js"></script>
+    <script src="./Js/UserInteractions.js"></script>
+    <script src="./Js/DrawGraph.js"></script>
 
 
 </body>

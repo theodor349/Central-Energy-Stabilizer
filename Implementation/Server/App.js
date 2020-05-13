@@ -25,6 +25,7 @@ app.get('/', function(req, res) {
 
 const port = 3000;
 const updateInterval = 1 * 1000;
+const waterHeaterBaseLoad = 100; // in watts
 
 /*
     SECTION: Timers
@@ -145,7 +146,6 @@ function handleUserManagerCommands() {
 
 function executeCommand(command) {
     print("Send Command: " + command.command + " Payload: " + command.payload);
-    console.log(command.payload);
     let socket = command.socket;
     let payload = command.payload;
     command = command.command;
@@ -166,6 +166,10 @@ function updateUserManager() {
     updatedDevices.concat(sd.getUpdatedDevices());
     um.sendUpdatedDevices(updatedDevices);
     um.graphUpdate();
+
+    // Kwh saved
+    let ticksSaved = sd.getTicksSaved();
+    um.sendKwhsSaved(ticksSaved * waterHeaterBaseLoad);
 }
 
 /*

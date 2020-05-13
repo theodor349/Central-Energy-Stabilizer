@@ -8,10 +8,13 @@ const functions = {
     getCommandQueue: () => getCommandQueue(),
     clearUpdatedDevices: () => clearUpdatedDevices(),
     getUpdatedDevices: () => getUpdatedDevices(),
+    getTicksSaved: () => getTicksSaved(),
 }
 module.exports = functions;
 
 let updatedDevices = [];
+let baseBadTicks = 0;
+let powerBadTicks = 0;
 
 async function scheduleDevice(device) {
     return new Promise(async (resolve, reject) => {
@@ -28,8 +31,19 @@ async function scheduleDevice(device) {
         let schedule = {
             start: date
         }
-        console.log("--- Surplus: " + surplusGraph.values[date.getMinutes()]);
-        console.log("--- Surplus: " + device.nextState);
+
+        // To show how much we have saved
+        if (surplusGraph.values[date.getMinutes()] <= 0) {
+            // Add bad base tick
+            baseBadTicks += 1
+
+            // Add bad power tick
+            if (device.currentState === "on") {
+                powerBadTicks += 1
+            }
+        }
+
+        console.log("Surplus: " + surplusGraph.values[date.getMinutes()]);
         // If there is surplus and the device is not scheduled to "on"
         if (surplusGraph.values[date.getMinutes()] > 0 && device.nextState !== "on") {
             await daD.updateDevice(device.deviceId, "nextState", "on");
@@ -58,6 +72,10 @@ async function scheduleDevice(device) {
 /*
     SECTION: Helper Functions
 */
+
+function getTicksSaved() {
+    return baseBadTicks - powerBadTicks;
+}
 
 function addUpdatedDevice(deviceId) {
     updatedDevices.push(deviceId);

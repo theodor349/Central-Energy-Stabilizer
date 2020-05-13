@@ -12,7 +12,8 @@ const functions = {
     graphUpdate: () => graphUpdate(),
     getCommandQueue: () => getCommandQueue(),
     sendAPISurplusGraph: (socket, date) => sendAPISurplusGraph(socket, date),
-    sendSurplusGraph: (socket, date) => sendSurplusGraph(socket, date)
+    sendSurplusGraph: (socket, date) => sendSurplusGraph(socket, date),
+    sendKwhsSaved: (kwhSaved) => sendKwhsSaved(kwhSaved),
 }
 module.exports = functions;
 let commandQueue = [];
@@ -157,6 +158,10 @@ async function graphUpdate() {
         }
         createCommand("userSpace", "graphValueUpdate", payload);
     });
+}
+
+function sendKwhsSaved(kwhSaved) {
+    createCommand("userSpace", "savedKwhData", kwhSaved);
 }
 
 /*

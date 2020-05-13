@@ -18,7 +18,9 @@ let newGraph = [];
 let newGraphName = "";
 
 socket.on('createGraphValues', function(graphObject) {
-
+    if (graphObject.name === "surplusGraph") {
+        console.log("h: " + graphObject.hour + " length: " + graphObject.values.length);
+    }
     // if the graph has already been drawn return
     if (getGraphValueObject(graphObject.name) !== undefined) {
         return;
@@ -67,9 +69,18 @@ socket.on('graphValueUpdate', function(graphPoint) {
 });
 
 function executeUpdatePoint(graphValueObject, graphPoint) {
-    if ((graphValueObject.graphPointer + 1) % graphValueObject.valuesToSkip == 0) {
+    if (graphValueObject.name === "surplusGraph") {
+        console.log("---");
+        console.log("h: " + graphPoint.hour + " m: " + graphPoint.minute);
+        console.log("y: " + graphPoint.values[0]);
+        console.log("Graph pointer: " + graphValueObject.graphPointer);
+    }
+
+    if ((graphValueObject.graphPointer - 1) % graphValueObject.valuesToSkip == 0) {
+        console.log("Plotting");
         updateGraphValues(graphPoint, graphValueObject);
     } else {
+        console.log("Not Plotting");
         graphValueObject.graphPointer += 1;
     }
 }

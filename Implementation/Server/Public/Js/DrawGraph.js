@@ -39,12 +39,12 @@ let mainGraph = {
 };
 
 let demandGraphStyle = {
-    steps: 1440 / 4, // must be of the formula 1440 / x (1440 % x must equal 0)
+    steps: 1440 / 2, // must be of the formula 1440 / x (1440 % x must equal 0)
     style: "graphPathRed"
 }
 
 let otherDemandGraphStyle = {
-    steps: 1440 / 4, // must be of the formula 1440 / x (1440 % x must equal 0)
+    steps: 1440 / 2, // must be of the formula 1440 / x (1440 % x must equal 0)
     style: "graphPathGreen"
 }
 
@@ -281,14 +281,11 @@ function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWid
     let pointValue = point / 1000 * (graph.innerHeight / graph.horizontalAmount);
     let newVerticalValue = verticalOrigin - pointValue;
     let newHorizontalValue;
-    if (name === "surplusGraph") {}
 
     // testing we are not doing an update of the graph
     if (valueIndex !== 0 || graphValues.length === 1) {
         newHorizontalValue = previousHorizontalValue += pathWidth;
-        if (name === "surplusGraph") {}
     } else {
-        if (name === "surplusGraph") {}
         newHorizontalValue = previousHorizontalValue;
     }
 
@@ -307,6 +304,11 @@ function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWid
     graphValueObject.previousHorizontalValue = previousHorizontalValue;
     graphValueObject.graphPointer += 1;
     valueIndex += valuesToSkip;
+
+    if (name === "surplusGraph") {
+        console.log("y Value: " + point);
+        console.log("Pointer Index: " + graphValueObject.graphPointer);
+    }
 
     if (valueIndex < graphValues.length || graphValues.length === graph.maxPoints && valueIndex <= graphValues.length) {
         let newDrawingGraph = setTimeout(function() {

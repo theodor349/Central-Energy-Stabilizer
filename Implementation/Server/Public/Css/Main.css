@@ -68,6 +68,18 @@ header {
         border: solid 0.5px #333;
     }
 
+    #mainGraphInfo{
+        color: #333;
+    }
+
+    #mainGraphInfo h2{
+        margin: 0;
+    }
+
+    #mainGraphInfo h2:last-child{
+        margin-bottom: 20px;
+    }
+
     #connectionLost{
         display: none;
     }

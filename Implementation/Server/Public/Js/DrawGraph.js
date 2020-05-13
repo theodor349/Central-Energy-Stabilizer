@@ -261,8 +261,7 @@ function drawGraphValues(name, graphValues, style, graph) {
         previousVerticalValue: previousVerticalValue,
         previousHorizontalValue: previousHorizontalValue,
         graph: graph,
-        graphPointer: 0
-
+        graphPointer: 0,
     }
 
     activeGraphValues.push(graphValueObject)

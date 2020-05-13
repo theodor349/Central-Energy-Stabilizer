@@ -1,4 +1,4 @@
-const refreshDelay = 100;
+const refreshDelay = 200;
 let allowRefresh = true;
 
 

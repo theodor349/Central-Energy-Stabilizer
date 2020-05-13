@@ -16,7 +16,11 @@ let newGraph = [];
 let newGraphName = "";
 
 socket.on('createGraphValues', function(graphObject) {
-    if (graphObject.name === "surplusGraph") {}
+
+    // if the graph has already been drawn return
+    if (getGraphValueObject(graphObject.name) !== undefined) {
+        return;
+    }
 
     if (newGraphName === graphObject.name) {
         if (graphObject.values !== "done") {

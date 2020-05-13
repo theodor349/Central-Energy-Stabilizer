@@ -55,7 +55,7 @@ function getPropertyInformation(device, propertyItem) {
             break;
 
         case "maxPower":
-            property.name = "Power";
+            property.name = "Max Power";
             if (device.maxPower !== undefined) {
                 property.value = device.maxPower.toFixed(0);
             }

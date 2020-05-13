@@ -19,7 +19,7 @@ async function scheduleDevice(device) {
 
         // If the device is on add demand
         if (device.currentState === "on") {
-            let demandGraph = [3000 / (60 * 60) * 10]; // TODO: Make dynamic
+            let demandGraph = [device.currentPower / (60 * 60) * 10]; // TODO: Remove *10
             await forecaster.addDemand(date, demandGraph);
         }
 

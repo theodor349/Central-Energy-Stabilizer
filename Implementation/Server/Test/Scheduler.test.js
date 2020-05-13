@@ -46,16 +46,16 @@ function createAutoServerTestDevice() {
             minTemp: 55,
             maxTemp: 90
         }
-        
+
     };
     return serverTestDevice;
 }
 
-if (false) {
+if (true) {
     describe('Scheduler', () => {
 
         // Schedule device
-        it('scheduleDevice: Schedule automatic device from "off" to "on" when surplus', async() => {
+        it('scheduleDevice: Schedule automatic device from "off" to "on" when surplus', async () => {
             daG.dropDatabase();
             daD.dropDatabase();
             scheduler.getCommandQueue();
@@ -70,18 +70,18 @@ if (false) {
             let dbDevice = await daD.getDevice(testDevice.deviceId);
             let updatedDevices = scheduler.getUpdatedDevices();
 
-            assert(res === true && 
+            assert(res === true &&
                 dbDevice.nextState === "on" &&
                 dbDevice.isScheduled === true &&
                 updatedDevices.length === 1);
-                          
+
         })
-        it('scheduleDevice: Schedule automatic device from "on" to "off" when no surplus', async() => {     
+        it('scheduleDevice: Schedule automatic device from "on" to "off" when no surplus', async () => {
             daG.dropDatabase();
             daD.dropDatabase();
             scheduler.getCommandQueue();
             scheduler.clearUpdatedDevices();
-            
+
             await createSurplusGraph(-1000);
             let testDevice = createAutoServerTestDevice();
             testDevice.currentState = "on";
@@ -92,17 +92,17 @@ if (false) {
             let dbDevice = await daD.getDevice(testDevice.deviceId);
             let updatedDevices = scheduler.getUpdatedDevices();
 
-            assert(res === true && 
+            assert(res === true &&
                 dbDevice.nextState === "off" &&
                 dbDevice.isScheduled === true &&
                 updatedDevices.length === 1);
         })
-        it('scheduleDevice: When already scheduled to "off" when surplus', async() => {     
+        it('scheduleDevice: When already scheduled to "off" when surplus', async () => {
             daG.dropDatabase();
             daD.dropDatabase();
             scheduler.getCommandQueue();
             scheduler.clearUpdatedDevices();
-            
+
             await createSurplusGraph(1000);
             let testDevice = createAutoServerTestDevice();
             testDevice.currentState = "off";
@@ -114,22 +114,17 @@ if (false) {
             let dbDevice = await daD.getDevice(testDevice.deviceId);
             let updatedDevices = scheduler.getUpdatedDevices();
 
-            console.log(res);
-            console.log(dbDevice.nextState);
-            console.log(dbDevice.isScheduled);
-            console.log(updatedDevices.length);
-
-            assert(res === true && 
+            assert(res === true &&
                 dbDevice.nextState === "on" &&
                 dbDevice.isScheduled === true &&
                 updatedDevices.length === 1);
         })
-        it('scheduleDevice: When already scheduled to "off" when no surplus', async() => {     
+        it('scheduleDevice: When already scheduled to "off" when no surplus', async () => {
             daG.dropDatabase();
             daD.dropDatabase();
             scheduler.getCommandQueue();
             scheduler.clearUpdatedDevices();
-            
+
             await createSurplusGraph(-1000);
             let testDevice = createAutoServerTestDevice();
             testDevice.currentState = "off";
@@ -141,7 +136,7 @@ if (false) {
             let dbDevice = await daD.getDevice(testDevice.deviceId);
             let updatedDevices = scheduler.getUpdatedDevices();
 
-            assert(res === false && 
+            assert(res === false &&
                 dbDevice.nextState === "off" &&
                 dbDevice.isScheduled === true &&
                 updatedDevices.length === 0);
@@ -162,7 +157,7 @@ function getRelativeDate(mins, operator) {
 }
 
 // Creates a positive or negative surplus graph depending on input value
-async function createSurplusGraph (value) {
+async function createSurplusGraph(value) {
     let date = new Date();
     let id = util.dateToId("surplusGraph", date);
     let values = [];
@@ -171,7 +166,7 @@ async function createSurplusGraph (value) {
         values[i] = value;
     }
 
-    return new Promise (async (resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         daG.updateGraph(id, values)
             .then((val) => {
                 resolve(true);

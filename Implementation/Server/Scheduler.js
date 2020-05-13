@@ -23,7 +23,7 @@ async function scheduleDevice(device) {
             await forecaster.addDemand(date, demandGraph);
         }
 
-        let graphId = util.dateToId("apiDemand", date);
+        let graphId = util.dateToId("surplusGraph", date);
         let surplusGraph = await daG.getGraph(graphId);
         let schedule = {
             start: date

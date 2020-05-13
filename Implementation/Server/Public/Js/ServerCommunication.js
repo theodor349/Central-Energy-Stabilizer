@@ -2,6 +2,8 @@ let socket = io('/user');
 
 let knownDevices = [];
 
+let connectionText = document.getElementById('connectionLost');
+
 socket.on('updateDevice', function(device) {
     if (knownDevices.includes(device.deviceId)) {
         updateDevice(device);
@@ -74,10 +76,12 @@ function executeUpdatePoint(graphValueObject, graphPoint) {
 
 socket.on('connect', function() {
     drawGraph(mainGraph);
+    connectionText.style.display = "none";
 });
 
 socket.on('disconnect', function() {
     deleteActiveGraphs();
+    connectionText.style.display = "block";
 });
 
 

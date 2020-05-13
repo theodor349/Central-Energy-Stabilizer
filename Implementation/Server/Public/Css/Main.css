@@ -68,6 +68,10 @@ header {
         border: solid 0.5px #333;
     }
 
+    #connectionLost h1{
+        font-size: 4em;
+    }
+
     #serverDevices{
         display: inline-block;
         position: relative;

@@ -10,6 +10,8 @@ let Device = mongoose.model("Devices", new mongoose.Schema({
 
     // From Device
     deviceId: String,
+    name: String,
+    maxPower: Number,
     isAutomatic: Boolean,
     currentPower: Number,
     currentState: String,
@@ -79,6 +81,8 @@ async function createDevice(device) {
 
                 // From Device
                 deviceId: serilizedDevice.deviceId,
+                name: serilizedDevice.name,
+                maxPower: serilizedDevice.maxPower,
                 isAutomatic: serilizedDevice.isAutomatic,
                 currentPower: serilizedDevice.currentPower,
                 currentState: serilizedDevice.currentState,
@@ -200,6 +204,16 @@ async function updateDevice(id, field, value) {
                     case "deviceType":
                         update = {
                             deviceType: value
+                        };
+                        break;
+                    case "name":
+                        update = {
+                            name: value
+                        };
+                        break;
+                    case "maxPower":
+                        update = {
+                            maxPower: value
                         };
                         break;
                     case "programs":

@@ -1,9 +1,11 @@
 {
-"isAutomatic": true,
-"deviceType": "Water Heater",
-"uniqueProperties": {
-    "minTemp": 55,
-    "maxTemp": 90,
-    "currentTemp": null
-    }
+    "name": "Snuske",
+    "maxPower": 3000,
+    "isAutomatic": true,
+    "deviceType": "Water Heater",
+    "uniqueProperties": {
+        "minTemp": 55,
+        "maxTemp": 90,
+        "currentTemp": null
+        }
 }

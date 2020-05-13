@@ -19,7 +19,7 @@ async function scheduleDevice(device) {
 
         // If the device is on add demand
         if (device.currentState === "on") {
-            let demandGraph = [3000 / (60 * 60)]; // TODO: Make dynamic
+            let demandGraph = [3000 / (60 * 60) * 10]; // TODO: Make dynamic
             await forecaster.addDemand(date, demandGraph);
         }
 
@@ -28,7 +28,8 @@ async function scheduleDevice(device) {
         let schedule = {
             start: date
         }
-
+        console.log("--- Surplus: " + surplusGraph.values[date.getMinutes()]);
+        console.log("--- Surplus: " + device.nextState);
         // If there is surplus and the device is not scheduled to "on"
         if (surplusGraph.values[date.getMinutes()] > 0 && device.nextState !== "on") {
             await daD.updateDevice(device.deviceId, "nextState", "on");
@@ -40,7 +41,7 @@ async function scheduleDevice(device) {
             resolve(true);
         }
         // If there is no surplus and the device is not scheduled to "off"
-        else if (device.nextState !== "off") {
+        else if (surplusGraph.values[date.getMinutes()] <= 0 && device.nextState !== "off") {
             await daD.updateDevice(device.deviceId, "nextState", "off");
             await daD.updateDevice(device.deviceId, "isScheduled", true);
             await daD.updateDevice(device.deviceId, "schedule", schedule);

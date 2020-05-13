@@ -9,12 +9,20 @@ const functions = {
     clearUpdatedDevices: () => clearUpdatedDevices(),
     getUpdatedDevices: () => getUpdatedDevices(),
     getTicksSaved: () => getTicksSaved(),
+    getGoodPowerUsed: (basePerTick) => getGoodPowerUsed(basePerTick),
+    setTicksPerHour: (ticksPerHour) => setTicksPerHour(ticksPerHour),
 }
 module.exports = functions;
 
 let updatedDevices = [];
+
 let baseBadTicks = 0;
 let powerBadTicks = 0;
+
+let baseGoodTicks = 0;
+let powerGoodPower = 0;
+
+let ticksPerHours;
 
 async function scheduleDevice(device) {
     return new Promise(async (resolve, reject) => {
@@ -22,15 +30,12 @@ async function scheduleDevice(device) {
 
         // If the device is on add demand
         if (device.currentState === "on") {
-            let demandGraph = [device.currentPower / (60 * 60) * 10]; // TODO: Remove *10
+            let demandGraph = [device.currentPower / (ticksPerHours)];
             await forecaster.addDemand(date, demandGraph);
         }
 
-        let graphId = util.dateToId("surplusGraph", date);
+        let graphId = util.dateToId("apiSurplusGraph", date);
         let surplusGraph = await daG.getGraph(graphId);
-        let schedule = {
-            start: date
-        }
 
         // To show how much we have saved
         if (surplusGraph.values[date.getMinutes()] <= 0) {
@@ -41,9 +46,22 @@ async function scheduleDevice(device) {
             if (device.currentState === "on") {
                 powerBadTicks += 1
             }
+        } else {
+            // Add good base tick
+            baseGoodTicks += 1
+
+            // Add bad power tick
+            if (device.currentState === "on") {
+                powerGoodPower += device.currentPower / (ticksPerHour);
+            }
         }
 
-        console.log("Surplus: " + surplusGraph.values[date.getMinutes()]);
+        graphId = util.dateToId("surplusGraph", date);
+        surplusGraph = await daG.getGraph(graphId);
+        let schedule = {
+            start: date
+        }
+
         // If there is surplus and the device is not scheduled to "on"
         if (surplusGraph.values[date.getMinutes()] > 0 && device.nextState !== "on") {
             await daD.updateDevice(device.deviceId, "nextState", "on");
@@ -75,6 +93,14 @@ async function scheduleDevice(device) {
 
 function getTicksSaved() {
     return baseBadTicks - powerBadTicks;
+}
+
+function getGoodPowerUsed(basePerTick) {
+    return powerGoodPower - baseGoodTicks * basePerTick;
+}
+
+function setTicksPerHour(_ticksPerHour) {
+    ticksPerHour = _ticksPerHour;
 }
 
 function addUpdatedDevice(deviceId) {

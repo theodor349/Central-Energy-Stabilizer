@@ -130,7 +130,7 @@ function updateSavedKwhData(amount) {
 let frontEndUsedKWh = 0;
 let frontEndUsedKWhContainer = document.getElementById('usedKwhContainer');
 
-function updateSavedKwhData(amount) {
+function updateUsedKwhData(amount) {
 
     if (frontEndUsedKWh === 0) {
         frontEndUsedKWhContainer.innerHTML = amount;

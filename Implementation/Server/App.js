@@ -26,6 +26,7 @@ app.get('/', function(req, res) {
 const port = 3000;
 const updateInterval = 1 * 1000;
 const waterHeaterBaseLoad = 100; // in watts
+sd.setTicksPerHour(3600 / (updateInterval / 1000));
 
 /*
     SECTION: Timers
@@ -169,7 +170,9 @@ function updateUserManager() {
 
     // Kwh saved
     let ticksSaved = sd.getTicksSaved();
-    um.sendKwhsSaved(ticksSaved * waterHeaterBaseLoad);
+    um.sendKwhsSaved(ticksSaved * waterHeaterBaseLoad * (1 / ticksPerHour));
+    let powerUsed = sd.getGoodPowerUsed(waterHeaterBaseLoad * (1 / ticksPerHour));
+    um.sendKwhsUsed(powerUsed);
 }
 
 /*

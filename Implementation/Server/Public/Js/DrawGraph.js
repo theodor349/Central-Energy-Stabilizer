@@ -39,12 +39,12 @@ let mainGraph = {
 };
 
 let demandGraphStyle = {
-    steps: 1440 / 2, // must be of the formula 1440 / x (1440 % x must equal 0)
+    steps: 1440 / 4, // must be of the formula 1440 / x (1440 % x must equal 0)
     style: "graphPathRed"
 }
 
 let otherDemandGraphStyle = {
-    steps: 1440 / 2, // must be of the formula 1440 / x (1440 % x must equal 0)
+    steps: 1440 / 4, // must be of the formula 1440 / x (1440 % x must equal 0)
     style: "graphPathGreen"
 }
 

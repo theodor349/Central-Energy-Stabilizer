@@ -46,6 +46,8 @@ header {
     padding: 20px 0;
     color: #333;
     text-align: center;
+    width: 100vw;
+    max-width: 1000px;
     margin-bottom: 40px;
 }
     header h1{
@@ -69,15 +71,18 @@ header {
     }
 
     #mainGraphInfo{
-        color: #333;
+        color: #444;
+        display: flex;
+        justify-content: space-around;
     }
 
     #mainGraphInfo h2{
         margin: 0;
+
     }
 
     #mainGraphInfo h2:last-child{
-        margin-bottom: 20px;
+        margin-bottom: 50px;
     }
 
     #connectionLost{
@@ -119,6 +124,7 @@ header {
 
         #serverDevices > section > header > ul > li{
             line-height: 38px;
+            min-width: 140px;
         }
 
     #serverDevices section header{

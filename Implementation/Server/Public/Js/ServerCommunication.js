@@ -104,6 +104,9 @@ socket.on('savedKwhData', function(amount) {
     updateSavedKwhData(amount);
 });
 
+socket.on('usedKwhData', function(amount) {
+    updateUsedKwhData(amount);
+});
 
 let frontEndSavedKWh = 0;
 let frontEndSavedKWhContainer = document.getElementById('savedKwhContainer');
@@ -117,6 +120,25 @@ function updateSavedKwhData(amount) {
         setTimeout(function() {
             frontEndSavedKWh++;
             frontEndSavedKWhContainer.innerHTML = frontEndSavedKWh;
+            updateSavedKwhData(amount);
+        }, 10);
+    }
+
+
+}
+
+let frontEndUsedKWh = 0;
+let frontEndUsedKWhContainer = document.getElementById('usedKwhContainer');
+
+function updateSavedKwhData(amount) {
+
+    if (frontEndUsedKWh === 0) {
+        frontEndUsedKWhContainer.innerHTML = amount;
+    } else if (frontEndUsedKWh < amount) {
+
+        setTimeout(function() {
+            frontEndUsedKWh++;
+            frontEndUsedKWhContainer.innerHTML = frontEndUsedKWh;
             updateSavedKwhData(amount);
         }, 10);
     }

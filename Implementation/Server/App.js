@@ -50,8 +50,13 @@ http.listen(port, () => {
 
 const userSpace = io.of('/user');
 userSpace.on('connection', (socket) => {
-    um.onConnect(socket, dm.getActiveConnections());
-})
+
+    socket.on('getMainGraphs', () => {
+        um.onConnect(socket, dm.getActiveConnections());
+    });
+
+
+});
 
 const deviceSpace = io.of('/device');
 deviceSpace.on('connection', (socket) => {

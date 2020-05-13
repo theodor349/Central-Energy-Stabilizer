@@ -16,9 +16,7 @@ let newGraph = [];
 let newGraphName = "";
 
 socket.on('createGraphValues', function(graphObject) {
-    if (graphObject.name === "surplusGraph") {
-        console.log("h: " + graphObject.hour + " num m: " + graphObject.values.length);
-    }
+    if (graphObject.name === "surplusGraph") {}
 
     if (newGraphName === graphObject.name) {
         if (graphObject.values !== "done") {
@@ -48,10 +46,6 @@ socket.on('createGraphValues', function(graphObject) {
 
 let cachedUpdateCommands = [];
 socket.on('graphValueUpdate', function(graphPoint) {
-    console.log("---");
-    if (graphPoint.name === "surplusGraph") {
-        console.log("h: " + graphPoint.hour + " m: " + graphPoint.minute);
-    }
     let graphValueObject = getGraphValueObject(graphPoint.name);
 
     if (graphValueObject === undefined || !graphValueObject.isDone) {
@@ -73,6 +67,14 @@ function executeUpdatePoint(graphValueObject, graphPoint) {
         graphValueObject.graphPointer += 1;
     }
 }
+
+socket.on('connect', function() {
+    drawGraph(mainGraph);
+});
+
+socket.on('disconnect', function() {
+    deleteActiveGraphs();
+});
 
 
 socket.on('removeDevice', function(device) {

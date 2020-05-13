@@ -26,8 +26,8 @@ let mainGraph = {
     innerWidth: null,
     horizontalLines: 20,
     horizontalValue: "Kw",
-    horizontalOrigin: 5,
-    horizontalAmount: 10,
+    horizontalOrigin: 10,
+    horizontalAmount: 20,
     verticalLines: 48,
     verticalValue: "time interval",
     verticalAmount: 24,
@@ -55,14 +55,6 @@ let otherDemandGraphStyle = {
 
 
 
-
-
-
-
-drawGraph(mainGraph);
-
-
-
 function drawGraph(graph) {
 
     drawSvgContainer(graph);
@@ -71,6 +63,8 @@ function drawGraph(graph) {
     drawGraphHorizontalLines(graph);
     drawGraphVerticalLines(graph);
     activeGraphs.push(graph.htmlElement);
+
+    socket.emit('getMainGraphs');
 }
 
 function convertArray(graphValues) {
@@ -288,20 +282,14 @@ function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWid
     let pointValue = point / 1000 * (graph.innerHeight / graph.horizontalAmount);
     let newVerticalValue = verticalOrigin - pointValue;
     let newHorizontalValue;
-    if (name === "surplusGraph") {
-        console.log("Plotting: " + point + " at: " + newVerticalValue + " ratio: " + (point / (pointValue)));
-    }
+    if (name === "surplusGraph") {}
 
     // testing we are not doing an update of the graph
     if (valueIndex !== 0 || graphValues.length === 1) {
         newHorizontalValue = previousHorizontalValue += pathWidth;
-        if (name === "surplusGraph") {
-            console.log("Horizontal Spaceing: " + newHorizontalValue + " diff: " + (pathWidth));
-        }
+        if (name === "surplusGraph") {}
     } else {
-        if (name === "surplusGraph") {
-            console.log("Horizontal Spaceing: " + newHorizontalValue + " diff: " + (newHorizontalValue - previousHorizontalValue));
-        }
+        if (name === "surplusGraph") {}
         newHorizontalValue = previousHorizontalValue;
     }
 

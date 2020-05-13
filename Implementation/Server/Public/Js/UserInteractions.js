@@ -1,4 +1,4 @@
-const refreshDelay = 50;
+const refreshDelay = 100;
 let allowRefresh = true;
 
 
@@ -28,7 +28,7 @@ function setCorrectHeightValue() {
 }
 
 function reloadPageElements() {
-
+    deleteActiveGraphs();
     if (allowRefresh) {
         setTimeout(function() {
 

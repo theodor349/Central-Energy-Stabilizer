@@ -88,55 +88,8 @@ async function addDemand(startTime, graph) {
 async function removeDemand(startTime, graph) {
     return new Promise(async (resolve, reject) => {
         graph = invertValues(graph);
-
         await addDemand(startTime, graph);
-        /*
-        let lowerGraph = {
-            graphId: undefined,
-            values: []
-        };
-        let upperGraph = {
-            graphId: undefined,
-            values: []
-        };
-        let demandGraphs = {};
-        let secondGraphStartTime = new Date(startTime.getTime() + 60 * 60 * 1000);
-        let graphToSplit = [];
-        for (i = 0; graph.length > 60; i++) {
-            graphToSplit = await createGraphToSplit(graph);
-            demandGraphs = splitGraph(startTime, graphToSplit);
-            lowerGraph.graphId = await utility.dateToId("demandGraph", startTime);
-            upperGraph.graphId = await utility.dateToId("demandGraph", secondGraphStartTime);
-            lowerGraph.values = demandGraphs.demandGraphLower;
-            upperGraph.values = demandGraphs.demandGraphUpper;
-            lowerGraph.values = invertValues(lowerGraph.values);
-            upperGraph.values = invertValues(upperGraph.values);
 
-            await updateDemandGraph(lowerGraph);
-            await updateDemandGraph(upperGraph);
-            await updateSurplusGraph(startTime);
-
-            startTime.setTime(startTime.getTime() + 60 * 60 * 1000);
-            secondGraphStartTime.setTime(startTime.getTime() + 60 * 60 * 1000);
-        }
-        demandGraphs = splitGraph(startTime, graph);
-        // Puts the graphId and values into the lower and upper bound graphs
-        lowerGraph.graphId = await utility.dateToId("demandGraph", startTime);
-        upperGraph.graphId = await utility.dateToId("demandGraph", secondGraphStartTime);
-        lowerGraph.values = demandGraphs.demandGraphLower;
-        upperGraph.values = demandGraphs.demandGraphUpper;
-        lowerGraph.values = invertValues(lowerGraph.values);
-        upperGraph.values = invertValues(upperGraph.values);
-
-        if (isGraphValid(lowerGraph.values) !== true && isGraphValid(upperGraph.values) !== true) {
-            reject(err);
-        }
-
-        await updateDemandGraph(lowerGraph);
-        await updateDemandGraph(upperGraph);
-        await updateSurplusGraph(startTime);
-        await updateSurplusGraph(secondGraphStartTime);
-        */
         resolve(true);
     });
 }
@@ -246,20 +199,3 @@ async function createGraphToSplit(graph) {
     });
 }
 
-let testIntervalObject = {
-    start: new Date(2010, 1, 24, 18, 24),
-    finish: new Date(2010, 1, 24, 20, 24)
-};
-
-let testGraph = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-    11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-    21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-    31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-    41, 42, 43, 44, 45, 46, 47, 38, 39, 50,
-    51, 52, 53, 54, 55, 56, 57, 58, 59, 60
-];
-
-//addDemand(testIntervalObject.start, testGraph);
-//removeDemand(testIntervalObject.finish, testGraph);
-
-//updateSurplus(testIntervalObject);

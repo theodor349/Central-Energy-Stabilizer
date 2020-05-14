@@ -47,7 +47,7 @@ async function createGraph(graph) {
         return null;
     }
 
-    let serilizedGraph = serilizeGraph(graph);
+    let serilizedGraph = serializeGraph(graph);
     return new Promise((resolve, reject) => {
         try {
             const graphModel = new Graph({
@@ -73,9 +73,9 @@ async function getGraph(id) {
                 if (graph === null) {
                     graph = createDefaultGraph(id);
                     graph = await createGraph(graph);
-                    resolve(deserilizeGraph(graph));
+                    resolve(deserializeGraph(graph));
                 } else {
-                    resolve(deserilizeGraph(graph));
+                    resolve(deserializeGraph(graph));
                 }
             })
             .catch((err) => {
@@ -195,12 +195,12 @@ function isGraphValid(graph) {
     return graph.values.length === 60
 }
 
-function serilizeGraph(graph) {
+function serializeGraph(graph) {
     graph.values = JSON.stringify(graph.values);
     return graph;
 }
 
-function deserilizeGraph(graph) {
+function deserializeGraph(graph) {
     graph = graph.toObject({
         getters: true,
         virtuals: true

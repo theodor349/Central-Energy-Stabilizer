@@ -47,12 +47,12 @@ async function createGraph(graph) {
         return null;
     }
 
-    let serilizedGraph = serializeGraph(graph);
+    let serializedGraph = serializeGraph(graph);
     return new Promise((resolve, reject) => {
         try {
             const graphModel = new Graph({
-                graphId: serilizedGraph.graphId,
-                values: serilizedGraph.values
+                graphId: serializedGraph.graphId,
+                values: serializedGraph.values
             });
             graphModel.save((saveError, savedUser) => {
                 if (saveError)

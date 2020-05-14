@@ -2,7 +2,7 @@
 
 const svgNS = "http://www.w3.org/2000/svg";
 const horizontalTextOffset = 4; // how far ahead should the text be taken to be aligned center with line
-const graphDrawValueSpeed = 10;
+const graphDrawValueSpeed = 1;
 
 
 let drawingGraphValues = [];
@@ -39,12 +39,12 @@ let mainGraph = {
 };
 
 let demandGraphStyle = {
-    steps: 1440 / 4, // must be of the formula 1440 / x (1440 % x must equal 0)
+    steps: 1440 / 1, // must be of the formula 1440 / x (1440 % x must equal 0)
     style: "graphPathRed"
 }
 
 let otherDemandGraphStyle = {
-    steps: 1440 / 4, // must be of the formula 1440 / x (1440 % x must equal 0)
+    steps: 1440 / 1, // must be of the formula 1440 / x (1440 % x must equal 0)
     style: "graphPathGreen"
 }
 

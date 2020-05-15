@@ -4,7 +4,7 @@
     "description": "",
     "main": "App.js",
     "scripts": {
-        "start": "nodemon ForecasterAPI.js",
+        "start": "node App.js",
         "test": "nodemon --exec mocha"
     },
     "author": "",

@@ -250,5 +250,6 @@ $RECYCLE.BIN/
 
 # End of https://www.gitignore.io/api/vim,node,linux,macos,windows,notepadpp,sublimetext,visualstudiocode
 Implementation/Server/New Text Document.txt
+Implementation/Devices/WashingMachine/DeviceId.json
 Implementation/Devices/WaterHeater/DeviceId.json
 Implementation/Server/DBConnectionString.js

@@ -23,7 +23,7 @@ app.get('/', function(req, res) {
     SECTION: Parameters
 */
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 const updateInterval = 1 * 1000;
 const waterHeaterBaseLoad = 100; // in watts
 sd.setTicksPerHour(3600 / (updateInterval / 1000));

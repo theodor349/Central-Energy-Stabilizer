@@ -75,7 +75,6 @@ if (true) {
             let res = await dm.deviceInit(testDevice, "socket")
             // Get things to check
             let commandQueue = dm.getCommandQueue();
-            testDevice = createAutoTestDevice();
             let dbDevice = await db.getDevice(id);
             assert(res === true &&
                 commandQueue !== undefined &&

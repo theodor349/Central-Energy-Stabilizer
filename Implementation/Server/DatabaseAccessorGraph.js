@@ -12,8 +12,9 @@ let Graph = mongoose.model("Graphs", new mongoose.Schema({
     SECTION: Setup Functions
 */
 
+const mongoConnectionString = require('./DBConnectionString.js');
 console.log("Creating connection to Graph DB");
-run(process.env.MONGODB_URI || 'mongodb://localhost:27017/P2Test').catch(error => console.log(error.stack));
+run(mongoConnectionString || process.env.MONGODB_URI || 'mongodb://localhost:27017/P2Test').catch(error => console.log(error.stack));
 async function run(connectionString) {
     await mongoose.connect(connectionString, {
         useNewUrlParser: true,

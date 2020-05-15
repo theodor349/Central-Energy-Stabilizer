@@ -34,7 +34,7 @@ let deviceUpdateInterval;
 let updater;
 let socket;
 
-let connectionString = "http://localhost:3000/device";
+let connectionString = "https://central-energy-stabilizer.herokuapp.com/device";
 setTimeout(function() {
     socket = io.connect(connectionString, {
         reconnection: true,
@@ -226,7 +226,7 @@ function sendUpdate(deviceInfo) {
 // Connection
 function connectionSetup() {
     socket.once('connect', function() {
-        console.log('Connected to localhost:3000');
+        console.log('Connected to ' + connectionString);
         deviceInfo.isConnected = true;
 
         socket.on('askForId', function() {

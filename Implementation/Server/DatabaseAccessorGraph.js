@@ -1,4 +1,5 @@
 'use strict';
+require('dotenv').config();
 const mongoose = require('mongoose');
 const utility = require('./Utilities.js');
 
@@ -11,12 +12,14 @@ let Graph = mongoose.model("Graphs", new mongoose.Schema({
     SECTION: Setup Functions
 */
 
-run('mongodb://localhost:27017/P2Test').catch(error => console.log(error.stack));
+console.log("Creating connection to Graph DB");
+run(process.env.MONGODB_URI || 'mongodb://localhost:27017/P2Test').catch(error => console.log(error.stack));
 async function run(connectionString) {
     await mongoose.connect(connectionString, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     });
+    console.log("DBAGraph Connected to DB");
 }
 
 async function dropDatabase() {

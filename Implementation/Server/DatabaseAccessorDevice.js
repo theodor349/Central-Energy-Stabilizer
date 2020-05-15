@@ -1,4 +1,5 @@
 'use strict';
+require('dotenv').config();
 const mongoose = require('mongoose');
 
 let Device = mongoose.model("Devices", new mongoose.Schema({
@@ -25,12 +26,14 @@ let Device = mongoose.model("Devices", new mongoose.Schema({
     SECTION: Setup Functions
 */
 
-run('mongodb://localhost:27017/P2Test').catch(error => console.log(error.stack));
+console.log("Creating connection to Deivce DB");
+run(process.env.MONGODB_URI || 'mongodb://localhost:27017/P2Test').catch(error => console.log(error.stack));
 async function run(connectionString) {
     await mongoose.connect(connectionString, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     });
+    console.log("DBADevice Connected to DB");
 }
 
 async function dropDatabase() {

@@ -217,6 +217,11 @@ function setWaterHeaterOff(waterHeater) {
 }
 
 function sendUpdate(deviceInfo) {
+    // Are we connected?
+    deviceInfo.isConnected = socket.connected;
+    if (socket.connected === false) {
+        return;
+    }
     console.log();
     console.log("Sending Update to Server");
     console.log("Temp: " + deviceInfo.uniqueProperties.currentTemp);
@@ -262,6 +267,5 @@ function connectionSetup() {
     socket.on('disconnect', function() {
         console.log('Lost connection with localhost:3000');
         deviceInfo.isConnected = false;
-        clearInterval(deviceUpdateInterval);
     });
 }

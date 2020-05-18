@@ -149,10 +149,10 @@ async function graphUpdate() {
     let date = new Date()
     if (lastGraphUpdate !== undefined &&
         lastGraphUpdate.getMinutes() === date.getMinutes()) {
-        console.log("Do not send update");
+        //    console.log("Do not send update");
         return false;
     }
-    console.log("Send update");
+    //console.log("Send update");
     lastGraphUpdate = new Date();
     return new Promise(async (resolve, reject) => {
         date = new Date(); // 10:12

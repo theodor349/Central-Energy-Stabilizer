@@ -36,8 +36,8 @@ startServer();
 
 async function startServer() {
     setInterval(() => {
-        console.log();
-        console.log();
+        //    console.log();
+        //    console.log();
         update();
     }, updateInterval);
 }
@@ -47,7 +47,7 @@ async function startServer() {
 */
 
 http.listen(port, () => {
-    print("Server started!")
+    //print("Server started!")
 });
 
 const userSpace = io.of('/user');
@@ -96,7 +96,7 @@ deviceSpace.on('connection', (socket) => {
 */
 
 async function update() {
-    print("Update started")
+    // print("Update started")
     let devices = dm.getActiveConnections();
     devices.forEach(async (connection) => {
         let device = await dd.getDevice(connection.deviceId);
@@ -146,7 +146,7 @@ function handleUserManagerCommands() {
 }
 
 function executeCommand(command) {
-    print("Send Command: " + command.command + " Payload: " + command.payload);
+    // print("Send Command: " + command.command + " Payload: " + command.payload);
     let socket = command.socket;
     let payload = command.payload;
     command = command.command;

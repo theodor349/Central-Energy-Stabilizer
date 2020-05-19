@@ -133,13 +133,8 @@ function initCurrentTemp() {
 
 function initState(waterHeater) {
     let uniqueProperties = waterHeater.uniqueProperties;
-    if (uniqueProperties.currentTemp < uniqueProperties.minTemp) {
-        waterHeater.currentState = "on";
-        waterHeaterOn(waterHeater);
-    } else {
         waterHeater.currentState = "off";
         waterHeaterOff(waterHeater);
-    }
 }
 
 function checkState(waterHeater) {

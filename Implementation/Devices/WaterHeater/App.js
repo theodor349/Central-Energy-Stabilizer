@@ -151,8 +151,7 @@ function checkState(waterHeater) {
         uniqueProperties.currentTemp > uniqueProperties.minTemp &&
         waterHeater.currentState === "on") {
         changeStateToOff(waterHeater);
-    } else if (uniqueProperties.currentTemp <= uniqueProperties.minTemp &&
-        waterHeater.currentState === "off") {
+    } else if (uniqueProperties.currentTemp <= uniqueProperties.minTemp) {
         changeStateToOn(waterHeater);
     } else if (waterHeater.isConnected === true &&
         waterHeater.serverMessage === "off" &&

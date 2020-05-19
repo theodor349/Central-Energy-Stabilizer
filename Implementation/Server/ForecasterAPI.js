@@ -1,7 +1,7 @@
 const da = require('./DatabaseAccessorGraph.js');
 const util = require('./Utilities.js');
 const forecaster = require('./Forecaster.js');
-const scale = 1000;
+const scale = 100000;
 const lift = 100;
 /*
     Graphs it works with

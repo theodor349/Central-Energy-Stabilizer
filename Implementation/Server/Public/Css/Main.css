@@ -78,7 +78,7 @@ header {
 
     #mainGraphInfo h2{
         margin: 0;
-
+        font-family: 'DM Mono', monospace;
     }
 
     #mainGraphInfo h2:last-child{

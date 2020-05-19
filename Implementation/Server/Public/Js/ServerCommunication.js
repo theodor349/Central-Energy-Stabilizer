@@ -112,16 +112,16 @@ let frontEndSavedKWh = 0;
 let frontEndSavedKWhContainer = document.getElementById('savedKwhContainer');
 
 function updateSavedKwhData(amount) {
-
     if (frontEndSavedKWh === 0) {
         frontEndSavedKWhContainer.innerHTML = amount;
+        frontEndSavedKWh = amount;
     } else if (frontEndSavedKWh < amount) {
 
         setTimeout(function() {
             frontEndSavedKWh++;
             frontEndSavedKWhContainer.innerHTML = frontEndSavedKWh;
             updateSavedKwhData(amount);
-        }, 10);
+        }, 100);
     }
 
 
@@ -134,13 +134,14 @@ function updateUsedKwhData(amount) {
 
     if (frontEndUsedKWh === 0) {
         frontEndUsedKWhContainer.innerHTML = amount;
+        frontEndUsedKWh = amount;
     } else if (frontEndUsedKWh < amount) {
 
         setTimeout(function() {
             frontEndUsedKWh++;
             frontEndUsedKWhContainer.innerHTML = frontEndUsedKWh;
             updateSavedKwhData(amount);
-        }, 10);
+        }, 100);
     }
 
 

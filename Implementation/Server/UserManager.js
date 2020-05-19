@@ -53,7 +53,7 @@ async function onConnectGraph(socket) {
 async function sendAPISurplusGraph(socket, date) {
     return new Promise(async (resolve, reject) => {
         if (process.env.PORT) {
-            date.setHours(date.getHours() - 2);
+            date.setHours(date.getHours());
         }
         for (var i = 0; i < 24; i++) {
             let id = util.dateToId("apiSurplusGraph", date);
@@ -84,12 +84,8 @@ async function sendSurplusGraph(socket, date) {
         let hours = date.getHours();
         date.setHours(0);
 
-        let serverOffset = 0;
-        if (process.env.PORT) {
-            date.setHours(date.getHours() - 2);
-            serverOffset = 2;
-        }
-        for (var i = 0; i < hours + serverOffset; i++) {
+
+        for (var i = 0; i < hours; i++) {
             let id = util.dateToId("surplusGraph", date);
             let graph = await dbG.getGraph(id);
             let payload = {

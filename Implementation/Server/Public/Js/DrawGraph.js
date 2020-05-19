@@ -25,9 +25,9 @@ let mainGraph = {
     innerHeight: null,
     innerWidth: null,
     horizontalLines: 20,
-    horizontalValue: "Kw",
-    horizontalOrigin: 10,
-    horizontalAmount: 20,
+    horizontalValue: "Mw",
+    horizontalOrigin: 1000,
+    horizontalAmount: 2000,
     verticalLines: 48,
     verticalValue: "time interval",
     verticalAmount: 24,
@@ -231,7 +231,7 @@ function drawGraphHorizontalTextPoint(line, graph, lineOffset, offsetValue) {
 
     if (graph.horizontalValue != "time interval") {
         let verticalRelation = graph.horizontalLines / graph.horizontalAmount;
-        value.textContent = (lineOffset / verticalRelation) - graph.horizontalOrigin + graph.horizontalValue;
+        value.textContent = ((lineOffset / verticalRelation) - graph.horizontalOrigin)/100 + graph.horizontalValue;
     }
 
     graph.htmlElement.appendChild(value);

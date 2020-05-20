@@ -167,11 +167,11 @@ async function graphUpdate() {
 }
 
 function sendKwhsSaved(kwhSaved) {
-    createCommand("userSpace", "savedKwhData", kwhSaved.toFixed(0));
+    createCommand("userSpace", "savedKwhData", kwhSaved.toFixed(3));
 }
 
 function sendKwhsUsed(kwhUsed) {
-    createCommand("userSpace", "usedKwhData", kwhUsed.toFixed(0));
+    createCommand("userSpace", "usedKwhData", kwhUsed.toFixed(3));
 }
 
 /*

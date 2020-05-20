@@ -20,7 +20,7 @@ async function run(connectionString) {
         useNewUrlParser: true,
         useUnifiedTopology: true
     });
-    console.log("DBAGraph Connected to DB");
+    //    console.log("DBAGraph Connected to DB");
 }
 
 async function dropDatabase() {

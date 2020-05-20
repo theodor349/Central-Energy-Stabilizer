@@ -34,7 +34,7 @@ async function run(connectionString) {
         useNewUrlParser: true,
         useUnifiedTopology: true
     });
-    console.log("DBADevice Connected to DB");
+    //    console.log("DBADevice Connected to DB");
 }
 
 async function dropDatabase() {

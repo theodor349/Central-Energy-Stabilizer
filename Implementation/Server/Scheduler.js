@@ -38,23 +38,7 @@ async function scheduleDevice(device) {
         let surplusGraph = await daG.getGraph(graphId);
 
         // To show how much we have saved
-        if (surplusGraph.values[date.getMinutes()] <= 0) {
-            // Add bad base tick
-            baseBadTicks += 1
-
-            // Add bad power tick
-            if (device.currentState === "on") {
-                powerBadTicks += 1
-            }
-        } else {
-            // Add good base tick
-            baseGoodTicks += 1
-
-            // Add bad power tick
-            if (device.currentState === "on") {
-                powerGoodPower += device.currentPower / (ticksPerHour);
-            }
-        }
+        savePowerStats(device, surplusGraph, date);
 
         graphId = util.dateToId("surplusGraph", date);
         surplusGraph = await daG.getGraph(graphId);
@@ -117,4 +101,29 @@ function getUpdatedDevices() {
 
 function clearUpdatedDevices() {
     updatedDevices = [];
+}
+
+async function savePowerStats(device, surplusGraph, date) {
+    let arr = [60];
+    if (surplusGraph.values[date.getMinutes()] <= 0) {
+        // Add bad base tick
+        arr[0] += 1;
+
+        // Add bad power tick
+        if (device.currentState === "on") {
+            arr[1] += 1;
+        }
+    } else {
+        // Add good base tick
+        arr[2] += 1;
+
+        // Add bad power tick
+        if (device.currentState === "on") {
+            arr[3] += device.currentPower / (ticksPerHour);
+        }
+    }
+    return new Promise(async (resolve, reject) => {
+        await daG.updateGraph("powerStats", arr, true);
+        resolve(true);
+    })
 }

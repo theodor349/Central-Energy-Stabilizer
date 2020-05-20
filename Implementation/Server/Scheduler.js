@@ -16,12 +16,6 @@ module.exports = functions;
 
 let updatedDevices = [];
 
-let baseBadTicks = 0;
-let powerBadTicks = 0;
-
-let baseGoodTicks = 0;
-let powerGoodPower = 0;
-
 let ticksPerHours;
 
 async function scheduleDevice(device) {
@@ -38,7 +32,7 @@ async function scheduleDevice(device) {
         let surplusGraph = await daG.getGraph(graphId);
 
         // To show how much we have saved
-        savePowerStats(device, surplusGraph, date);
+        await savePowerStats(device, surplusGraph, date);
 
         graphId = util.dateToId("surplusGraph", date);
         surplusGraph = await daG.getGraph(graphId);
@@ -75,11 +69,19 @@ async function scheduleDevice(device) {
     SECTION: Helper Functions
 */
 
-function getTicksSaved() {
+async function getTicksSaved() {
+    let stats = await daG.getGraph("powerStats");
+    let baseBadTicks = stats.values[0];
+    let powerBadTicks = stats.values[1];
+    console.log("baseBadTicks: " + baseBadTicks + " powerBadTicks: " + powerBadTicks);
     return baseBadTicks - powerBadTicks;
 }
 
-function getGoodPowerUsed(basePerTick) {
+async function getGoodPowerUsed(basePerTick) {
+    let stats = await daG.getGraph("powerStats");
+    let baseGoodTicks = stats.values[2];
+    let powerGoodPower = stats.values[3];
+    console.log("BaseGoodTicks: " + baseGoodTicks + " powerGoodPower: " + powerGoodPower);
     return powerGoodPower - baseGoodTicks * basePerTick;
 }
 
@@ -104,7 +106,12 @@ function clearUpdatedDevices() {
 }
 
 async function savePowerStats(device, surplusGraph, date) {
-    let arr = [60];
+    let arr = Array(60);
+
+    for (var i = 0; i < arr.length; i++) {
+        arr[i] = 0;
+    }
+
     if (surplusGraph.values[date.getMinutes()] <= 0) {
         // Add bad base tick
         arr[0] += 1;
@@ -123,7 +130,7 @@ async function savePowerStats(device, surplusGraph, date) {
         }
     }
     return new Promise(async (resolve, reject) => {
-        await daG.updateGraph("powerStats", arr, true);
+        var res = await daG.updateGraph("powerStats", arr, true);
         resolve(true);
     })
 }

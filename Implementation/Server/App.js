@@ -110,7 +110,7 @@ async function update() {
     });
 
     handleCommands();
-    updateUserManager();
+    await updateUserManager();
     //print("Update finished")
 }
 
@@ -161,7 +161,7 @@ function executeCommand(command) {
     SECTION: User Manager
 */
 
-function updateUserManager() {
+async function updateUserManager() {
     //print("Update User Manager")
     let updatedDevices = dm.getUpdatedDevices();
     updatedDevices.concat(sd.getUpdatedDevices());
@@ -169,9 +169,9 @@ function updateUserManager() {
     um.graphUpdate();
 
     // Kwh saved
-    let ticksSaved = sd.getTicksSaved();
+    let ticksSaved = await sd.getTicksSaved();
     um.sendKwhsSaved(ticksSaved * waterHeaterBaseLoad * (1 / ticksPerHour));
-    let powerUsed = sd.getGoodPowerUsed(waterHeaterBaseLoad * (1 / ticksPerHour));
+    let powerUsed = await sd.getGoodPowerUsed(waterHeaterBaseLoad * (1 / ticksPerHour));
     um.sendKwhsUsed(powerUsed);
 }
 

@@ -26,7 +26,8 @@ app.get('/', function(req, res) {
 const port = process.env.PORT || 3000;
 const updateInterval = 1 * 1000;
 const waterHeaterBaseLoad = 100; // in watts
-
+const ticksPerHour = (3600 / (updateInterval / 1000));
+sd.setTicksPerHour(ticksPerHour);
 /*
     SECTION: Timers
 */

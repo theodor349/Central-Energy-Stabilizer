@@ -11,11 +11,17 @@ const functions = {
     getTicksSaved: () => getTicksSaved(),
     getGoodPowerUsed: (basePerTick) => getGoodPowerUsed(basePerTick),
     savePowerStatsToDatabase: () => savePowerStatsToDatabase(),
+    setTicksPerHour: (_ticks) => setTicksPerHour(_ticks),
 }
 module.exports = functions;
 
 let updatedDevices = [];
 let powerStatsGraph;
+let ticksPerHour;
+
+function setTicksPerHour(_ticks) {
+    ticksPerHour = _ticks;
+}
 
 async function scheduleDevice(device) {
     return new Promise(async (resolve, reject) => {

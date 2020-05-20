@@ -126,7 +126,7 @@ async function savePowerStats(device, surplusGraph, date) {
 
         // Add bad power tick
         if (device.currentState === "on") {
-            arr[3] += device.currentPower / (ticksPerHour);
+            arr[3] += device.currentPower * (3600 / ticksPerHour);
         }
     }
     return new Promise(async (resolve, reject) => {

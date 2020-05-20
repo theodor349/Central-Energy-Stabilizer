@@ -118,7 +118,7 @@ function updateSavedKwhData(amount) {
     } else if (frontEndSavedKWh < amount) {
 
         setTimeout(function() {
-            frontEndSavedKWh++;
+            frontEndSavedKWh += 0.001;
             frontEndSavedKWhContainer.innerHTML = frontEndSavedKWh;
             updateSavedKwhData(amount);
         }, 100);
@@ -138,7 +138,7 @@ function updateUsedKwhData(amount) {
     } else if (frontEndUsedKWh < amount) {
 
         setTimeout(function() {
-            frontEndUsedKWh++;
+            frontEndUsedKWh += 0.001;
             frontEndUsedKWhContainer.innerHTML = frontEndUsedKWh;
             updateUsedKwhData(amount);
         }, 100);

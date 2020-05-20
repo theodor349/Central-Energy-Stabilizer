@@ -140,7 +140,7 @@ function updateUsedKwhData(amount) {
         setTimeout(function() {
             frontEndUsedKWh++;
             frontEndUsedKWhContainer.innerHTML = frontEndUsedKWh;
-            updateSavedKwhData(amount);
+            updateUsedKwhData(amount);
         }, 100);
     }
 

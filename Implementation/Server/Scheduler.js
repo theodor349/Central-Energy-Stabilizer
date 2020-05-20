@@ -11,10 +11,12 @@ const functions = {
     getTicksSaved: () => getTicksSaved(),
     getGoodPowerUsed: (basePerTick) => getGoodPowerUsed(basePerTick),
     setTicksPerHour: (ticksPerHour) => setTicksPerHour(ticksPerHour),
+    savePowerStatsToDatabase: () => savePowerStatsToDatabase(),
 }
 module.exports = functions;
 
 let updatedDevices = [];
+let powerStatsGraph;
 
 let ticksPerHours;
 
@@ -32,7 +34,7 @@ async function scheduleDevice(device) {
         let surplusGraph = await daG.getGraph(graphId);
 
         // To show how much we have saved
-        await savePowerStats(device, surplusGraph, date);
+        savePowerStats(device, surplusGraph, date);
 
         graphId = util.dateToId("surplusGraph", date);
         surplusGraph = await daG.getGraph(graphId);
@@ -73,7 +75,6 @@ async function getTicksSaved() {
     let stats = await daG.getGraph("powerStats");
     let baseBadTicks = stats.values[0];
     let powerBadTicks = stats.values[1];
-    console.log("baseBadTicks: " + baseBadTicks + " powerBadTicks: " + powerBadTicks);
     return baseBadTicks - powerBadTicks;
 }
 
@@ -81,7 +82,6 @@ async function getGoodPowerUsed(basePerTick) {
     let stats = await daG.getGraph("powerStats");
     let baseGoodTicks = stats.values[2];
     let powerGoodPower = stats.values[3];
-    console.log("BaseGoodTicks: " + baseGoodTicks + " powerGoodPower: " + powerGoodPower);
     return powerGoodPower - baseGoodTicks * basePerTick;
 }
 
@@ -105,32 +105,45 @@ function clearUpdatedDevices() {
     updatedDevices = [];
 }
 
-async function savePowerStats(device, surplusGraph, date) {
-    let arr = Array(60);
+async function savePowerStatsToDatabase() {
+    return new Promise(async (resolve, reject) => {
+        let res = false;
+        if (powerStatsGraph !== undefined) {
+            res = await daG.updateGraph("powerStats", powerStatsGraph, true);
+        }
+        createSavePowerStats();
+        resolve(res);
+    })
+}
 
-    for (var i = 0; i < arr.length; i++) {
-        arr[i] = 0;
+function createSavePowerStats() {
+    powerStatsGraph = Array(60);
+
+    for (var i = 0; i < powerStatsGraph.length; i++) {
+        powerStatsGraph[i] = 0;
+    }
+}
+
+function savePowerStats(device, surplusGraph, date) {
+    if (powerStatsGraph === undefined) {
+        createSavePowerStats();
     }
 
     if (surplusGraph.values[date.getMinutes()] <= 0) {
         // Add bad base tick
-        arr[0] += 1;
+        powerStatsGraph[0] += 1;
 
         // Add bad power tick
         if (device.currentState === "on") {
-            arr[1] += 1;
+            powerStatsGraph[1] += 1;
         }
     } else {
         // Add good base tick
-        arr[2] += 1;
+        powerStatsGraph[2] += 1;
 
         // Add bad power tick
         if (device.currentState === "on") {
-            arr[3] += device.currentPower * (3600 / ticksPerHour);
+            powerStatsGraph[3] += device.currentPower * (3600 / ticksPerHour);
         }
     }
-    return new Promise(async (resolve, reject) => {
-        var res = await daG.updateGraph("powerStats", arr, true);
-        resolve(true);
-    })
 }

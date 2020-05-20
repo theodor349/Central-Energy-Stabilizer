@@ -96,7 +96,7 @@ deviceSpace.on('connection', (socket) => {
 */
 
 async function update() {
-    // print("Update started")
+    //print("Update started")
     let devices = dm.getActiveConnections();
     devices.forEach(async (connection) => {
         let device = await dd.getDevice(connection.deviceId);
@@ -108,6 +108,7 @@ async function update() {
             dm.manageDevice(device);
         }
     });
+    await sd.savePowerStatsToDatabase();
 
     handleCommands();
     await updateUserManager();

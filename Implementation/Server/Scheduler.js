@@ -10,15 +10,12 @@ const functions = {
     getUpdatedDevices: () => getUpdatedDevices(),
     getTicksSaved: () => getTicksSaved(),
     getGoodPowerUsed: (basePerTick) => getGoodPowerUsed(basePerTick),
-    setTicksPerHour: (ticksPerHour) => setTicksPerHour(ticksPerHour),
     savePowerStatsToDatabase: () => savePowerStatsToDatabase(),
 }
 module.exports = functions;
 
 let updatedDevices = [];
 let powerStatsGraph;
-
-let ticksPerHours;
 
 async function scheduleDevice(device) {
     return new Promise(async (resolve, reject) => {
@@ -83,10 +80,6 @@ async function getGoodPowerUsed(basePerTick) {
     let baseGoodTicks = stats.values[2];
     let powerGoodPower = stats.values[3];
     return powerGoodPower - baseGoodTicks * basePerTick;
-}
-
-function setTicksPerHour(_ticksPerHour) {
-    ticksPerHour = _ticksPerHour;
 }
 
 function addUpdatedDevice(deviceId) {

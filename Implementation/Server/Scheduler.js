@@ -75,17 +75,21 @@ async function scheduleDevice(device) {
 */
 
 async function getTicksSaved() {
-    let stats = await daG.getGraph("powerStats");
-    let baseBadTicks = stats.values[0];
-    let powerBadTicks = stats.values[1];
-    return baseBadTicks - powerBadTicks;
+    return new Promise(async (resolve, reject) => {
+        let stats = await daG.getGraph("powerStats");
+        let baseBadTicks = stats.values[0];
+        let powerBadTicks = stats.values[1];
+        resolve(baseBadTicks - powerBadTicks);
+    })
 }
 
 async function getGoodPowerUsed(basePerTick) {
-    let stats = await daG.getGraph("powerStats");
-    let baseGoodTicks = stats.values[2];
-    let powerGoodPower = stats.values[3];
-    return powerGoodPower - baseGoodTicks * basePerTick;
+    return new Promise(async (resolve, reject) => {
+        let stats = await daG.getGraph("powerStats");
+        let baseGoodTicks = stats.values[2];
+        let powerGoodPower = stats.values[3];
+        resolve(powerGoodPower - baseGoodTicks * basePerTick);
+    })
 }
 
 function addUpdatedDevice(deviceId) {

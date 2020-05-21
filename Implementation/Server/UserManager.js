@@ -59,7 +59,7 @@ async function sendAPISurplusGraph(socket, date) {
             let id = util.dateToId("apiSurplusGraph", date);
             let graph = await dbG.getGraph(id);
             for (var j = 0; j < graph.values.length; j++) {
-                graph.values[j] = Number(graph.values[j]) - 600;
+                graph.values[j] = Number(graph.values[j]);
             }
             let payload = {
                 name: "apiSurplusGraph",

@@ -30,7 +30,7 @@ socket.on('createGraphValues', function(graphObject) {
         if (graphObject.values !== "done") {
             newGraph.push(graphObject.values);
         } else {
-            let graphReadyToPlot = convertArray(newGraph, graphObject);
+            let graphReadyToPlot = convertArray(newGraph);
             switch (graphObject.name) {
                 case "apiSurplusGraph":
                     drawGraphValues(graphObject.name, graphReadyToPlot, demandGraphStyle, mainGraph);

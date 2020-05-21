@@ -25,9 +25,9 @@ let mainGraph = {
     innerHeight: null,
     innerWidth: null,
     horizontalLines: 20,
-    horizontalValue: "Mw",
-    horizontalOrigin: 1000,
-    horizontalAmount: 2000,
+    horizontalValue: "Kw",
+    horizontalOrigin: 10000,
+    horizontalAmount: 20000,
     verticalLines: 48,
     verticalValue: "time interval",
     verticalAmount: 24,
@@ -74,13 +74,7 @@ function convertArray(graphValues, graph) {
     for (var h = 0; h < graphValues.length; h++) {
 
         for (var m = 0; m < graphValues[h].length; m++) {
-
-            if (graph.name === 'apiSurplusGraph') {
-                newGraph.push(Number(graphValues[h][m]) - 600);
-            } else {
-                newGraph.push(graphValues[h][m]);
-            }
-
+            newGraph.push(graphValues[h][m]);
         }
     }
     return newGraph;
@@ -284,7 +278,7 @@ function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWid
         point = graphValues[valueIndex];
     }
 
-    let pointValue = point / 1000 * (graph.innerHeight / graph.horizontalAmount);
+    let pointValue = point / 100 * (graph.innerHeight / graph.horizontalAmount);
     let newVerticalValue = verticalOrigin - pointValue;
     let newHorizontalValue;
 

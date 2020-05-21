@@ -30,7 +30,7 @@ socket.on('createGraphValues', function(graphObject) {
         if (graphObject.values !== "done") {
             newGraph.push(graphObject.values);
         } else {
-            let graphReadyToPlot = convertArray(newGraph);
+            let graphReadyToPlot = convertArray(newGraph, graphObject);
             switch (graphObject.name) {
                 case "apiSurplusGraph":
                     drawGraphValues(graphObject.name, graphReadyToPlot, demandGraphStyle, mainGraph);
@@ -118,7 +118,7 @@ function updateSavedKwhData(amount) {
     } else if (frontEndSavedKWh < amount) {
 
         setTimeout(function() {
-            frontEndSavedKWh = Number(Number(frontEndSavedKWh) + 0.0001).toFixed(4);
+            frontEndSavedKWh += 0.001;
             frontEndSavedKWhContainer.innerHTML = frontEndSavedKWh;
             updateSavedKwhData(amount);
         }, 100);
@@ -138,7 +138,7 @@ function updateUsedKwhData(amount) {
     } else if (frontEndUsedKWh < amount) {
 
         setTimeout(function() {
-            frontEndUsedKWh = Number(Number(frontEndUsedKWh) + 0.0001).toFixed(4);
+            frontEndUsedKWh += 0.001;
             frontEndUsedKWhContainer.innerHTML = frontEndUsedKWh;
             updateUsedKwhData(amount);
         }, 100);

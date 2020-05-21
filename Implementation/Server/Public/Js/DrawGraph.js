@@ -75,15 +75,15 @@ function convertArray(graphValues, graph) {
 
         for (var m = 0; m < graphValues[h].length; m++) {
 
-            if (graph.name == 'apiSurplusGraph') {
+            if (graph.name === 'apiSurplusGraph') {
                 newGraph.push(Number(graphValues[h][m]) - 600);
             } else {
-                newGraph.push(graphValues[h][m]));
-        }
+                newGraph.push(graphValues[h][m]);
+            }
 
+        }
     }
-}
-return newGraph;
+    return newGraph;
 }
 
 /*

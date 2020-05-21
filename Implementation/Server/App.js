@@ -172,7 +172,7 @@ async function updateUserManager() {
     // Kwh saved
     let ticksSaved = await sd.getTicksSaved();
     um.sendKwhsSaved(ticksSaved * waterHeaterBaseLoad * 0.001 * (1 / ticksPerHour));
-    let powerUsed = await sd.getGoodPowerUsed(waterHeaterBaseLoad * (1 / ticksPerHour));
+    let powerUsed = await sd.getGoodPowerUsed(waterHeaterBaseLoad * (3600 / ticksPerHour));
     um.sendKwhsUsed(powerUsed * 0.001 / 3600);
 }
 

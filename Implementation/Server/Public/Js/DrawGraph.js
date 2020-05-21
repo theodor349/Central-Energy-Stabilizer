@@ -67,17 +67,23 @@ function drawGraph(graph) {
     socket.emit('getMainGraphs');
 }
 
-function convertArray(graphValues) {
+function convertArray(graphValues, graph) {
 
     let newGraph = [];
 
     for (var h = 0; h < graphValues.length; h++) {
 
         for (var m = 0; m < graphValues[h].length; m++) {
-            newGraph.push(graphValues[h][m]);
+
+            if (graph.name == 'apiSurplusGraph') {
+                newGraph.push(Number(graphValues[h][m]) - 600);
+            } else {
+                newGraph.push(graphValues[h][m]));
         }
+
     }
-    return newGraph;
+}
+return newGraph;
 }
 
 /*
@@ -231,7 +237,7 @@ function drawGraphHorizontalTextPoint(line, graph, lineOffset, offsetValue) {
 
     if (graph.horizontalValue != "time interval") {
         let verticalRelation = graph.horizontalLines / graph.horizontalAmount;
-        value.textContent = ((lineOffset / verticalRelation) - graph.horizontalOrigin)/100 + graph.horizontalValue;
+        value.textContent = ((lineOffset / verticalRelation) - graph.horizontalOrigin) / 100 + graph.horizontalValue;
     }
 
     graph.htmlElement.appendChild(value);

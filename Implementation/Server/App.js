@@ -167,7 +167,7 @@ async function updateUserManager() {
     let updatedDevices = dm.getUpdatedDevices();
     updatedDevices.concat(sd.getUpdatedDevices());
     await um.sendUpdatedDevices(updatedDevices);
-    um.graphUpdate();
+    await um.graphUpdate();
 
     // Kwh saved
     let ticksSaved = await sd.getTicksSaved();

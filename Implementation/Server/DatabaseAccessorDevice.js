@@ -27,7 +27,7 @@ let Device = mongoose.model("Devices", new mongoose.Schema({
 */
 
 const mongoConnectionString = require('./DBConnectionString.js');
-console.log("Creating connection to Deivce DB");
+console.log("Creating connection to Device DB");
 run(mongoConnectionString || process.env.MONGODB_URI || 'mongodb://localhost:27017/P2Test').catch(error => console.log(error.stack));
 async function run(connectionString) {
     await mongoose.connect(connectionString, {

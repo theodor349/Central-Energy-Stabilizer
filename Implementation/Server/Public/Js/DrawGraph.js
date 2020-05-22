@@ -278,7 +278,7 @@ function displayNextValue(graphValues, valueIndex, verticalOrigin, path, pathWid
         point = graphValues[valueIndex];
     }
 
-    let pointValue = point / 100 * (graph.innerHeight / graph.horizontalAmount);
+    let pointValue = point / 500 * (graph.innerHeight / graph.horizontalAmount);
     let newVerticalValue = verticalOrigin - pointValue;
     let newHorizontalValue;
 

@@ -28,7 +28,7 @@ let deviceInfo = {};
 let updater;
 let socket;
 
-let connectionString = "http://localhost:3000/device";
+let connectionString = "https://central-energy-stabilizer.herokuapp.com/device";
 setTimeout(function() {
     init();
 }, 10); // For testing

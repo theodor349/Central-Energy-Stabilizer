@@ -30,7 +30,7 @@ async function addToDemand(device) {
 async function manageStats(device) {
     return new Promise(async (resolve, reject) => {
         let date = new Date();
-        let surplusGraph = await dbG.getGraph(util.dateToId("surplusGraph", date));
+        let surplusGraph = await dbG.getGraph(util.dateToId("apiSurplusGraph", date));
         if (surplusGraph.values[date.getMinutes()] > 0) {
             resolve(handleSurplus(device));
         } else {

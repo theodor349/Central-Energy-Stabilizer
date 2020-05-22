@@ -8,6 +8,7 @@ const sd = require('./Scheduler.js');
 const um = require('./UserManager.js');
 const dd = require('./DatabaseAccessorDevice.js');
 const dg = require('./DatabaseAccessorGraph.js');
+const pm = require("./PowerManager.js");
 const apiG = require('./ForecasterAPI.js');
 
 app.use("/Public", express.static(__dirname + '/Public'));
@@ -25,9 +26,11 @@ app.get('/', function(req, res) {
 
 const port = process.env.PORT || 3000;
 const updateInterval = 1 * 1000;
-const waterHeaterBaseLoad = 100; // in watts
+const waterHeaterBaseLoad = 50; // in watts
 const ticksPerHour = (3600 / (updateInterval / 1000));
-sd.setTicksPerHour(ticksPerHour);
+pm.setBaseLoad(waterHeaterBaseLoad);
+pm.setTicksPrHour(ticksPerHour);
+
 /*
     SECTION: Timers
 */
@@ -35,6 +38,7 @@ sd.setTicksPerHour(ticksPerHour);
 startServer();
 
 async function startServer() {
+    print("Starting server");
     setInterval(() => {
         //    console.log();
         //    console.log();
@@ -98,17 +102,19 @@ deviceSpace.on('connection', (socket) => {
 async function update() {
     //print("Update started")
     let devices = dm.getActiveConnections();
-    devices.forEach(async (connection) => {
-        let device = await dd.getDevice(connection.deviceId);
+
+    for (let i = 0; i < devices.length; i++) {
+        let device = await dd.getDevice(devices[i].deviceId);
         if (device !== null) {
+            await pm.addToDemand(device);
+            await pm.manageStats(device);
             await sd.scheduleDevice(device);
         }
-        device = await dd.getDevice(connection.deviceId);
+        device = await dd.getDevice(devices[i].deviceId);
         if (device !== null) {
             dm.manageDevice(device);
         }
-    });
-    await sd.savePowerStatsToDatabase();
+    }
 
     handleCommands();
     await updateUserManager();
@@ -170,10 +176,10 @@ async function updateUserManager() {
     await um.graphUpdate();
 
     // Kwh saved
-    let ticksSaved = await sd.getTicksSaved();
-    um.sendKwhsSaved(ticksSaved * waterHeaterBaseLoad * 0.001 * (1 / ticksPerHour));
-    let powerUsed = await sd.getGoodPowerUsed(waterHeaterBaseLoad * (3600 / ticksPerHour));
-    um.sendKwhsUsed(powerUsed * 0.001 / 3600);
+    let avoidedPeaker = await pm.getAvoidedPeaker();
+    um.sendKwhsSaved((avoidedPeaker * 0.001) / 3600);
+    let energyStored = await pm.getEnergyStored();
+    um.sendKwhsUsed((energyStored * 0.001) / 3600);
 }
 
 /*

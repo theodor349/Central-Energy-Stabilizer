@@ -20,8 +20,8 @@ const io = require('socket.io-client');
 const updateInterval = 1000;
 const graphInterval = 1000;
 const constDeviceUpdateInterval = 1000; //60000;
-const tempGainPrSecond = 0.0095;
-const tempLossPrSecond = 0.000159;
+const tempGainPrSecond = 0.0095; // Energy: (3000/3600)Watts Mass: 75kg Substance: Water 25C | https://www.omnicalculator.com/physics/specific-heat#heat-capacity-formula
+const tempLossPrSecond = 0.000159; // Energy: (50/3600)Watts Mass: 75kg Substance: Water 25C | https://www.omnicalculator.com/physics/specific-heat#heat-capacity-formula
 const initTemp = 54;
 
 let deviceInfo = {};

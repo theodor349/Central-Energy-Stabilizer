@@ -182,7 +182,7 @@ function createAutoServerTestDevice() {
 // Creates a positive or negative surplus graph depending on input value
 async function createSurplusGraph(value) {
     let date = new Date();
-    let id = util.dateToId("surplusGraph", date);
+    let id = util.dateToId("apiSurplusGraph", date);
     let values = [];
 
     for (i = 0; i < 60; i++) {

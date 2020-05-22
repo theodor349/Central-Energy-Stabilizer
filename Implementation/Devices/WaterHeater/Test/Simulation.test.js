@@ -24,7 +24,7 @@ describe('Water heater stateMachine', () => {
                 maxTemp: 90
             }
         }
-        app.checkState(testDevice);
+        app.setState(testDevice);
         assert(testDevice.currentState === "off");
     })
 
@@ -40,7 +40,7 @@ describe('Water heater stateMachine', () => {
                 maxTemp: 90
             }
         }
-        app.checkState(testDevice);
+        app.setState(testDevice);
         assert(testDevice.currentState === "off");
     })
 
@@ -56,7 +56,7 @@ describe('Water heater stateMachine', () => {
                 maxTemp: 90
             }
         }
-        app.checkState(testDevice);
+        app.setState(testDevice);
         assert(testDevice.currentState === "on");
     })
 
@@ -72,7 +72,7 @@ describe('Water heater stateMachine', () => {
                 maxTemp: 90
             }
         }
-        app.checkState(testDevice);
+        app.setState(testDevice);
         assert(testDevice.currentState === "on");
     })
 
@@ -88,7 +88,7 @@ describe('Water heater stateMachine', () => {
                 maxTemp: 90
             }
         }
-        app.checkState(testDevice);
+        app.setState(testDevice);
         assert(testDevice.currentState === "off");
     })
 
@@ -104,7 +104,7 @@ describe('Water heater stateMachine', () => {
                 maxTemp: 90
             }
         }
-        app.checkState(testDevice);
+        app.setState(testDevice);
         assert(testDevice.currentState === "off");
     })
 
@@ -120,7 +120,7 @@ describe('Water heater stateMachine', () => {
                 maxTemp: 90
             }
         }
-        app.checkState(testDevice);
+        app.setState(testDevice);
         assert(testDevice.currentState === "on");
     })
 
@@ -136,7 +136,7 @@ describe('Water heater stateMachine', () => {
                 maxTemp: 90
             }
         }
-        app.checkState(testDevice);
+        app.setState(testDevice);
         assert(testDevice.currentState === "on");
     })
 
@@ -152,7 +152,7 @@ describe('Water heater stateMachine', () => {
                 maxTemp: 90
             }
         }
-        app.checkState(testDevice);
+        app.setState(testDevice);
         assert(testDevice.currentState === "off");
     })
 
@@ -174,7 +174,7 @@ describe('Water heater temperature while off/on', () => {
                 maxTemp: 90
             }
         }
-        app.setWaterHeaterOn(testDevice);
+        app.setTemp(testDevice);
         assert(priorTemp < testDevice.uniqueProperties.currentTemp);
 
     })
@@ -193,7 +193,7 @@ describe('Water heater temperature while off/on', () => {
                 maxTemp: 90
             }
         }
-        app.setWaterHeaterOff(testDevice);
+        app.setTemp(testDevice);
         assert(priorTemp > testDevice.uniqueProperties.currentTemp);
 
     })
@@ -203,6 +203,7 @@ describe('Water heater current power usage', () => {
 
     it('Energy usage goes to next currentState in array from index 0', async () => {
         let testDevice = {
+            currentState: "on",
             programs: [
                 {
                     pointArray: [
@@ -213,12 +214,13 @@ describe('Water heater current power usage', () => {
             currentPower: 0,
             graphIndex: 0
         }
-        app.setEnergyUsage(testDevice);
+        app.setPower(testDevice);
         assert(testDevice.currentPower === 750);
     })
 
     it('Energy usage goes to next currentState in array from index 2', async () => {
         let testDevice = {
+            currentState: "on",
             programs: [
                 {
                     pointArray: [
@@ -230,12 +232,13 @@ describe('Water heater current power usage', () => {
             graphIndex: 2
         }
 
-        app.setEnergyUsage(testDevice);
+        app.setPower(testDevice);
         assert(testDevice.currentPower === 2250);
     })
 
     it('Energy usage does not go to infinity (stays at max)', async () => {
         let testDevice = {
+            currentState: "on",
             programs: [
                 {
                     pointArray: [
@@ -247,12 +250,13 @@ describe('Water heater current power usage', () => {
             graphIndex: 4
         }
 
-        app.setEnergyUsage(testDevice);
+        app.setPower(testDevice);
         assert(testDevice.currentPower === 3000 && testDevice.graphIndex === 4);
     })
 
     it('Current power is 0 when device is turned off', async () => {
         let testDevice = {
+            currentState: "off",
             programs: [
                 {
                     pointArray: [
@@ -264,7 +268,7 @@ describe('Water heater current power usage', () => {
             graphIndex: 5
         }
 
-        app.stopEnergyUsageInterval(testDevice);
+        app.setPower(testDevice);
         assert(testDevice.graphIndex === 0 && testDevice.currentPower === 0);
     })
 });

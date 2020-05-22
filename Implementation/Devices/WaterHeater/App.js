@@ -7,13 +7,11 @@ const functions = {
     setDeviceId: (deviceId) => setDeviceId(deviceId),
     changeStateToOff: (waterHeater) => changeStateToOff(waterHeater),
     changeStateToOn: (waterHeater) => changeStateToOn(waterHeater),
-    checkState: (waterHeater) => checkState(waterHeater),
-    setWaterHeaterOn: (waterHeater) => setWaterHeaterOn(waterHeater),
-    setWaterHeaterOff: (waterHeater) => setWaterHeaterOff(waterHeater),
-    setEnergyUsage: (waterHeater) => setEnergyUsage(waterHeater),
-    stopEnergyUsageInterval: (waterHeater) => stopEnergyUsageInterval(waterHeater),
     changeConnectionString: (connectionString) => changeConnectionString(connectionString),
     sendUpdate: (deviceInfo) => sendUpdate(deviceInfo),
+    setState: (deviceInfo) => setState(deviceInfo),
+    setPower: (deviceInfo) => setPower(deviceInfo),
+    setTemp: (deviceInfo) => setTemp(deviceInfo),
 };
 module.exports = functions;
 
@@ -22,39 +20,38 @@ const io = require('socket.io-client');
 const updateInterval = 1000;
 const graphInterval = 1000;
 const constDeviceUpdateInterval = 1000; //60000;
-const tempGainPrSecond = 0.0033;
-const tempLossPrSecond = 0.0017;
-const initTemp = 66;
+const tempGainPrSecond = 0.0095;
+const tempLossPrSecond = 0.000159;
+const initTemp = 54;
 
 let deviceInfo = {};
-let waterHeaterOnInterval;
-let waterHeaterOffInterval;
-let energyUsageInterval;
-let deviceUpdateInterval;
 let updater;
 let socket;
 
-let connectionString = "https://central-energy-stabilizer.herokuapp.com/device";
+let connectionString = "http://localhost:3000/device";
 setTimeout(function() {
+    init();
+}, 10); // For testing
+
+/*
+    SECTION: Initialization
+*/
+
+function init() {
     socket = io.connect(connectionString, {
         reconnection: true,
     });
 
     getLocalDeviceInfo();
-    initCurrentTemp();
+    initCurrentTemp(deviceInfo);
     initState(deviceInfo);
 
     updater = setInterval(() => {
-        checkState(deviceInfo);
+        update(deviceInfo);
     }, updateInterval);
 
     connectionSetup();
-}, 10);
-
-function changeConnectionString(cs) {
-    connectionString = cs;
 }
-
 
 function getLocalDeviceInfo() {
     let idRawData = fs.readFileSync('DeviceId.json');
@@ -83,32 +80,6 @@ function getLocalDeviceInfo() {
     setDeviceId(idDataObject.deviceId);
 }
 
-function startEnergyUsageInterval(waterHeater) {
-    energyUsageInterval = setInterval(function() {
-        setEnergyUsage(waterHeater);
-    }, graphInterval);
-}
-
-function setEnergyUsage(waterHeater) {
-    let uniqueProperties = waterHeater.uniqueProperties;
-    if (waterHeater.programs[0].pointArray[waterHeater.graphIndex + 1] !== Infinity) {
-        waterHeater.graphIndex++;
-    }
-    waterHeater.currentPower = waterHeater.programs[0].pointArray[waterHeater.graphIndex];
-}
-
-function stopEnergyUsageInterval(waterHeater) {
-    let uniqueProperties = waterHeater.uniqueProperties;
-    clearInterval(energyUsageInterval);
-    waterHeater.graphIndex = 0;
-    waterHeater.currentPower = 0;
-}
-
-function getCurrentPower(waterHeater) {
-    let uniqueProperties = waterHeater.uniqueProperties;
-    console.log(deviceInfo.currentPower);
-}
-
 function setDeviceId(deviceId) {
     deviceInfo.deviceId = deviceId;
 
@@ -121,108 +92,67 @@ function setDeviceId(deviceId) {
     fs.writeFileSync('DeviceId.json', idJsonObject);
 }
 
+/*
+    SECTION: Update
+*/
 
-// Unique function for water heater
-// Due to the lack of sensors, we assume the waterHeater to be 0 degrees on startup
-function initCurrentTemp() {
-    let uniqueProperties = deviceInfo.uniqueProperties;
-    if (uniqueProperties.currentTemp === null) {
-        uniqueProperties.currentTemp = initTemp;
+function update(deviceInfo) {
+    setState(deviceInfo);
+    setPower(deviceInfo);
+    setTemp(deviceInfo);
+
+    deviceInfo.isConnected = socket.connected;
+    if (socket.connected === true) {
+        sendUpdate(deviceInfo);
     }
 }
 
-function initState(waterHeater) {
-    let uniqueProperties = waterHeater.uniqueProperties;
-        waterHeater.currentState = "off";
-        waterHeaterOff(waterHeater);
+function setPower(waterHeater) {
+    if (waterHeater.currentState === "on") {
+        if (waterHeater.programs[0].pointArray[waterHeater.graphIndex + 1] !== Infinity) {
+            waterHeater.graphIndex++;
+        }
+        waterHeater.currentPower = waterHeater.programs[0].pointArray[waterHeater.graphIndex];
+    } else {
+        waterHeater.currentPower = 0;
+        waterHeater.graphIndex = 0;
+    }
 }
 
-function checkState(waterHeater) {
+function setTemp(waterHeater) {
     let uniqueProperties = waterHeater.uniqueProperties;
-
-    if (uniqueProperties.currentTemp > uniqueProperties.maxTemp) {
-        changeStateToOff(waterHeater);
-    } else if (waterHeater.isConnected === false &&
-        uniqueProperties.currentTemp > uniqueProperties.minTemp &&
-        waterHeater.currentState === "on") {
-        changeStateToOff(waterHeater);
-    } else if (uniqueProperties.currentTemp <= uniqueProperties.minTemp) {
-        changeStateToOn(waterHeater);
-    } else if (waterHeater.isConnected === true &&
-        waterHeater.serverMessage === "off" &&
-        waterHeater.currentState === "on") {
-        changeStateToOff(waterHeater);
-        waterHeater.serverMessage = null;
-    } else if (waterHeater.isConnected === true &&
-        waterHeater.serverMessage === "on" &&
-        waterHeater.currentState === "off") {
-        changeStateToOn(waterHeater);
-        waterHeater.serverMessage = null;
-    } else if (waterHeater.onDisconnect === true &&
-        waterHeater.currentState === "on") {
-        changeStateToOff(waterHeater);
-        waterHeater.serverMessage = null;
+    if (waterHeater.currentState === "on") {
+        uniqueProperties.currentTemp += tempGainPrSecond;
+    } else {
+        uniqueProperties.currentTemp -= tempLossPrSecond;
     }
 }
 
 function changeStateToOff(waterHeater) {
     waterHeater.onDisconnect = false;
-    clearInterval(waterHeaterOnInterval);
-    waterHeaterOff(waterHeater);
     waterHeater.currentState = "off";
-
-    if (socket.connected === true) {
-        socket.emit("currentStateChanged", waterHeater.currentState, waterHeater.deviceId);
-    }
 }
 
 function changeStateToOn(waterHeater) {
-    clearInterval(waterHeaterOffInterval);
-    waterHeaterOn(waterHeater);
     waterHeater.currentState = "on";
-
-    if (socket.connected === true) {
-        socket.emit("currentStateChanged", waterHeater.currentState, waterHeater.deviceId);
-    }
 }
 
-function waterHeaterOn(waterHeater) {
-    startEnergyUsageInterval(waterHeater);
-    waterHeaterOnInterval = setInterval(() => {
-        setWaterHeaterOn(waterHeater);
-    }, updateInterval);
-}
+/*
+    SECNTION: Connection
+*/
 
-function setWaterHeaterOn(waterHeater) {
-    let uniqueProperties = waterHeater.uniqueProperties;
-    uniqueProperties.currentTemp += tempGainPrSecond;
-}
-
-function waterHeaterOff(waterHeater) {
-    stopEnergyUsageInterval(waterHeater);
-    waterHeaterOffInterval = setInterval(() => {
-        setWaterHeaterOff(waterHeater);
-    }, updateInterval);
-}
-
-function setWaterHeaterOff(waterHeater) {
-    let uniqueProperties = waterHeater.uniqueProperties;
-    uniqueProperties.currentTemp -= tempLossPrSecond;
+function changeConnectionString(cs) {
+    connectionString = cs;
 }
 
 function sendUpdate(deviceInfo) {
-    // Are we connected?
-    deviceInfo.isConnected = socket.connected;
-    if (socket.connected === false) {
-        return;
-    }
     console.log();
     console.log("Sending Update to Server");
     console.log("Temp: " + deviceInfo.uniqueProperties.currentTemp);
     console.log("State: " + deviceInfo.currentState);
     socket.emit('deviceUpdate', deviceInfo);
 }
-// Connection
+
 function connectionSetup() {
     socket.once('connect', function() {
         console.log('Connected to ' + connectionString);
@@ -252,14 +182,56 @@ function connectionSetup() {
             console.log("---");
             deviceInfo.serverMessage = "off";
         });
-
-        deviceUpdateInterval = setInterval(function() {
-            sendUpdate(deviceInfo);
-        }, constDeviceUpdateInterval);
     });
 
     socket.on('disconnect', function() {
         console.log('Lost connection with localhost:3000');
         deviceInfo.isConnected = false;
     });
+}
+
+/*
+    SECTION: Unique functions
+*/
+
+// Unique function for water heater
+// Due to the lack of sensors, we assume the waterHeater to be 0 degrees on startup
+function initCurrentTemp(deviceInfo) {
+    let uniqueProperties = deviceInfo.uniqueProperties;
+    if (uniqueProperties.currentTemp === null) {
+        uniqueProperties.currentTemp = initTemp;
+    }
+}
+
+function initState(waterHeater) {
+    let uniqueProperties = waterHeater.uniqueProperties;
+    waterHeater.currentState = "off";
+}
+
+function setState(waterHeater) {
+    let uniqueProperties = waterHeater.uniqueProperties;
+
+    if (uniqueProperties.currentTemp > uniqueProperties.maxTemp) {
+        changeStateToOff(waterHeater);
+    } else if (waterHeater.isConnected === false &&
+        uniqueProperties.currentTemp > uniqueProperties.minTemp &&
+        waterHeater.currentState === "on") {
+        changeStateToOff(waterHeater);
+    } else if (uniqueProperties.currentTemp <= uniqueProperties.minTemp) {
+        changeStateToOn(waterHeater);
+    } else if (waterHeater.isConnected === true &&
+        waterHeater.serverMessage === "off" &&
+        waterHeater.currentState === "on") {
+        changeStateToOff(waterHeater);
+        waterHeater.serverMessage = null;
+    } else if (waterHeater.isConnected === true &&
+        waterHeater.serverMessage === "on" &&
+        waterHeater.currentState === "off") {
+        changeStateToOn(waterHeater);
+        waterHeater.serverMessage = null;
+    } else if (waterHeater.onDisconnect === true &&
+        waterHeater.currentState === "on") {
+        changeStateToOff(waterHeater);
+        waterHeater.serverMessage = null;
+    }
 }

@@ -115,34 +115,29 @@ function updateSavedKwhData(amount) {
     if (frontEndSavedKWh === 0) {
         frontEndSavedKWhContainer.innerHTML = amount;
         frontEndSavedKWh = amount;
-    } else if (frontEndSavedKWh < amount) {
-
+    } else if (Math.abs(frontEndSavedKWh - amount) > 0.0001) {
         setTimeout(function() {
-            frontEndSavedKWh = Number(Number(frontEndSavedKWh) + 0.0001).toFixed(4);
+            let scale = (amount > 0) ? 1 : -1;
+            frontEndSavedKWh = Number(Number(frontEndSavedKWh) + (0.0001 * scale)).toFixed(4);
             frontEndSavedKWhContainer.innerHTML = frontEndSavedKWh;
             updateSavedKwhData(amount);
         }, 100);
     }
-
-
 }
 
 let frontEndUsedKWh = 0;
 let frontEndUsedKWhContainer = document.getElementById('usedKwhContainer');
 
 function updateUsedKwhData(amount) {
-
     if (frontEndUsedKWh === 0) {
         frontEndUsedKWhContainer.innerHTML = amount;
         frontEndUsedKWh = amount;
-    } else if (frontEndUsedKWh < amount) {
-
+    } else if (Math.abs(frontEndSavedKWh - amount) > 0.0001) {
         setTimeout(function() {
-            frontEndUsedKWh = Number(Number(frontEndUsedKWh) + 0.0001).toFixed(4);
+            let scale = (amount > 0) ? 1 : -1;
+            frontEndUsedKWh = Number(Number(frontEndUsedKWh) + (0.0001 * scale)).toFixed(4);
             frontEndUsedKWhContainer.innerHTML = frontEndUsedKWh;
             updateUsedKwhData(amount);
         }, 100);
     }
-
-
 }

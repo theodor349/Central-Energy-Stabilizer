@@ -112,12 +112,13 @@ let frontEndSavedKWh = 0;
 let frontEndSavedKWhContainer = document.getElementById('savedKwhContainer');
 
 function updateSavedKwhData(amount) {
+    let diff = Math.abs(amount) - Math.abs(frontEndSavedKWh);
     if (frontEndSavedKWh === 0) {
         frontEndSavedKWhContainer.innerHTML = amount;
         frontEndSavedKWh = amount;
-    } else if (Math.abs(frontEndSavedKWh - amount) > 0.0001) {
+    } else if (Math.abs(diff) > 0.0001) {
         setTimeout(function() {
-            let scale = (amount > 0) ? 1 : -1;
+            let scale = (diff > 0) ? -1 : 1;
             frontEndSavedKWh = Number(Number(frontEndSavedKWh) + (0.0001 * scale)).toFixed(4);
             frontEndSavedKWhContainer.innerHTML = frontEndSavedKWh;
             updateSavedKwhData(amount);
@@ -129,12 +130,13 @@ let frontEndUsedKWh = 0;
 let frontEndUsedKWhContainer = document.getElementById('usedKwhContainer');
 
 function updateUsedKwhData(amount) {
+    let diff = Math.abs(amount) - Math.abs(frontEndUsedKWh);
     if (frontEndUsedKWh === 0) {
         frontEndUsedKWhContainer.innerHTML = amount;
         frontEndUsedKWh = amount;
-    } else if (Math.abs(frontEndSavedKWh - amount) > 0.0001) {
+    } else if (Math.abs(diff) > 0.0001) {
         setTimeout(function() {
-            let scale = (amount > 0) ? 1 : -1;
+            let scale = (diff > 0) ? -1 : 1;
             frontEndUsedKWh = Number(Number(frontEndUsedKWh) + (0.0001 * scale)).toFixed(4);
             frontEndUsedKWhContainer.innerHTML = frontEndUsedKWh;
             updateUsedKwhData(amount);

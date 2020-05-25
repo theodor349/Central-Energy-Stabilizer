@@ -17,6 +17,7 @@ function createAutoServerTestDevice() {
         deviceId: uuid.uuid(),
         isAutomatic: true,
         currentPower: 123,
+        maxPower: 3000,
         currentState: "on",
         deviceType: "Water Heater",
         onDisconnect: false,
@@ -56,12 +57,12 @@ if (true) {
 
         // Schedule device
         it('scheduleDevice: Schedule automatic device from "off" to "on" when surplus', async () => {
-            daG.dropDatabase();
-            daD.dropDatabase();
+            await daG.dropDatabase();
+            await daD.dropDatabase();
             scheduler.getCommandQueue();
             scheduler.clearUpdatedDevices();
 
-            await createSurplusGraph(1000);
+            await createSurplusGraph(10000);
             let testDevice = createAutoServerTestDevice();
             testDevice.currentState = "off";
             await dm.testDeviceInit(testDevice);
@@ -69,7 +70,6 @@ if (true) {
             let res = await scheduler.scheduleDevice(testDevice);
             let dbDevice = await daD.getDevice(testDevice.deviceId);
             let updatedDevices = scheduler.getUpdatedDevices();
-
             assert(res === true &&
                 dbDevice.nextState === "on" &&
                 dbDevice.isScheduled === true &&
@@ -77,12 +77,12 @@ if (true) {
 
         })
         it('scheduleDevice: Schedule automatic device from "on" to "off" when no surplus', async () => {
-            daG.dropDatabase();
-            daD.dropDatabase();
+            await daG.dropDatabase();
+            await daD.dropDatabase();
             scheduler.getCommandQueue();
             scheduler.clearUpdatedDevices();
 
-            await createSurplusGraph(-1000);
+            await createSurplusGraph(-10000);
             let testDevice = createAutoServerTestDevice();
             testDevice.currentState = "on";
             await dm.testDeviceInit(testDevice);
@@ -98,12 +98,12 @@ if (true) {
                 updatedDevices.length === 1);
         })
         it('scheduleDevice: When already scheduled to "off" when surplus', async () => {
-            daG.dropDatabase();
-            daD.dropDatabase();
+            await daG.dropDatabase();
+            await daD.dropDatabase();
             scheduler.getCommandQueue();
             scheduler.clearUpdatedDevices();
 
-            await createSurplusGraph(1000);
+            await createSurplusGraph(10000);
             let testDevice = createAutoServerTestDevice();
             testDevice.currentState = "off";
             testDevice.isScheduled = true;
@@ -120,12 +120,12 @@ if (true) {
                 updatedDevices.length === 1);
         })
         it('scheduleDevice: When already scheduled to "off" when no surplus', async () => {
-            daG.dropDatabase();
-            daD.dropDatabase();
+            await daG.dropDatabase();
+            await daD.dropDatabase();
             scheduler.getCommandQueue();
             scheduler.clearUpdatedDevices();
 
-            await createSurplusGraph(-1000);
+            await createSurplusGraph(-10000);
             let testDevice = createAutoServerTestDevice();
             testDevice.currentState = "off";
             testDevice.isScheduled = true;

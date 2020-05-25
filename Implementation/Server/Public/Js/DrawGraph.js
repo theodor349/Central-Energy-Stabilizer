@@ -26,7 +26,7 @@ let mainGraph = {
     innerWidth: null,
     horizontalLines: 20,
     horizontalValue: "Kw",
-    horizontalOrigin: 10000,
+    horizontalOrigin: 12500,
     horizontalAmount: 20000,
     verticalLines: 48,
     verticalValue: "time interval",

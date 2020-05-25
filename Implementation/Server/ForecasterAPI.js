@@ -117,7 +117,7 @@ function getSurplusAt(x) {
 function getDemandAt(x) {
     return (Math.sin(0.9 * x - 5) * 2.2 +
         Math.sin(1.4 * x - 0.2) * 1.3 +
-        Math.sin(2.1 * x - 2) * 2.8 + lift) * scale;
+        Math.sin(2.1 * x - 2) * 2.8 + lift) * scale + 1000000;
 }
 
 function getProdutionAt(x) {

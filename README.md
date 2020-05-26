@@ -1,5 +1,13 @@
 # Central-Energy-Stabilizer
 
+This project has been developed by a group of five Computer Science students at Aalborg University. This is a 2nd Semester Project.
+
+WattsApp is an energy saving network bot that helps stabilizing the energy grid through the adjustment of connected devices. WattsApp helps schedule devices to turn on when there is surplus, so that they can be turned off when there is no surplus without having to use energy during the deficit period.
+
+The first version of WattsApp includes one device: The water heater.
+
+Further development of the program looks to include multiple devices, the first new device added being the washing machine.
+
 ## Installation ##
   - Clone the repository into a desired folder
   - Needed installs 

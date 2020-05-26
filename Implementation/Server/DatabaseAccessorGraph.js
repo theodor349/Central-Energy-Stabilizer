@@ -12,9 +12,9 @@ let Graph = mongoose.model("Graphs", new mongoose.Schema({
     SECTION: Setup Functions
 */
 
-const mongoConnectionString = require('./DBConnectionString.js');
 console.log("Creating connection to Graph DB");
 if (process.env.MONGODB_URI) { // Server
+    const mongoConnectionString = require('./DBConnectionString.js');
     run(mongoConnectionString).catch(error => console.log(error.stack));
 } else { // Local
     run('mongodb://localhost:27017/P2Test').catch(error => console.log(error.stack));

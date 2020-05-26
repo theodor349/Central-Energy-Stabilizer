@@ -1,6 +1,6 @@
 # Central-Energy-Stabilizer
 
-## Setup ##
+## Installation ##
   - Clone the repository into a desired folder
   - Needed installs 
     - Node.js
@@ -21,7 +21,7 @@
  - In ```DBConnectionString.js``` write ```module.exports = "insert connectionStringToRemoteMongoDBServer";```
  - Set the boolen ```shouldConnectToServer = true``` on line 32 in ```.\Implementation\Devices\WaterHeater\App.js```
  
- ## Startup ##
+ ## Usage ##
 
 **MongoDB startup**
   - When MongoDB is installed use ```"C:\Program Files\MongoDB\Server\4.2\bin\mongod.exe" --dbpath="c:\data\db"``` in a commandline

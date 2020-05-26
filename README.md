@@ -6,15 +6,16 @@
     - Node.js
     - npm or another packagemanager for .js (this guide uses npm)
     - MongoDB https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/#install-mongodb-community-edition
+    
+**Server setup:**
+  - Open a commandline and navigate to ```.\Implementation\Server``` and use the command ```npm install```
 
 **Water heater setup:**
   - Create a ```DeviceId.json``` file inside ```.\Implementation\Devices\WaterHeater```
     - In ```DeviceId.json``` write ```{"deviceId":"testId"}```
   - Open a commandline and navigate to ```.\Implementation\Devices\WaterHeater``` and use the command ```npm install```
 
-**Server setup:**
-  - Open a commandline and navigate to ```.\Implementation\Server``` and use the command ```npm install```
-  
+
 **For setup with remote server:**
  - Create a ```DBConnectionString.js``` file inside ```.\Implementation\Server```
  - In ```DBConnectionString.js``` write ```module.exports = "insert connectionStringToRemoteMongoDBServer";```

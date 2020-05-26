@@ -21,11 +21,14 @@
  - Set the boolen ```shouldConnectToServer = true``` on line 32 in ```.\Implementation\Devices\WaterHeater\App.js```
  
  ## Startup ##
- 
- **Water heater startup:**
-  - Open a commandline, navigate to ```.\Implementation\Devices\WaterHeater``` and run ```node App.js```
-   
- **Server startup:**
-  - Start the MongoDB server on ```mongodb://localhost:27017``` (the default)
-  - Open a commandline, navigate to ```.\Implementation\Server``` and run ```node App.js```
+
+**MongoDB startup**
   - When MongoDB is installed use ```"C:\Program Files\MongoDB\Server\4.2\bin\mongod.exe" --dbpath="c:\data\db"``` in a commandline
+
+**Server startup:**
+ - Start the MongoDB server on ```mongodb://localhost:27017``` (the default)
+ - Open a commandline, navigate to ```.\Implementation\Server``` and run ```node App.js```
+
+**Water heater startup:**
+ - Open a commandline, navigate to ```.\Implementation\Devices\WaterHeater``` and run ```node App.js```
+  

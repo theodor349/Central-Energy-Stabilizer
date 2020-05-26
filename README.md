@@ -57,7 +57,7 @@ In Root there exists three folders
 
 ### Implementation ###
 
-Implementation is split into two applications 
+Implementation is split into two folders 
   - Server 
   - Devices which connects to the server
     - At the moment in contains a water heater which works and a washing machine which does not

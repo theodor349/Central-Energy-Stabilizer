@@ -8,24 +8,24 @@
     - MongoDB https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/#install-mongodb-community-edition
 
 **Water heater setup:**
-  - Create a ```DeviceId.json``` file inside ```\Implementation\Devices\WaterHeater```
+  - Create a ```DeviceId.json``` file inside ```.\Implementation\Devices\WaterHeater```
     - In ```DeviceId.json``` write ```{"deviceId":"testId"}```
-  - Open a commandline and navigate to ```\Implementation\Devices\WaterHeater``` and use the command ```npm install```
+  - Open a commandline and navigate to ```.\Implementation\Devices\WaterHeater``` and use the command ```npm install```
 
 **Server setup:**
-  - Open a commandline and navigate to ```\Implementation\Server``` and use the command ```npm install```
+  - Open a commandline and navigate to ```.\Implementation\Server``` and use the command ```npm install```
   
 **For setup with remote server:**
- - Create a ```DBConnectionString.js``` file inside ```\Implementation\Server```
- - In ```DBConnectionString.js``` wrtie ```module.exports = "insert connectionStringToRemoteMongoDBServer";```
- - Set the boolen ```shouldConnectToServer = true``` on line 32 in ```\Implementation\Devices\WaterHeater\App.js```
+ - Create a ```DBConnectionString.js``` file inside ```.\Implementation\Server```
+ - In ```DBConnectionString.js``` write ```module.exports = "insert connectionStringToRemoteMongoDBServer";```
+ - Set the boolen ```shouldConnectToServer = true``` on line 32 in ```.\Implementation\Devices\WaterHeater\App.js```
  
  ## Startup ##
  
  **Water heater startup:**
-  - Open a commandline, navigate to ```\Implementation\Devices\WaterHeater``` and run ```node App.js```
-    - When installed use ```"C:\Program Files\MongoDB\Server\4.2\bin\mongod.exe" --dbpath="c:\data\db"``` in a commandline
+  - Open a commandline, navigate to ```.\Implementation\Devices\WaterHeater``` and run ```node App.js```
    
  **Server startup:**
   - Start the MongoDB server on ```mongodb://localhost:27017``` (the default)
-  - Open a commandline, navigate to ```\Implementation\Server``` and run ```node App.js```
+  - Open a commandline, navigate to ```.\Implementation\Server``` and run ```node App.js```
+  - When MongoDB is installed use ```"C:\Program Files\MongoDB\Server\4.2\bin\mongod.exe" --dbpath="c:\data\db"``` in a commandline

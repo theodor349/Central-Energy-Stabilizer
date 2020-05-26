@@ -28,7 +28,13 @@ let deviceInfo = {};
 let updater;
 let socket;
 
-let connectionString = "https://central-energy-stabilizer.herokuapp.com/device";
+let connectionString;
+let shouldConnectToServer = false;
+if (shouldConnectToServer) { // Server
+    connectionString = "https://central-energy-stabilizer.herokuapp.com/device";
+} else { // Local
+    connectionString = "http://localhost:3000/device"
+}
 setTimeout(function() {
     init();
 }, 10); // For testing
@@ -38,6 +44,7 @@ setTimeout(function() {
 */
 
 function init() {
+    console.log("Device Started");
     socket = io.connect(connectionString, {
         reconnection: true,
     });

@@ -16,12 +16,12 @@ Further development of the program looks to include multiple devices, the first 
     - MongoDB https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/#install-mongodb-community-edition
     
 **Server setup:**
-  - Open a commandline and navigate to ```.\Implementation\Server``` and use the command ```npm install```
+  - Open a terminal and navigate to ```.\Implementation\Server``` and use the command ```npm install```
 
 **Water heater setup:**
   - Create a ```DeviceId.json``` file inside ```.\Implementation\Devices\WaterHeater```
     - In ```DeviceId.json``` write ```{"deviceId":"testId"}```
-  - Open a commandline and navigate to ```.\Implementation\Devices\WaterHeater``` and use the command ```npm install```
+  - Open a terminal and navigate to ```.\Implementation\Devices\WaterHeater``` and use the command ```npm install```
 
 
 **For setup with remote server:**
@@ -32,14 +32,14 @@ Further development of the program looks to include multiple devices, the first 
  ## Usage ##
 
 **MongoDB startup:**
-  - When MongoDB is installed use ```"C:\Program Files\MongoDB\Server\4.2\bin\mongod.exe" --dbpath="c:\data\db"``` in a commandline
+  - When MongoDB is installed use ```"C:\Program Files\MongoDB\Server\4.2\bin\mongod.exe" --dbpath="c:\data\db"``` in a terminal
 
 **Server startup:**
  - Start the MongoDB server on ```mongodb://localhost:27017``` (the default)
- - Open a commandline, navigate to ```.\Implementation\Server``` and run ```node App.js```
+ - Open a terminal, navigate to ```.\Implementation\Server``` and run ```node App.js```
 
 **Water heater startup:**
- - Open a commandline, navigate to ```.\Implementation\Devices\WaterHeater``` and run ```node App.js```
+ - Open a terminal, navigate to ```.\Implementation\Devices\WaterHeater``` and run ```node App.js```
   
 ## Dependencies ##
  - express V4.17.1

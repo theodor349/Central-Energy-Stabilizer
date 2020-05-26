@@ -23,7 +23,7 @@
  
  ## Usage ##
 
-**MongoDB startup**
+**MongoDB startup:**
   - When MongoDB is installed use ```"C:\Program Files\MongoDB\Server\4.2\bin\mongod.exe" --dbpath="c:\data\db"``` in a commandline
 
 **Server startup:**
@@ -33,3 +33,48 @@
 **Water heater startup:**
  - Open a commandline, navigate to ```.\Implementation\Devices\WaterHeater``` and run ```node App.js```
   
+## Dependencies ##
+ - express V4.17.1
+ - mongoose V5.9.
+ - nodemon V2.0.2
+ - socket.io V2.3.0
+ - uuidv4 V6.0.7
+ 
+**Development:**
+ - assert V2.0.0
+ - dotenv V8.2.0
+ - mocha V7.1.1
+
+## Folder Structure ##
+
+In Root there exists three folders
+  - Demo
+    - Was a quick mock-up of the program and is now deprecated
+  - Graphs 
+    - Contains a single .ggb file which was used to create the API Demand and Production graphs
+  - Implementation 
+    - Contains all the code for the working application
+
+### Implementation ###
+
+Implementation is split into two applications 
+  - Server 
+  - Devices which connects to the server
+    - At the moment in contains a water heater which works and a washing machine which does not
+
+**Server:**  
+Contains two folders
+  - Public
+    - Contains all resources accesseble by a user client
+      - This includes: ```.js```, ```.css```, ```.html``` and ```.svg``` files
+  - Test
+    - Contains all the tests for the server
+    
+All the files that make up the server is located in root.
+
+**Water Heater:**
+
+Contains a folder for all its test.
+
+All the files that make up the water heater is located in root.
+
